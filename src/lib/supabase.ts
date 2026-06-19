@@ -29,14 +29,15 @@ export const supabase: SupabaseClient = createClient(
       // navigateur, donc on reste connecté d'une visite à l'autre.
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      // ⚠️ flux explicitement « implicit ». Le défaut de supabase-js est PKCE,
-      // qui renvoie `?code=` à échanger via un « vérificateur » — échange qui
-      // échouait au retour de Discord en prod (le code restait coincé dans
-      // l'URL). Le flux implicit renvoie directement le jeton dans le `#hash`,
-      // parsé par detectSessionInUrl, sans échange. Ne pas remettre PKCE sans
-      // avoir testé tout l'aller-retour Discord en production.
+      // ⚠️ flux explicitement « implicit » : Discord renvoie le jeton dans le
+      // `#hash` (et non `?code=` du flux PKCE par défaut, dont l'échange
+      // échouait en prod). La détection auto est DÉSACTIVÉE car elle ne
+      // ramassait pas le jeton quand Discord ajoute des paramètres en plus
+      // (provider_token, sb=…) : on l'établit nous-mêmes au démarrage via
+      // setSession (voir AuthContext.tsx). Ne pas remettre PKCE/detectSessionInUrl
+      // sans retester tout l'aller-retour Discord en production.
+      detectSessionInUrl: false,
       flowType: 'implicit',
     },
   },

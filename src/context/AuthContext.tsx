@@ -47,13 +47,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let mounted = true
 
-    supabase.auth
-      .getSession()
-      .then(async ({ data }) => {
-        if (!mounted) return
-        setSession(data.session)
-        if (data.session?.user) await loadProfile(data.session.user.id)
-      })
+    async function bootstrap() {
+      // Filet de sécurité OAuth Discord : la détection automatique de
+      // supabase-js ne ramasse pas toujours le jeton du hash (#access_token)
+      // quand Discord ajoute des paramètres en plus (provider_token, sb=…).
+      // On l'établit donc nous-mêmes, puis on nettoie l'URL.
+      const hash = window.location.hash
+      if (hash.includes('access_token')) {
+        const p = new URLSearchParams(hash.replace(/^#/, ''))
+        const access_token = p.get('access_token')
+        const refresh_token = p.get('refresh_token')
+        if (access_token && refresh_token) {
+          try {
+            await supabase.auth.setSession({ access_token, refresh_token })
+          } catch {
+            /* jeton invalide/expiré : on retombe sur getSession ci-dessous */
+          }
+          window.history.replaceState(null, '', window.location.pathname + window.location.search)
+        }
+      }
+
+      const { data } = await supabase.auth.getSession()
+      if (!mounted) return
+      setSession(data.session)
+      if (data.session?.user) await loadProfile(data.session.user.id)
+    }
+
+    bootstrap()
       // Une session illisible (réseau, jeton expiré) ne doit pas figer le spinner.
       .catch(() => {})
       .finally(() => {
