@@ -24,7 +24,6 @@ export const supabaseConfigured = Boolean(url && anonKey)
 function captureOAuthTokens(): { access_token: string; refresh_token: string; expires_in: number } | null {
   if (typeof window === 'undefined') return null
   const h = window.location.hash
-  console.log('[CK3FR capture] hash au démarrage =', h ? h.slice(0, 30) + '…' : '(vide)')
   if (!h.includes('access_token')) return null
   const p = new URLSearchParams(h.replace(/^#/, ''))
   const access_token = p.get('access_token')

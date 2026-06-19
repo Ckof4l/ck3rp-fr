@@ -55,7 +55,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // avec le nouveau format sb_publishable_). On contourne : fetch direct de
       // l'utilisateur (qui, lui, transmet la clé → 200), on écrit la session au
       // format supabase-js dans le stockage, puis getSession() la relit.
-      console.log('[CK3FR auth] oauthTokens =', oauthTokens ? 'présents' : 'ABSENTS')
       if (oauthTokens) {
         try {
           const apiUrl = import.meta.env.VITE_SUPABASE_URL as string
@@ -63,7 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const res = await fetch(`${apiUrl}/auth/v1/user`, {
             headers: { apikey: apiKey, Authorization: `Bearer ${oauthTokens.access_token}` },
           })
-          console.log('[CK3FR auth] fetch /user status =', res.status)
           if (res.ok) {
             const user = await res.json()
             const ref = new URL(apiUrl).hostname.split('.')[0]
@@ -76,10 +74,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               user,
             }
             window.localStorage.setItem(`sb-${ref}-auth-token`, JSON.stringify(stored))
-            console.log('[CK3FR auth] session écrite dans le storage ✓ clé sb-' + ref + '-auth-token')
           }
-        } catch (e) {
-          console.log('[CK3FR auth] ERREUR fetch/écriture:', e)
+        } catch {
+          /* réseau / jeton invalide : on retombe sur getSession ci-dessous */
         }
       }
 
