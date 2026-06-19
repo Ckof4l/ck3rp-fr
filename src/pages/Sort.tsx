@@ -3,145 +3,210 @@ import { useAuth } from '../context/AuthContext'
 import { getHouse } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
-import { listRolls, rollDice, deleteRoll, type Roll, type RollKind } from '../lib/rolls'
+import { listDuels, createDuel, resolveDuel, deleteDuel, type Duel } from '../lib/duels'
+import { listPlayers } from '../lib/directory'
+import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
-   Le Sort — trancher au hasard (dés, pile ou face). Tirage serveur, public.
+   Le Sort — duel à pile ou face entre deux joueurs. Challenger = Pile.
    ========================================================================== */
-
-const KINDS: { kind: RollKind; icon: string; label: string }[] = [
-  { kind: 'coin', icon: '🪙', label: 'Pile ou Face' },
-  { kind: 'd6', icon: '🎲', label: 'Dé à 6' },
-  { kind: 'd20', icon: '🎲', label: 'Dé à 20' },
-  { kind: 'd100', icon: '🎲', label: 'Dé à 100' },
-]
-
-function rollLabel(k: RollKind): string {
-  return KINDS.find((x) => x.kind === k)?.label ?? k
-}
 
 export function Sort() {
   const { profile } = useAuth()
+  const meId = profile!.id
   const isAdmin = !!profile?.is_admin
-  const canRoll = !profile?.is_observer
+  const canPlay = !profile?.is_observer
 
-  const [rolls, setRolls] = useState<Roll[]>([])
+  const [duels, setDuels] = useState<Duel[]>([])
+  const [players, setPlayers] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
-  const [label, setLabel] = useState('')
-  const [busy, setBusy] = useState(false)
-  const [last, setLast] = useState<{ kind: RollKind; result: string } | null>(null)
 
   const refresh = useCallback(async () => {
-    setRolls(await listRolls())
+    setDuels(await listDuels())
     setLoading(false)
   }, [])
 
   useEffect(() => {
     refresh()
+    listPlayers().then(setPlayers)
     const ch = supabase
-      .channel('rolls')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'rolls' }, () => refresh())
+      .channel('duels')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'duels' }, () => refresh())
       .subscribe()
     return () => {
       supabase.removeChannel(ch)
     }
   }, [refresh])
 
-  async function roll(kind: RollKind) {
-    if (!canRoll || busy) return
+  const incoming = duels.filter((d) => d.status === 'pending' && d.opponent === meId)
+  const outgoing = duels.filter((d) => d.status === 'pending' && d.challenger === meId)
+  const resolved = duels.filter((d) => d.status !== 'pending')
+
+  return (
+    <section>
+      <h2 className="section-h">🪙 Le Sort · duel à pile ou face</h2>
+      <p className="channel-desc">Trancher un différend au hasard, entre deux mains. La pièce est lancée par le destin lui-même.</p>
+
+      <HelpCard id="sort" title="Le Sort — comment ça marche ?">
+        <ul>
+          <li>Tu <b>défies un joueur précis</b> (avec un enjeu si tu veux).</li>
+          <li>L'adversaire <b>accepte</b> (la pièce est alors lancée par le serveur) ou <b>refuse</b>.</li>
+          <li>Convention : le <b>provocateur a Pile</b>, le <b>défié a Face</b>. Le résultat désigne le vainqueur.</li>
+          <li>Tirage <b>infalsifiable</b> et registre <b>public</b>.</li>
+        </ul>
+      </HelpCard>
+
+      {canPlay ? (
+        <ChallengeForm meId={meId} players={players} onDone={refresh} />
+      ) : (
+        <p className="hint">Mode observateur — tu peux lire le registre mais pas défier.</p>
+      )}
+
+      {incoming.length > 0 && (
+        <>
+          <h3 className="section-h" style={{ fontSize: 12, marginTop: 8 }}>⚔️ Défis reçus</h3>
+          <div className="ravens" style={{ marginBottom: 18 }}>
+            {incoming.map((d) => (
+              <IncomingDuel key={d.id} duel={d} onChanged={refresh} />
+            ))}
+          </div>
+        </>
+      )}
+
+      {outgoing.length > 0 && (
+        <>
+          <h3 className="section-h" style={{ fontSize: 12 }}>⏳ Défis lancés</h3>
+          <div className="ravens" style={{ marginBottom: 18 }}>
+            {outgoing.map((d) => (
+              <div key={d.id} className="report-card" style={{ borderColor: 'var(--line)' }}>
+                <DuelLine duel={d} />
+                <div style={{ color: '#9C8F71', fontSize: 12, marginTop: 4 }}>En attente de la réponse de l'adversaire…</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      <h3 className="section-h" style={{ fontSize: 12 }}>📜 Registre des duels</h3>
+      {loading ? (
+        <div className="empty">Ouverture du registre…</div>
+      ) : !resolved.length ? (
+        <div className="empty">Aucun duel tranché pour l'instant.</div>
+      ) : (
+        <div className="ravens">
+          {resolved.map((d) => (
+            <div key={d.id} className="report-card" style={{ borderColor: 'var(--line)' }}>
+              <DuelLine duel={d} />
+              {d.status === 'declined' ? (
+                <div style={{ color: '#9C8F71', fontSize: 13, marginTop: 6 }}>🚫 Défi refusé.</div>
+              ) : (
+                <div style={{ marginTop: 6, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <span style={{ fontFamily: 'var(--display)', fontSize: 18, color: 'var(--gold)' }}>🪙 {d.result}</span>
+                  <span style={{ color: '#E7DBBE' }}>
+                    Vainqueur : <b>{(d.winner === d.challenger ? d.challengerP : d.opponentP)?.character_name ?? '—'}</b>
+                  </span>
+                </div>
+              )}
+              <div style={{ color: '#9C8F71', fontSize: 12, marginTop: 4 }}>{fmtDate(d.resolved_at ?? d.created_at)}</div>
+              {isAdmin && (
+                <button className="tiny danger" style={{ marginTop: 8 }} onClick={() => deleteDuel(d.id).then(refresh)}>🗑️ Retirer</button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
+
+/** Ligne « X (Pile) ⚔️ Y (Face) » + enjeu. */
+function DuelLine({ duel }: { duel: Duel }) {
+  return (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+      <Seal house={duel.challengerP?.house} size="sm" />
+      <span style={{ color: '#E7DBBE' }}>{duel.challengerP?.character_name ?? 'Inconnu'}</span>
+      <span className="kicker" style={{ fontSize: 11 }}>Pile</span>
+      <span style={{ color: '#9C8F71' }}>⚔️</span>
+      <Seal house={duel.opponentP?.house} size="sm" />
+      <span style={{ color: '#E7DBBE' }}>{duel.opponentP?.character_name ?? 'Inconnu'}</span>
+      <span className="kicker" style={{ fontSize: 11 }}>Face</span>
+      {duel.reason && <span style={{ fontStyle: 'italic', color: '#9C8F71', fontSize: 12, width: '100%' }}>« {duel.reason} »</span>}
+    </div>
+  )
+}
+
+function IncomingDuel({ duel, onChanged }: { duel: Duel; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false)
+
+  async function respond(accept: boolean) {
     setBusy(true)
-    setLast(null)
     try {
-      const result = await rollDice(kind, label)
-      setLast({ kind, result })
-      setLabel('')
+      await resolveDuel(duel.id, accept)
+      await onChanged()
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Tirage impossible.')
+      alert(e instanceof Error ? e.message : 'Action impossible.')
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="report-card" style={{ borderColor: 'var(--gold-dim)' }}>
+      <DuelLine duel={duel} />
+      <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <button className="btn-seal" disabled={busy} onClick={() => respond(true)}>🪙 Accepter & lancer</button>
+        <button className="btn-ghost" disabled={busy} onClick={() => respond(false)}>Refuser</button>
+      </div>
+    </div>
+  )
+}
+
+function ChallengeForm({ meId, players, onDone }: { meId: string; players: Profile[]; onDone: () => void }) {
+  const [opponent, setOpponent] = useState('')
+  const [reason, setReason] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [status, setStatus] = useState('')
+
+  const others = players.filter((p) => p.id !== meId)
+
+  async function submit() {
+    if (!opponent) return setStatus('Choisis un adversaire.')
+    setBusy(true)
+    setStatus('')
+    try {
+      await createDuel(opponent, reason)
+      setOpponent('')
+      setReason('')
+      onDone()
+    } catch (e) {
+      setStatus(e instanceof Error ? e.message : 'Échec.')
     } finally {
       setBusy(false)
     }
   }
 
   return (
-    <section>
-      <h2 className="section-h">🎲 Le Sort</h2>
-      <p className="channel-desc">Quand la raison ne tranche plus, laisse le hasard décider. Tirage scellé, visible de tous.</p>
-
-      <HelpCard id="sort" title="Le Sort — comment ça marche ?">
-        <ul>
-          <li>Choisis une raison (facultatif), puis lance une <b>pièce</b> ou un <b>dé</b>.</li>
-          <li>Le résultat est tiré <b>par le serveur</b> et inscrit au registre : <b>impossible à truquer ni à effacer</b>.</li>
-          <li>Tous les tirages sont <b>publics</b> — parfait pour trancher un duel, un ordre de marche, un héritage…</li>
-        </ul>
-      </HelpCard>
-
-      {canRoll ? (
-        <div className="card" style={{ marginBottom: 22 }}>
-          <div className="field">
-            <label>Raison du tirage (facultatif)</label>
-            <input
-              className="input"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="ex. Qui attaque en premier ?"
-            />
-          </div>
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
-            {KINDS.map((k) => (
-              <button key={k.kind} className="btn-seal" disabled={busy} onClick={() => roll(k.kind)}>
-                {k.icon} {k.label}
-              </button>
-            ))}
-          </div>
-          {last && (
-            <div className="roll-result" style={{ marginTop: 16, textAlign: 'center' }}>
-              <div className="kicker">{rollLabel(last.kind)}</div>
-              <div style={{ fontFamily: 'var(--display)', fontSize: 44, color: 'var(--gold)', lineHeight: 1.1 }}>
-                {last.result}
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <p className="hint">Mode observateur — tu peux lire le registre mais pas tirer.</p>
-      )}
-
-      <h3 className="section-h" style={{ fontSize: 12, marginTop: 8 }}>📜 Registre des tirages</h3>
-      {loading ? (
-        <div className="empty">Ouverture du registre…</div>
-      ) : !rolls.length ? (
-        <div className="empty">Aucun tirage pour l'instant.</div>
-      ) : (
-        <div className="ravens">
-          {rolls.map((r) => {
-            const h = getHouse(r.author?.house)
-            return (
-              <div key={r.id} className="report-card" style={{ borderColor: 'var(--line)' }}>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <Seal house={r.author?.house} size="sm" />
-                  <span style={{ color: '#E7DBBE' }}>{r.author?.character_name ?? 'Inconnu'}</span>
-                  <span style={{ color: '#9C8F71', fontSize: 12 }}>Maison {h.nom}</span>
-                  <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                    <span className="kicker" style={{ fontSize: 11 }}>{rollLabel(r.kind)}</span>
-                    <span style={{ fontFamily: 'var(--display)', fontSize: 20, color: 'var(--gold)' }}>{r.result}</span>
-                  </span>
-                </div>
-                <div style={{ color: '#9C8F71', fontSize: 12, marginTop: 4, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {r.label && <span style={{ fontStyle: 'italic' }}>« {r.label} »</span>}
-                  <span style={{ marginLeft: 'auto' }}>{fmtDate(r.created_at)}</span>
-                </div>
-                {isAdmin && (
-                  <button className="tiny danger" style={{ marginTop: 8 }} onClick={() => deleteRoll(r.id).then(refresh)}>
-                    🗑️ Retirer
-                  </button>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </section>
+    <div className="composer" style={{ marginBottom: 22 }}>
+      <div className="field">
+        <label>Adversaire</label>
+        <select className="input" value={opponent} onChange={(e) => setOpponent(e.target.value)}>
+          <option value="">— Choisis un joueur —</option>
+          {others.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.character_name} ({getHouse(p.house).nom})
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="field">
+        <label>Enjeu du duel (facultatif)</label>
+        <input className="input" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="ex. Le contrôle du péage du Trident" />
+      </div>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginTop: 4 }}>
+        <button className="btn-seal" disabled={busy} onClick={submit}>🪙 Lancer le défi</button>
+        {status && <span className="sent-ok">{status}</span>}
+      </div>
+    </div>
   )
 }
