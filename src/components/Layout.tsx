@@ -175,6 +175,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <Link to="/confidentialite">Confidentialité (RGPD)</Link>
             </p>
             <p>Projet de fan, non affilié à Paradox Interactive, HBO ou George R. R. Martin.</p>
+            <p style={{ color: 'var(--gold-dim)' }}>✒️ Créé par <b>Falcko</b></p>
           </footer>
         </main>
       </div>

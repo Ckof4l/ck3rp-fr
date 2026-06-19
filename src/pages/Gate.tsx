@@ -67,6 +67,9 @@ function Centered({ children }: { children: React.ReactNode }) {
         <p style={{ marginTop: 30, color: '#7C715A', fontSize: 12, textAlign: 'center', lineHeight: 1.6 }}>
           Projet de fan, non affilié à Paradox Interactive, HBO ou George R. R. Martin.
         </p>
+        <p style={{ marginTop: 6, color: 'var(--gold-dim)', fontSize: 12, textAlign: 'center' }}>
+          ✒️ Créé par <b>Falcko</b>
+        </p>
       </div>
     </div>
   )
