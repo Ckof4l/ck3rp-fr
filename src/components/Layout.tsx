@@ -96,6 +96,8 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} />
       <SideLink to="/chroniques" icon="📖" label="Chroniques" onClick={onNavigate} />
       <SideLink to="/trone" icon="👑" label="Le Trône de Fer" onClick={onNavigate} />
+
+      <div className="side-cat">Décisions</div>
       <SideLink to="/scrutins" icon="🗳️" label="Scrutins" onClick={onNavigate} />
       <SideLink to="/sort" icon="🪙" label="Le Sort" onClick={onNavigate} />
 

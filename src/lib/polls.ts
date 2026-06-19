@@ -1,7 +1,8 @@
 import { supabase } from './supabase'
 
 /* ============================================================================
-   Scrutins — votes des grands événements. Lecture publique, un vote par joueur.
+   Scrutins par royaume — le Roi ouvre, les membres du royaume votent (une voix).
+   Résultats scellés jusqu'à la clôture (compte à rebours), puis révélés à tous.
    ========================================================================== */
 
 export interface PollOption {
@@ -12,18 +13,26 @@ export interface PollOption {
 
 export interface Poll {
   id: string
+  realm: string
   title: string
   description: string
   author_profile: string
   status: 'open' | 'closed'
+  closes_at: string
   created_at: string
   author?: { character_name: string; house: string } | null
   options: PollOption[]
-  /** Nombre de voix par option (clé = id d'option). */
+  /** Les résultats sont-ils révélés (clôture atteinte) ? */
+  revealed: boolean
+  /** Le scrutin accepte-t-il encore des votes ? */
+  open: boolean
+  /** Voix par option (clé = id) — fiable seulement si `revealed`. */
   counts: Record<string, number>
+  /** Total des voix — fiable seulement si `revealed`. */
   total: number
-  /** L'option pour laquelle je me suis prononcé (ou null). */
+  /** L'option pour laquelle je me suis prononcé (toujours connue). */
   myChoice: string | null
+  hasVoted: boolean
 }
 
 function asError(step: string, e: unknown): Error {
@@ -38,7 +47,7 @@ export async function listPolls(meId: string): Promise<Poll[]> {
   const { data, error } = await supabase
     .from('polls')
     .select(
-      `id, title, description, author_profile, status, created_at,
+      `id, realm, title, description, author_profile, status, closes_at, created_at,
        author:profiles!polls_author_profile_fkey(character_name, house),
        options:poll_options(id, label, position),
        votes:poll_votes(option_id, profile_id)`,
@@ -46,10 +55,12 @@ export async function listPolls(meId: string): Promise<Poll[]> {
     .order('created_at', { ascending: false })
   if (error) throw asError('lecture', error)
 
-  type Row = Omit<Poll, 'counts' | 'total' | 'myChoice'> & {
+  const now = Date.now()
+  type Row = Omit<Poll, 'revealed' | 'open' | 'counts' | 'total' | 'myChoice' | 'hasVoted'> & {
     votes: { option_id: string; profile_id: string }[]
   }
   return (data as unknown as Row[]).map((p) => {
+    const revealed = p.status === 'closed' || new Date(p.closes_at).getTime() <= now
     const counts: Record<string, number> = {}
     let myChoice: string | null = null
     for (const v of p.votes) {
@@ -59,18 +70,28 @@ export async function listPolls(meId: string): Promise<Poll[]> {
     return {
       ...p,
       options: [...p.options].sort((a, b) => a.position - b.position),
-      counts,
-      total: p.votes.length,
+      revealed,
+      open: p.status === 'open' && new Date(p.closes_at).getTime() > now,
+      // Avant révélation, la RLS ne renvoie que MON vote : on n'expose pas de total.
+      counts: revealed ? counts : {},
+      total: revealed ? p.votes.length : 0,
       myChoice,
+      hasVoted: myChoice !== null,
     }
   })
 }
 
-export async function createPoll(title: string, description: string, options: string[]): Promise<void> {
+export async function createPoll(
+  title: string,
+  description: string,
+  options: string[],
+  closesAt: string,
+): Promise<void> {
   const { error } = await supabase.rpc('create_poll', {
     p_title: title,
     p_description: description,
     p_options: options,
+    p_closes_at: closesAt,
   })
   if (error) throw asError('création', error)
 }
@@ -83,10 +104,7 @@ export async function castVote(pollId: string, optionId: string, meId: string): 
 }
 
 export async function closePoll(id: string): Promise<void> {
-  const { error } = await supabase
-    .from('polls')
-    .update({ status: 'closed', closed_at: new Date().toISOString() })
-    .eq('id', id)
+  const { error } = await supabase.from('polls').update({ status: 'closed' }).eq('id', id)
   if (error) throw asError('clôture', error)
 }
 

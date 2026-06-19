@@ -54,6 +54,13 @@ export function getChannel(key: string | undefined): Channel | undefined {
   return key ? BY_KEY[key] : undefined
 }
 
+/** Clé du royaume (région) d'un joueur, d'après sa maison — ou null (maison « autre »). */
+export function playerRealm(profile: Profile | null): string | null {
+  if (!profile) return null
+  const regionName = getHouse(profile.house).region
+  return CHANNELS.find((c) => c.kind === 'region' && c.region === regionName)?.key ?? null
+}
+
 export function channelsByCategory(): { category: string; channels: Channel[] }[] {
   return CATEGORY_ORDER.map((category) => ({
     category,
