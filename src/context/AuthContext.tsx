@@ -26,11 +26,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const loadProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle()
+    let { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+    if (!data) {
+      // Session valide sans profil (ex. après un bannissement) : on en recrée un
+      // pour permettre une nouvelle inscription, au lieu de boucler sur la Porte.
+      await supabase.rpc('ensure_profile')
+      const retry = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+      data = retry.data
+    }
     setProfile((data as Profile | null) ?? null)
   }, [])
 
