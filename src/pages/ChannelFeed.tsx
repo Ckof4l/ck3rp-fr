@@ -129,7 +129,7 @@ export function ChannelFeed() {
       </HelpCard>
 
       {mayPost ? (
-        <Composer meId={meId} channelKey={channel.key} useTitle={useTitle} onPosted={refresh} />
+        <Composer meId={meId} channelKey={channel.key} useTitle={useTitle} allowPrivate={channel.kind === 'region'} onPosted={refresh} />
       ) : (
         <div className="card" style={{ marginBottom: 18, color: '#9C8F71', fontSize: 14 }}>
           🔒 {lockReason(channel.key)} Tu peux lire et commenter.
@@ -170,6 +170,7 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="post-meta">
           {post.pinned && <span className="pin-tag">📌 Épinglé</span>}
+          {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé</span>}
           <span className="post-author">{post.author?.character_name ?? 'Inconnu'}</span>
           <span className="post-house">Maison {h.nom}</span>
           <span className="post-date">{fmtDate(post.created_at)}</span>
@@ -191,17 +192,20 @@ function Composer({
   meId,
   channelKey,
   useTitle,
+  allowPrivate,
   onPosted,
 }: {
   meId: string
   channelKey: string
   useTitle: boolean
+  allowPrivate: boolean
   onPosted: () => void
 }) {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [isPrivate, setIsPrivate] = useState(false)
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState('')
 
@@ -219,11 +223,12 @@ function Composer({
     setBusy(true)
     setStatus('Publication…')
     try {
-      await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile })
+      await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile, isPrivate })
       setTitle('')
       setBody('')
       setImageFile(null)
       setImageUrl(null)
+      setIsPrivate(false)
       setStatus('')
       onPosted()
     } catch (e) {
@@ -268,6 +273,16 @@ function Composer({
           📎 Image
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={pickImage} />
         </label>
+        {allowPrivate && (
+          <button
+            type="button"
+            className={isPrivate ? 'tiny good' : 'tiny'}
+            onClick={() => setIsPrivate((v) => !v)}
+            title={isPrivate ? 'Visible seulement de ton royaume' : 'Visible de tous'}
+          >
+            {isPrivate ? '🔒 Privé (ton royaume)' : '🌍 Public'}
+          </button>
+        )}
         {status && <span className="sent-ok">{status}</span>}
       </div>
     </div>
@@ -307,7 +322,7 @@ function PostDetail({
     const [{ data }, cs] = await Promise.all([
       supabase
         .from('posts')
-        .select('id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned, author:profiles!posts_author_profile_fkey(id, character_name, house)')
+        .select('id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned, is_private, author:profiles!posts_author_profile_fkey(id, character_name, house)')
         .eq('id', postId)
         .maybeSingle(),
       listComments(postId),
@@ -381,6 +396,7 @@ function PostDetail({
           <Seal house={post.author?.house} size="lg" />
           <div style={{ flex: 1 }}>
             {post.pinned && <span className="pin-tag">📌 Épinglé</span>}
+            {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé · ton royaume</span>}
             {post.title && <h2 className="pm-subj">{post.title}</h2>}
             <p className="pm-meta">
               {post.author?.character_name ?? 'Inconnu'} · Maison {h.nom} · {fmtDate(post.created_at)}

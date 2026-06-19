@@ -21,6 +21,7 @@ export interface PostRow {
   created_at: string
   updated_at: string | null
   pinned: boolean
+  is_private: boolean
   author?: PostAuthor | null
   commentCount?: number
 }
@@ -35,7 +36,7 @@ export interface CommentRow {
   author?: PostAuthor | null
 }
 
-const POST_COLS = 'id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned'
+const POST_COLS = 'id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned, is_private'
 const AUTHOR_EMBED = 'author:profiles!posts_author_profile_fkey(id, character_name, house)'
 const C_AUTHOR_EMBED = 'author:profiles!post_comments_author_profile_fkey(id, character_name, house)'
 
@@ -70,6 +71,7 @@ export async function createPost(p: {
   title: string
   body: string
   imageFile?: File | null
+  isPrivate?: boolean
 }): Promise<string> {
   let image_path: string | null = null
   if (p.imageFile) {
@@ -87,6 +89,7 @@ export async function createPost(p: {
       title: p.title.trim() || null,
       body: p.body,
       image_path,
+      is_private: !!p.isPrivate,
     })
     .select('id')
     .single()
