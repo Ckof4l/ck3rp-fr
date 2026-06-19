@@ -47,6 +47,7 @@ function SideLink({
   label,
   onClick,
   badge = 0,
+  soon = false,
 }: {
   to: string
   icon?: string
@@ -54,12 +55,18 @@ function SideLink({
   label: string
   onClick: () => void
   badge?: number
+  soon?: boolean
 }) {
   return (
-    <NavLink to={to} onClick={onClick} className={({ isActive }) => (isActive ? 'side-link on' : 'side-link')}>
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) => `side-link${isActive ? ' on' : ''}${soon ? ' soon' : ''}`}
+    >
       {seal ? <Seal house={seal} size="sm" /> : <span className="si">{icon}</span>}
       <span className="sl">{label}</span>
-      {badge > 0 && <span className="side-badge">{badge > 99 ? '99+' : badge}</span>}
+      {soon && <span className="soon-tag">bientôt</span>}
+      {!soon && badge > 0 && <span className="side-badge">{badge > 99 ? '99+' : badge}</span>}
     </NavLink>
   )
 }
@@ -91,11 +98,10 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       ))}
 
       <div className="side-cat">Le Monde</div>
-      <SideLink to="/armorial" icon="📜" label="Armorial" onClick={onNavigate} />
-      <SideLink to="/joueurs" icon="👥" label="La Cour" onClick={onNavigate} />
-      <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} />
+      <SideLink to="/armorial" icon="📜" label="Annuaire" onClick={onNavigate} />
       <SideLink to="/chroniques" icon="📖" label="Chroniques" onClick={onNavigate} />
-      <SideLink to="/trone" icon="👑" label="Le Trône de Fer" onClick={onNavigate} />
+      <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} soon />
+      <SideLink to="/trone" icon="👑" label="Le Trône de Fer" onClick={onNavigate} soon />
 
       <div className="side-cat">Décisions</div>
       <SideLink to="/scrutins" icon="🗳️" label="Scrutins" onClick={onNavigate} />

@@ -6,18 +6,16 @@ import { Layout } from './components/Layout'
 import { Gate } from './pages/Gate'
 import { Onboarding } from './pages/Onboarding'
 import { ChannelFeed } from './pages/ChannelFeed'
+import { Soon } from './components/Soon'
 import { Charte, Mentions, Confidentialite, NotFound } from './pages/Static'
 
 /* Routes lourdes ou rarement affichées au premier rendu : chargées à la demande
    pour alléger le bundle initial (la Porte et l'accueil restent immédiats). */
 const Chancellerie = lazy(() => import('./pages/Chancellerie').then((m) => ({ default: m.Chancellerie })))
-const Armorial = lazy(() => import('./pages/Armorial').then((m) => ({ default: m.Armorial })))
-const Cour = lazy(() => import('./pages/Cour').then((m) => ({ default: m.Cour })))
+const Annuaire = lazy(() => import('./pages/Annuaire').then((m) => ({ default: m.Annuaire })))
 const Personnage = lazy(() => import('./pages/Personnage').then((m) => ({ default: m.Personnage })))
-const Pactes = lazy(() => import('./pages/Pactes').then((m) => ({ default: m.Pactes })))
 const Requetes = lazy(() => import('./pages/Requetes').then((m) => ({ default: m.Requetes })))
 const Chroniques = lazy(() => import('./pages/Chroniques').then((m) => ({ default: m.Chroniques })))
-const Politique = lazy(() => import('./pages/Politique').then((m) => ({ default: m.Politique })))
 const Destin = lazy(() => import('./pages/Destin').then((m) => ({ default: m.Destin })))
 const Scrutins = lazy(() => import('./pages/Scrutins').then((m) => ({ default: m.Scrutins })))
 const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })))
@@ -80,13 +78,13 @@ export default function App() {
         <Route path="/" element={<Navigate to="/c/decret-royal" replace />} />
         <Route path="/chancellerie" element={<Chancellerie />} />
         <Route path="/c/:channelKey" element={<ChannelFeed />} />
-        <Route path="/armorial" element={<Armorial />} />
-        <Route path="/joueurs" element={<Cour />} />
+        <Route path="/armorial" element={<Annuaire />} />
+        <Route path="/joueurs" element={<Annuaire initial="cour" />} />
         <Route path="/personnage/:id" element={<Personnage />} />
-        <Route path="/pactes" element={<Pactes />} />
+        <Route path="/pactes" element={<Soon icon="🤝" title="Pactes & Diplomatie" desc="Les traités scellés entre maisons arriveront prochainement." />} />
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
-        <Route path="/trone" element={<Politique />} />
+        <Route path="/trone" element={<Soon icon="👑" title="Le Trône de Fer" desc="La carte du pouvoir — prétendants, vassalité et allégeances — ouvrira bientôt." />} />
         <Route path="/scrutins" element={<Scrutins />} />
         <Route path="/sort" element={<Sort />} />
         <Route path="/destin" element={<Destin />} />
