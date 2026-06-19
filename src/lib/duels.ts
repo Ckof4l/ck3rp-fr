@@ -20,6 +20,8 @@ export interface Duel {
   status: DuelStatus
   result: string | null
   winner: string | null
+  /** Joueur qui a tiré le côté « Pile » (assigné au hasard à l'acceptation). */
+  pile_profile: string | null
   created_at: string
   resolved_at: string | null
   challengerP?: Party | null
@@ -35,7 +37,7 @@ function asError(step: string, e: unknown): Error {
 }
 
 const SELECT =
-  `id, challenger, opponent, reason, status, result, winner, created_at, resolved_at,
+  `id, challenger, opponent, reason, status, result, winner, pile_profile, created_at, resolved_at,
    challengerP:profiles!duels_challenger_fkey(character_name, house),
    opponentP:profiles!duels_opponent_fkey(character_name, house)`
 

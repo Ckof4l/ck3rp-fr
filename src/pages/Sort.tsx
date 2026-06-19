@@ -53,7 +53,7 @@ export function Sort() {
         <ul>
           <li>Tu <b>défies un joueur précis</b> (avec un enjeu si tu veux).</li>
           <li>L'adversaire <b>accepte</b> (la pièce est alors lancée par le serveur) ou <b>refuse</b>.</li>
-          <li>Convention : le <b>provocateur a Pile</b>, le <b>défié a Face</b>. Le résultat désigne le vainqueur.</li>
+          <li>À l'acceptation, les côtés <b>Pile / Face sont tirés au hasard</b> entre les deux joueurs, puis la pièce désigne le vainqueur.</li>
           <li>Tirage <b>infalsifiable</b> et registre <b>public</b>.</li>
         </ul>
       </HelpCard>
@@ -121,17 +121,23 @@ export function Sort() {
   )
 }
 
-/** Ligne « X (Pile) ⚔️ Y (Face) » + enjeu. */
+/** Ligne du duel. Les côtés Pile/Face ne s'affichent qu'une fois tirés (à la
+    résolution) — avant, ils ne sont pas encore attribués. */
 function DuelLine({ duel }: { duel: Duel }) {
+  const assigned = !!duel.pile_profile
+  const pileIsChal = duel.pile_profile === duel.challenger
+  const left = assigned && !pileIsChal ? duel.opponentP : duel.challengerP
+  const leftId = assigned && !pileIsChal ? duel.opponent : duel.challenger
+  const right = leftId === duel.challenger ? duel.opponentP : duel.challengerP
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Seal house={duel.challengerP?.house} size="sm" />
-      <span style={{ color: '#E7DBBE' }}>{duel.challengerP?.character_name ?? 'Inconnu'}</span>
-      <span className="kicker" style={{ fontSize: 11 }}>Pile</span>
+      <Seal house={left?.house} size="sm" />
+      <span style={{ color: '#E7DBBE' }}>{left?.character_name ?? 'Inconnu'}</span>
+      {assigned && <span className="kicker" style={{ fontSize: 11 }}>Pile</span>}
       <span style={{ color: '#9C8F71' }}>⚔️</span>
-      <Seal house={duel.opponentP?.house} size="sm" />
-      <span style={{ color: '#E7DBBE' }}>{duel.opponentP?.character_name ?? 'Inconnu'}</span>
-      <span className="kicker" style={{ fontSize: 11 }}>Face</span>
+      <Seal house={right?.house} size="sm" />
+      <span style={{ color: '#E7DBBE' }}>{right?.character_name ?? 'Inconnu'}</span>
+      {assigned && <span className="kicker" style={{ fontSize: 11 }}>Face</span>}
       {duel.reason && <span style={{ fontStyle: 'italic', color: '#9C8F71', fontSize: 12, width: '100%' }}>« {duel.reason} »</span>}
     </div>
   )
