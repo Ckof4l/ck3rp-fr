@@ -42,7 +42,7 @@ $$;
 
 create or replace function public.conv_visible(p_conv uuid)
 returns boolean language sql stable security definer set search_path = public as $$
-  select c.is_private = false or public.conv_is_member(c.id)
+  select c.is_private = false or public.conv_is_member(c.id) or public.is_admin(auth.uid())
   from public.conversations c where c.id = p_conv;
 $$;
 
@@ -87,7 +87,7 @@ alter table public.conversation_messages enable row level security;
 
 -- conversations : visibles si publiques ou si l'on est membre. Création via RPC.
 create policy "conversations_select" on public.conversations
-  for select to authenticated using (is_private = false or public.conv_is_member(id));
+  for select to authenticated using (public.conv_visible(id));
 create policy "conversations_update" on public.conversations
   for update to authenticated
   using (creator = auth.uid() or public.is_admin(auth.uid()))

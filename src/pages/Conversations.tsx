@@ -11,8 +11,11 @@ import {
   sendMessage,
   deleteConversation,
   leaveConversation,
+  listMembers,
+  addMember,
   type Conversation,
   type ConvMessage,
+  type ConvMember,
 } from '../lib/conversations'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
@@ -57,6 +60,7 @@ export function Conversations() {
       <ConversationView
         conv={open}
         meId={meId}
+        players={players}
         canWrite={canCreate}
         isAdmin={!!profile?.is_admin}
         onBack={() => setOpenId(null)}
@@ -124,6 +128,7 @@ export function Conversations() {
 function ConversationView({
   conv,
   meId,
+  players,
   canWrite,
   isAdmin,
   onBack,
@@ -131,6 +136,7 @@ function ConversationView({
 }: {
   conv: Conversation
   meId: string
+  players: Profile[]
   canWrite: boolean
   isAdmin: boolean
   onBack: () => void
@@ -140,7 +146,16 @@ function ConversationView({
   const [loading, setLoading] = useState(true)
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
+  const [members, setMembers] = useState<ConvMember[]>([])
+  const [showMembers, setShowMembers] = useState(false)
   const endRef = useRef<HTMLDivElement>(null)
+
+  const loadMembers = useCallback(async () => {
+    setMembers(await listMembers(conv.id))
+  }, [conv.id])
+  useEffect(() => {
+    if (conv.is_private) loadMembers()
+  }, [conv.is_private, loadMembers])
 
   const load = useCallback(async () => {
     setMessages(await listMessages(conv.id))
@@ -198,6 +213,31 @@ function ConversationView({
           )}
         </span>
       </div>
+
+      {conv.is_private && (
+        <div style={{ marginTop: 10 }}>
+          <button className="tiny" onClick={() => setShowMembers((v) => !v)}>
+            👥 Membres ({members.length}) {showMembers ? '▲' : '▼'}
+          </button>
+          {showMembers && (
+            <div className="card" style={{ marginTop: 8 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: canManage ? 12 : 0 }}>
+                {members.map((m) => (
+                  <span key={m.profile_id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#E7DBBE', fontSize: 13 }}>
+                    <Seal house={m.member?.house} size="sm" /> {m.member?.character_name ?? '—'}
+                  </span>
+                ))}
+              </div>
+              {canManage && (
+                <InviteRow
+                  players={players.filter((p) => !members.some((m) => m.profile_id === p.id))}
+                  onAdd={async (id) => { await addMember(conv.id, id); await loadMembers() }}
+                />
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="comments" style={{ marginTop: 14, maxHeight: '60vh', overflowY: 'auto' }}>
         {loading ? (
@@ -319,6 +359,35 @@ function CreateForm({
         <button className="btn-ghost" disabled={busy} onClick={onCancel}>Annuler</button>
         {status && <span className="sent-ok">{status}</span>}
       </div>
+    </div>
+  )
+}
+
+function InviteRow({ players, onAdd }: { players: Profile[]; onAdd: (id: string) => Promise<void> }) {
+  const [sel, setSel] = useState('')
+  const [busy, setBusy] = useState(false)
+  if (!players.length) return <p className="hint" style={{ margin: 0 }}>Tous les joueurs sont déjà membres.</p>
+  async function add() {
+    if (!sel || busy) return
+    setBusy(true)
+    try {
+      await onAdd(sel)
+      setSel('')
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Invitation impossible.")
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <select className="input" style={{ flex: 1, minWidth: 180 }} value={sel} onChange={(e) => setSel(e.target.value)}>
+        <option value="">— Inviter un joueur —</option>
+        {players.map((p) => (
+          <option key={p.id} value={p.id}>{p.character_name} ({getHouse(p.house).nom})</option>
+        ))}
+      </select>
+      <button className="tiny good" disabled={!sel || busy} onClick={add}>➕ Inviter</button>
     </div>
   )
 }

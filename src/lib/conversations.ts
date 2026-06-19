@@ -76,6 +76,27 @@ export async function sendMessage(convId: string, body: string, meId: string): P
   if (error) throw asError('envoi', error)
 }
 
+export interface ConvMember {
+  profile_id: string
+  member?: Party | null
+}
+
+export async function listMembers(convId: string): Promise<ConvMember[]> {
+  const { data, error } = await supabase
+    .from('conversation_members')
+    .select('profile_id, member:profiles!conversation_members_profile_id_fkey(character_name, house)')
+    .eq('conversation_id', convId)
+  if (error) throw asError('membres', error)
+  return (data as unknown as ConvMember[]) ?? []
+}
+
+export async function addMember(convId: string, profileId: string): Promise<void> {
+  const { error } = await supabase
+    .from('conversation_members')
+    .insert({ conversation_id: convId, profile_id: profileId })
+  if (error) throw asError('invitation', error)
+}
+
 export async function deleteConversation(id: string): Promise<void> {
   const { error } = await supabase.from('conversations').delete().eq('id', id)
   if (error) throw asError('suppression', error)
