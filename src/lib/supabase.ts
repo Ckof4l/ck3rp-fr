@@ -24,13 +24,14 @@ export const supabase: SupabaseClient = createClient(
   anonKey ?? 'placeholder-anon-key',
   {
     auth: {
+      // persistSession + autoRefreshToken + stockage localStorage explicite :
+      // la session ET son jeton de rafraîchissement survivent à la fermeture du
+      // navigateur, donc on reste connecté d'une visite à l'autre.
+      // (Flux « implicit » par défaut : le flux PKCE cassait le retour OAuth
+      //  Discord en prod — le code restait dans l'URL sans être échangé.)
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      // Flux PKCE + stockage localStorage explicite : la session (et son jeton
-      // de rafraîchissement) survit à la fermeture du navigateur, donc on reste
-      // connecté d'une visite à l'autre.
-      flowType: 'pkce',
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     },
   },
