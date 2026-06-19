@@ -27,12 +27,17 @@ export const supabase: SupabaseClient = createClient(
       // persistSession + autoRefreshToken + stockage localStorage explicite :
       // la session ET son jeton de rafraîchissement survivent à la fermeture du
       // navigateur, donc on reste connecté d'une visite à l'autre.
-      // (Flux « implicit » par défaut : le flux PKCE cassait le retour OAuth
-      //  Discord en prod — le code restait dans l'URL sans être échangé.)
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      // ⚠️ flux explicitement « implicit ». Le défaut de supabase-js est PKCE,
+      // qui renvoie `?code=` à échanger via un « vérificateur » — échange qui
+      // échouait au retour de Discord en prod (le code restait coincé dans
+      // l'URL). Le flux implicit renvoie directement le jeton dans le `#hash`,
+      // parsé par detectSessionInUrl, sans échange. Ne pas remettre PKCE sans
+      // avoir testé tout l'aller-retour Discord en production.
+      flowType: 'implicit',
     },
   },
 )
