@@ -41,6 +41,8 @@ export const CHANNELS: Channel[] = [
   // ── La Cour ──
   { key: 'rumeurs', name: 'Rumeurs', category: 'La Cour', icon: '🗣️', kind: 'talk',
     description: "Bruits de couloir, ragots et secrets murmurés. Ouvert à tous." },
+  { key: 'hrp', name: 'HRP · Hors-RP', category: 'La Cour', icon: '🗨️', kind: 'talk',
+    description: "Discussion hors-roleplay : organisation, questions, papotage. Ouvert à tous." },
   { key: 'lore',    name: 'Lore',    category: 'La Cour', icon: '📖', kind: 'lore',
     description: "L'encyclopédie du monde : histoire, maisons, géographie. Tenu par les Grands Mestres." },
 ]
@@ -82,7 +84,7 @@ export function canPostChannel(profile: Profile | null, key: string): boolean {
   if (key === 'decret-royal') return !!profile.is_king || !!profile.is_admin
   if (key === 'decret-noble') return !profile.is_king && !profile.is_admin // vassaux uniquement
   if (key === 'lore') return !!profile.is_admin
-  if (key === 'rumeurs') return true
+  if (key === 'rumeurs' || key === 'hrp') return true
   const ch = BY_KEY[key]
   if (ch?.kind === 'region') {
     // On ne publie que dans la région de sa maison.
