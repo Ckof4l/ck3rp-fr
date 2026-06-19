@@ -48,20 +48,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true
 
     async function bootstrap() {
-      // Filet de sécurité OAuth Discord : la détection automatique de
-      // supabase-js ne ramasse pas toujours le jeton du hash (#access_token)
-      // quand Discord ajoute des paramètres en plus (provider_token, sb=…).
-      // On l'établit donc nous-mêmes, puis on nettoie l'URL.
+      // Filet de sécurité OAuth Discord. Au retour, Discord renvoie le jeton
+      // dans le hash (#access_token). On a constaté que ni la détection auto de
+      // supabase-js ni setSession() n'établissent la session ici : leur appel
+      // interne à /auth/v1/user repart en 401 (la clé API n'est pas transmise
+      // avec le nouveau format sb_publishable_). On contourne donc : on va
+      // chercher l'utilisateur par un fetch direct (qui, lui, transmet bien la
+      // clé), on construit la session, on l'écrit dans le stockage de
+      // supabase-js, puis getSession() la relit normalement.
       const hash = window.location.hash
       if (hash.includes('access_token')) {
         const p = new URLSearchParams(hash.replace(/^#/, ''))
         const access_token = p.get('access_token')
         const refresh_token = p.get('refresh_token')
+        const expires_in = Number(p.get('expires_in') || 3600)
         if (access_token && refresh_token) {
           try {
-            await supabase.auth.setSession({ access_token, refresh_token })
+            const apiUrl = import.meta.env.VITE_SUPABASE_URL as string
+            const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+            const res = await fetch(`${apiUrl}/auth/v1/user`, {
+              headers: { apikey: apiKey, Authorization: `Bearer ${access_token}` },
+            })
+            if (res.ok) {
+              const user = await res.json()
+              const ref = new URL(apiUrl).hostname.split('.')[0]
+              const stored = {
+                access_token,
+                refresh_token,
+                token_type: 'bearer',
+                expires_in,
+                expires_at: Math.floor(Date.now() / 1000) + expires_in,
+                user,
+              }
+              window.localStorage.setItem(`sb-${ref}-auth-token`, JSON.stringify(stored))
+            }
           } catch {
-            /* jeton invalide/expiré : on retombe sur getSession ci-dessous */
+            /* réseau / jeton invalide : on retombe sur getSession ci-dessous */
           }
           window.history.replaceState(null, '', window.location.pathname + window.location.search)
         }
