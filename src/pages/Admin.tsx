@@ -115,7 +115,7 @@ export function Admin() {
         </div>
       )}
 
-      {!ro && <AnnouncementControl meId={profile.id} />}
+      {isFounder && <AnnouncementControl meId={profile.id} />}
 
       <div className="subnav">
         <button className={tab === 'mestres' ? 'on' : ''} onClick={() => setTab('mestres')}>

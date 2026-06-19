@@ -19,6 +19,8 @@ const Requetes = lazy(() => import('./pages/Requetes').then((m) => ({ default: m
 const Chroniques = lazy(() => import('./pages/Chroniques').then((m) => ({ default: m.Chroniques })))
 const Politique = lazy(() => import('./pages/Politique').then((m) => ({ default: m.Politique })))
 const Destin = lazy(() => import('./pages/Destin').then((m) => ({ default: m.Destin })))
+const Scrutins = lazy(() => import('./pages/Scrutins').then((m) => ({ default: m.Scrutins })))
+const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })))
 const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 
 /* ============================================================================
@@ -85,6 +87,8 @@ export default function App() {
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
         <Route path="/trone" element={<Politique />} />
+        <Route path="/scrutins" element={<Scrutins />} />
+        <Route path="/sort" element={<Sort />} />
         <Route path="/destin" element={<Destin />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/charte" element={<Charte />} />
