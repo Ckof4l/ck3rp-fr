@@ -15,29 +15,6 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 export const supabaseConfigured = Boolean(url && anonKey)
 
 /**
- * Jetons OAuth capturés du `#access_token` AU TOUT DÉBUT du chargement, avant
- * que le client supabase ou react-router ne nettoient l'URL. On les lit ici de
- * façon synchrone (et on nettoie l'URL nous-mêmes) ; AuthContext s'en sert
- * ensuite pour établir la session. Indispensable car la lecture tardive (dans
- * un useEffect) tombait sur une URL déjà vidée.
- */
-function captureOAuthTokens(): { access_token: string; refresh_token: string; expires_in: number } | null {
-  if (typeof window === 'undefined') return null
-  const h = window.location.hash
-  if (!h.includes('access_token')) return null
-  const p = new URLSearchParams(h.replace(/^#/, ''))
-  const access_token = p.get('access_token')
-  const refresh_token = p.get('refresh_token')
-  if (!access_token || !refresh_token) return null
-  const expires_in = Number(p.get('expires_in') || 3600)
-  // Nettoie immédiatement le hash de l'URL.
-  window.history.replaceState(null, '', window.location.pathname + window.location.search)
-  return { access_token, refresh_token, expires_in }
-}
-
-export const oauthTokens = captureOAuthTokens()
-
-/**
  * Si les clés sont absentes, on crée tout de même un client avec des valeurs
  * factices pour que les imports ne cassent pas — mais aucun appel ne réussira
  * tant que le `.env` n'est pas rempli (`supabaseConfigured` le signale).
@@ -47,20 +24,16 @@ export const supabase: SupabaseClient = createClient(
   anonKey ?? 'placeholder-anon-key',
   {
     auth: {
-      // persistSession + autoRefreshToken + stockage localStorage explicite :
-      // la session ET son jeton de rafraîchissement survivent à la fermeture du
-      // navigateur, donc on reste connecté d'une visite à l'autre.
+      // persistSession + autoRefreshToken + stockage localStorage : la session
+      // et son jeton de rafraîchissement survivent à la fermeture du navigateur
+      // (on reste connecté d'une visite à l'autre). detectSessionInUrl gère le
+      // retour OAuth Discord (#access_token) automatiquement.
       persistSession: true,
       autoRefreshToken: true,
+      detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      // ⚠️ flux explicitement « implicit » : Discord renvoie le jeton dans le
-      // `#hash` (et non `?code=` du flux PKCE par défaut, dont l'échange
-      // échouait en prod). La détection auto est DÉSACTIVÉE car elle ne
-      // ramassait pas le jeton quand Discord ajoute des paramètres en plus
-      // (provider_token, sb=…) : on l'établit nous-mêmes au démarrage via
-      // setSession (voir AuthContext.tsx). Ne pas remettre PKCE/detectSessionInUrl
-      // sans retester tout l'aller-retour Discord en production.
-      detectSessionInUrl: false,
+      // Discord renvoie le jeton dans le `#hash` → flux « implicit » (le flux
+      // PKCE par défaut renverrait `?code=`, inutile ici).
       flowType: 'implicit',
     },
   },

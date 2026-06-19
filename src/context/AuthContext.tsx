@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { supabase, supabaseConfigured, oauthTokens } from '../lib/supabase'
+import { supabase, supabaseConfigured } from '../lib/supabase'
 import type { Profile } from '../types/database'
 
 /* ============================================================================
@@ -47,46 +47,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let mounted = true
 
-    async function bootstrap() {
-      // Filet de sécurité OAuth Discord. Les jetons ont été capturés très tôt
-      // (lib/supabase.ts, avant tout nettoyage d'URL). Ni la détection auto de
-      // supabase-js ni setSession() n'établissent la session ici : leur appel
-      // interne à /auth/v1/user repart en 401 (la clé API n'est pas transmise
-      // avec le nouveau format sb_publishable_). On contourne : fetch direct de
-      // l'utilisateur (qui, lui, transmet la clé → 200), on écrit la session au
-      // format supabase-js dans le stockage, puis getSession() la relit.
-      if (oauthTokens) {
-        try {
-          const apiUrl = import.meta.env.VITE_SUPABASE_URL as string
-          const apiKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
-          const res = await fetch(`${apiUrl}/auth/v1/user`, {
-            headers: { apikey: apiKey, Authorization: `Bearer ${oauthTokens.access_token}` },
-          })
-          if (res.ok) {
-            const user = await res.json()
-            const ref = new URL(apiUrl).hostname.split('.')[0]
-            const stored = {
-              access_token: oauthTokens.access_token,
-              refresh_token: oauthTokens.refresh_token,
-              token_type: 'bearer',
-              expires_in: oauthTokens.expires_in,
-              expires_at: Math.floor(Date.now() / 1000) + oauthTokens.expires_in,
-              user,
-            }
-            window.localStorage.setItem(`sb-${ref}-auth-token`, JSON.stringify(stored))
-          }
-        } catch {
-          /* réseau / jeton invalide : on retombe sur getSession ci-dessous */
-        }
-      }
-
-      const { data } = await supabase.auth.getSession()
-      if (!mounted) return
-      setSession(data.session)
-      if (data.session?.user) await loadProfile(data.session.user.id)
-    }
-
-    bootstrap()
+    // detectSessionInUrl traite le retour OAuth (#access_token) ; getSession
+    // récupère la session (de l'URL au 1ᵉʳ retour, du stockage ensuite).
+    supabase.auth
+      .getSession()
+      .then(async ({ data }) => {
+        if (!mounted) return
+        setSession(data.session)
+        if (data.session?.user) await loadProfile(data.session.user.id)
+      })
       // Une session illisible (réseau, jeton expiré) ne doit pas figer le spinner.
       .catch(() => {})
       .finally(() => {
