@@ -15,6 +15,29 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 export const supabaseConfigured = Boolean(url && anonKey)
 
 /**
+ * Jetons OAuth capturés du `#access_token` AU TOUT DÉBUT du chargement, avant
+ * que le client supabase ou react-router ne nettoient l'URL. On les lit ici de
+ * façon synchrone (et on nettoie l'URL nous-mêmes) ; AuthContext s'en sert
+ * ensuite pour établir la session. Indispensable car la lecture tardive (dans
+ * un useEffect) tombait sur une URL déjà vidée.
+ */
+function captureOAuthTokens(): { access_token: string; refresh_token: string; expires_in: number } | null {
+  if (typeof window === 'undefined') return null
+  const h = window.location.hash
+  if (!h.includes('access_token')) return null
+  const p = new URLSearchParams(h.replace(/^#/, ''))
+  const access_token = p.get('access_token')
+  const refresh_token = p.get('refresh_token')
+  if (!access_token || !refresh_token) return null
+  const expires_in = Number(p.get('expires_in') || 3600)
+  // Nettoie immédiatement le hash de l'URL.
+  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  return { access_token, refresh_token, expires_in }
+}
+
+export const oauthTokens = captureOAuthTokens()
+
+/**
  * Si les clés sont absentes, on crée tout de même un client avec des valeurs
  * factices pour que les imports ne cassent pas — mais aucun appel ne réussira
  * tant que le `.env` n'est pas rempli (`supabaseConfigured` le signale).
