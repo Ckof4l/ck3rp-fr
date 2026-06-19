@@ -80,7 +80,7 @@ export function isMuted(profile: Profile | null): boolean {
 export function canPostChannel(profile: Profile | null, key: string): boolean {
   if (!profile || profile.is_observer || isMuted(profile)) return false
   if (key === 'decret-royal') return !!profile.is_king || !!profile.is_admin
-  if (key === 'decret-noble') return !profile.is_king
+  if (key === 'decret-noble') return !profile.is_king && !profile.is_admin // vassaux uniquement
   if (key === 'lore') return !!profile.is_admin
   if (key === 'rumeurs') return true
   const ch = BY_KEY[key]
