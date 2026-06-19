@@ -79,6 +79,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
     <nav className="side-nav">
       <div className="side-cat">Messages privés</div>
       <SideLink to="/chancellerie" icon="🐦‍⬛" label="Corbeaux" onClick={onNavigate} badge={corbeaux} />
+      <SideLink to="/conversations" icon="💬" label="Conversations" onClick={onNavigate} />
 
       {cats.map(({ category, channels }) => (
         <div key={category}>
@@ -124,6 +125,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-shell">
+      <div className="app-header">
       <Banner />
       <header className="topbar">
         <button className="burger" onClick={() => setOpen((o) => !o)} aria-label="Salons">
@@ -155,6 +157,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         )}
       </header>
+      </div>
 
       <div className="app-body">
         {open && <div className="side-scrim" onClick={() => setOpen(false)} />}

@@ -105,8 +105,9 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   border-bottom: 1px solid var(--gold-dim);
 }
 
+.app-header { position: sticky; top: 0; z-index: 40; }
+
 .topbar {
-  position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; gap: 14px;
   padding: 12px 20px;
   border-bottom: 1px solid var(--line);
