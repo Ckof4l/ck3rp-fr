@@ -313,7 +313,7 @@ function TicketDetail({
   if (!ticket) return <div className="empty">Cette requête est introuvable.</div>
 
   const h = getHouse(ticket.author?.house)
-  const canDelete = ticket.author_profile === meId || isAdmin
+  const canDelete = isAdmin // un joueur ne retire pas ses propres traces
 
   return (
     <div>

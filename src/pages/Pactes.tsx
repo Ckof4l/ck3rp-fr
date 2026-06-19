@@ -114,7 +114,7 @@ function PactCard({
   const ratified = total > 0 && signed === total
   const myRow = pact.houses.find((h) => h.house_key === myHouse)
   const canSign = myRow && !myRow.signed_by
-  const canDelete = pact.author_profile === meId || isAdmin
+  const canDelete = isAdmin // un joueur ne retire pas ses propres traces
 
   async function act(fn: () => Promise<void>) {
     try {

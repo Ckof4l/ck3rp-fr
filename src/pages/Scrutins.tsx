@@ -120,6 +120,7 @@ export function Scrutins() {
               mineRealm={p.realm === myRealm}
               canVote={canVoteRealm && p.realm === myRealm}
               canManage={!!profile?.is_admin || p.author_profile === meId}
+              canDelete={!!profile?.is_admin}
               onChanged={refresh}
             />
           ))}
@@ -136,6 +137,7 @@ function PollCard({
   mineRealm,
   canVote,
   canManage,
+  canDelete,
   onChanged,
 }: {
   poll: Poll
@@ -144,6 +146,7 @@ function PollCard({
   mineRealm: boolean
   canVote: boolean
   canManage: boolean
+  canDelete: boolean
   onChanged: () => void
 }) {
   const h = getHouse(poll.author?.house)
@@ -220,10 +223,10 @@ function PollCard({
         {!poll.revealed && mineRealm && poll.open && canVote && (
           <span style={{ color: '#C7B894', fontSize: 12 }}>{poll.hasVoted ? '✓ Ton vote est enregistré (modifiable).' : 'Clique un choix pour voter.'}</span>
         )}
-        {canManage && (
+        {(canManage || canDelete) && (
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            {poll.open && <button className="tiny" onClick={() => closePoll(poll.id).then(onChanged)}>🔓 Clore & révéler</button>}
-            <button className="tiny danger" onClick={() => confirm('Supprimer ce scrutin et ses votes ?') && deletePoll(poll.id).then(onChanged)}>🗑️ Supprimer</button>
+            {canManage && poll.open && <button className="tiny" onClick={() => closePoll(poll.id).then(onChanged)}>🔓 Clore & révéler</button>}
+            {canDelete && <button className="tiny danger" onClick={() => confirm('Supprimer ce scrutin et ses votes ?') && deletePoll(poll.id).then(onChanged)}>🗑️ Supprimer</button>}
           </span>
         )}
       </div>

@@ -104,8 +104,9 @@ create policy "polls_update" on public.polls
   for update to authenticated
   using (author_profile = auth.uid() or public.is_admin(auth.uid()))
   with check (author_profile = auth.uid() or public.is_admin(auth.uid()));
+-- Suppression réservée aux Mestres (un joueur ne retire pas ses propres traces).
 create policy "polls_delete" on public.polls
-  for delete to authenticated using (author_profile = auth.uid() or public.is_admin(auth.uid()));
+  for delete to authenticated using (public.is_admin(auth.uid()));
 
 -- poll_options : un Mestre peut corriger ; la création passe par le RPC.
 create policy "poll_options_admin_write" on public.poll_options
