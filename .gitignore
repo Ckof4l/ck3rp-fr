@@ -30,3 +30,7 @@ dist-ssr
 # Supabase
 supabase/.branches
 supabase/.temp
+
+# Python
+__pycache__/
+*.pyc
