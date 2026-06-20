@@ -34,8 +34,8 @@ export function Armorial() {
               .filter((h) => h.key !== FREE_HOUSE_KEY)
               .map((h) => {
                 const holder = holders[h.key]
-                return (
-                  <div key={h.key} className="armorial-card">
+                const body = (
+                  <>
                     <Seal house={h.key} size="lg" />
                     <div style={{ minWidth: 0 }}>
                       <div className="armorial-name">Maison {h.nom}</div>
@@ -43,15 +43,23 @@ export function Armorial() {
                       {loading ? (
                         <div className="armorial-holder muted">…</div>
                       ) : holder ? (
-                        <Link to={`/personnage/${holder.id}`} className="armorial-holder held">
+                        <div className="armorial-holder held">
                           {holder.is_king ? '👑 ' : ''}
                           {holder.character_name}
-                        </Link>
+                        </div>
                       ) : (
                         <div className="armorial-holder free">Libre</div>
                       )}
                     </div>
-                  </div>
+                  </>
+                )
+                // Fiche entièrement cliquable vers le profil quand un joueur la tient.
+                return holder ? (
+                  <Link key={h.key} to={`/personnage/${holder.id}`} className="armorial-card linked">
+                    {body}
+                  </Link>
+                ) : (
+                  <div key={h.key} className="armorial-card">{body}</div>
                 )
               })}
           </div>

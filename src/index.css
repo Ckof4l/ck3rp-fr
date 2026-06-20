@@ -609,6 +609,16 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
   background: linear-gradient(#2A211733, #1C150E66);
   border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px;
 }
+/* Fiche entièrement cliquable (un joueur la tient) */
+a.armorial-card.linked {
+  color: inherit; text-decoration: none; cursor: pointer;
+  transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
+}
+a.armorial-card.linked:hover {
+  transform: translateY(-1px); border-color: var(--gold-dim);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .armorial-name { font-family: var(--display); font-size: 15px; color: var(--parch); }
 .armorial-devise { font-size: 12.5px; color: var(--gold-dim); font-style: italic; margin: 2px 0 4px; }
 .armorial-holder { font-size: 13px; }
