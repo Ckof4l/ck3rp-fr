@@ -24,7 +24,7 @@ interface SitePlayer { id: string; name: string; house: string; king: boolean }
 /* Version des données de carte (public/carte/*). À incrémenter à chaque
    régénération pour casser le cache du navigateur (évitait l'affichage incohérent
    de l'index.png à la place de la carte colorée). */
-const CV = '?v=6'
+const CV = '?v=7'
 
 /* ============================================================================
    La Carte — carte politique interactive de Westeros (mod AGOT).
