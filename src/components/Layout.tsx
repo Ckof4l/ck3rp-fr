@@ -44,6 +44,7 @@ function SideLink({
   to,
   icon,
   seal,
+  img,
   label,
   onClick,
   badge = 0,
@@ -52,6 +53,7 @@ function SideLink({
   to: string
   icon?: string
   seal?: string
+  img?: string
   label: string
   onClick: () => void
   badge?: number
@@ -63,7 +65,13 @@ function SideLink({
       onClick={onClick}
       className={({ isActive }) => `side-link${isActive ? ' on' : ''}${soon ? ' soon' : ''}`}
     >
-      {seal ? <Seal house={seal} size="sm" /> : <span className="si">{icon}</span>}
+      {img ? (
+        <span className="seal sm"><img className="seal-img" src={img} alt="" /></span>
+      ) : seal ? (
+        <Seal house={seal} size="sm" />
+      ) : (
+        <span className="si">{icon}</span>
+      )}
       <span className="sl">{label}</span>
       {soon && <span className="soon-tag">bientôt</span>}
       {!soon && badge > 0 && <span className="side-badge">{badge > 99 ? '99+' : badge}</span>}
@@ -90,7 +98,8 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
               key={c.key}
               to={`/c/${c.key}`}
               icon={c.icon}
-              seal={c.ruler}
+              seal={c.kind === 'region' ? undefined : c.ruler}
+              img={c.kind === 'region' ? `/blasons/regions/${c.key}.png?v=3` : undefined}
               label={c.name}
               onClick={onNavigate}
               badge={counts[c.key] ?? 0}
