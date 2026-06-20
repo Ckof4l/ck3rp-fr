@@ -66,10 +66,13 @@ export function ChannelFeed() {
           : null
     if (bg) {
       el.style.setProperty('--region-bg', `url(${bg})`)
+      // Rumeurs : la scène (les gens à la taverne) est en bas de l'image → on la cale en bas.
+      el.style.setProperty('--region-bg-pos', channel?.key === 'rumeurs' ? 'center bottom' : 'center top')
       el.setAttribute('data-region', '')
     }
     return () => {
       el.style.removeProperty('--region-bg')
+      el.style.removeProperty('--region-bg-pos')
       el.removeAttribute('data-region')
     }
   }, [channel])

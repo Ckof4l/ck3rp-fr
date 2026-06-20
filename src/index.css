@@ -552,7 +552,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 html[data-region] .content {
   background:
     linear-gradient(rgba(15, 11, 7, 0.55), rgba(15, 11, 7, 0.78)),
-    var(--region-bg, none) center top / cover fixed no-repeat,
+    var(--region-bg, none) var(--region-bg-pos, center top) / cover fixed no-repeat,
     #15110D;
 }
 /* La scène est plus visible : on protège la lisibilité du titre et du chapô. */
