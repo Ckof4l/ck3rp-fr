@@ -547,10 +547,13 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
    Voile sombre dégradé pour que cartes et texte restent lisibles par-dessus. ── */
 html[data-region] .content {
   background:
-    linear-gradient(rgba(15, 11, 7, 0.80), rgba(15, 11, 7, 0.92)),
+    linear-gradient(rgba(15, 11, 7, 0.55), rgba(15, 11, 7, 0.78)),
     var(--region-bg, none) center top / cover fixed no-repeat,
     #15110D;
 }
+/* La scène est plus visible : on protège la lisibilité du titre et du chapô. */
+html[data-region] .section-h { color: var(--gold); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9); }
+html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9); }
 .composer {
   background: linear-gradient(#2A211733, #1C150E66);
   border: 1px solid var(--line); border-radius: 12px;
