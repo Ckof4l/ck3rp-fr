@@ -77,15 +77,18 @@ export function Onboarding() {
         </div>
 
         <div className="field">
-          <label>Ta maison</label>
-          <HousePicker selected={house} taken={taken} onPick={pick} />
+          <label>Ta maison {house && <span style={{ color: 'var(--gold-dim)', fontWeight: 'normal' }}>· {getHouse(house).nom}</span>}</label>
+          {/* Liste défilante : évite que la carte d'inscription ne s'allonge à l'infini. */}
+          <div className="house-scroll">
+            <HousePicker selected={house} taken={taken} onPick={pick} />
+          </div>
           {KING_HOUSES.has(house) && (
-            <p className="hint" style={{ color: 'var(--gold)' }}>
+            <p className="hint" style={{ color: 'var(--gold)', marginBottom: 0 }}>
               👑 En tenant cette grande maison régnante, tu seras nommé <b>Roi</b>.
             </p>
           )}
-          <p className="hint">
-            Une maison ne peut être tenue que par un seul joueur. « {getHouse(FREE_HOUSE_KEY).nom} » reste ouverte à tous.
+          <p className="hint" style={{ marginBottom: 0 }}>
+            Une seule personne par maison. « {getHouse(FREE_HOUSE_KEY).nom} » reste ouverte à tous.
           </p>
         </div>
 
