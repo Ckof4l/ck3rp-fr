@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse, rkStyle } from '../lib/houses'
+import { getHouse, rkStyle, REGION_COLORS } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { listPlayers } from '../lib/directory'
@@ -30,6 +30,7 @@ export function Alliances() {
   const [alliances, setAlliances] = useState<Alliance[]>([])
   const [players, setPlayers] = useState<Profile[]>([])
   const [loading, setLoading] = useState(true)
+  const [view, setView] = useState<'liste' | 'royaumes'>('liste')
 
   const refresh = useCallback(async () => {
     setAlliances(await listAlliances())
@@ -93,19 +94,76 @@ export function Alliances() {
         </>
       )}
 
-      <h3 className="section-h" style={{ fontSize: 12 }}>📜 Alliances scellées</h3>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <h3 className="section-h" style={{ fontSize: 12, margin: 0 }}>📜 Alliances scellées</h3>
+        <div className="subnav" style={{ marginLeft: 'auto', marginBottom: 0 }}>
+          <button className={view === 'liste' ? 'on' : ''} onClick={() => setView('liste')}>📜 Liste</button>
+          <button className={view === 'royaumes' ? 'on' : ''} onClick={() => setView('royaumes')}>🗺️ Par royaume</button>
+        </div>
+      </div>
+
       {loading ? (
         <div className="empty">Ouverture du registre…</div>
       ) : !active.length ? (
         <div className="empty">Aucune alliance scellée pour l'instant.</div>
-      ) : (
-        <div className="ravens">
+      ) : view === 'liste' ? (
+        <div className="ravens" style={{ marginTop: 10 }}>
           {active.map((a) => (
             <AllianceCard key={a.id} a={a} meId={meId} isAdmin={isAdmin} onChanged={refresh} />
           ))}
         </div>
+      ) : (
+        <RoyaumesView active={active} meId={meId} isAdmin={isAdmin} onChanged={refresh} />
       )}
     </section>
+  )
+}
+
+/* ── Vue par royaume : les alliances scellées regroupées par région ────── */
+
+function RoyaumesView({
+  active,
+  meId,
+  isAdmin,
+  onChanged,
+}: {
+  active: Alliance[]
+  meId: string
+  isAdmin: boolean
+  onChanged: () => void
+}) {
+  // Une alliance apparaît sous CHAQUE royaume dont une maison est partie prenante.
+  const regions = Object.keys(REGION_COLORS)
+  const byRegion = regions
+    .map((region) => ({
+      region,
+      list: active.filter(
+        (a) =>
+          getHouse(a.proposer?.house).region === region ||
+          getHouse(a.target?.house).region === region,
+      ),
+    }))
+    .filter((g) => g.list.length > 0)
+
+  if (!byRegion.length) {
+    return <div className="empty" style={{ marginTop: 10 }}>Aucune alliance rattachée à un royaume.</div>
+  }
+
+  return (
+    <div style={{ marginTop: 6 }}>
+      {byRegion.map(({ region, list }) => (
+        <div key={region}>
+          <div className="region-h" style={{ ['--rk' as string]: REGION_COLORS[region] }}>
+            {region} <span style={{ color: '#9C8F71' }}>· {list.length}</span>
+          </div>
+          <div className="ravens" style={{ marginBottom: 14 }}>
+            {list.map((a) => (
+              <AllianceCard key={`${region}-${a.id}`} a={a} meId={meId} isAdmin={isAdmin} onChanged={onChanged} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
