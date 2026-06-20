@@ -66,7 +66,17 @@ function SideLink({
       className={({ isActive }) => `side-link${isActive ? ' on' : ''}${soon ? ' soon' : ''}`}
     >
       {img ? (
-        <span className="seal sm"><img className="seal-img" src={img} alt="" /></span>
+        <span className="seal sm">
+          <img
+            className="seal-img"
+            src={img}
+            alt=""
+            onError={(e) => {
+              const span = e.currentTarget.parentElement
+              if (span) span.outerHTML = `<span class="si">${icon ?? '📜'}</span>`
+            }}
+          />
+        </span>
       ) : seal ? (
         <Seal house={seal} size="sm" />
       ) : (
@@ -86,9 +96,9 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
   return (
     <nav className="side-nav">
       <div className="side-cat">Messages</div>
-      <SideLink to="/chancellerie" icon="🐦‍⬛" label="Corbeaux" onClick={onNavigate} badge={corbeaux} />
-      <SideLink to="/conversations" icon="💬" label="Conversations" onClick={onNavigate} />
-      <SideLink to="/hrp" icon="🗨️" label="Salon HRP" onClick={onNavigate} />
+      <SideLink to="/chancellerie" icon="🐦‍⬛" img="/icons/corbeaux.png?v=1" label="Corbeaux" onClick={onNavigate} badge={corbeaux} />
+      <SideLink to="/conversations" icon="💬" img="/icons/conversations.png?v=1" label="Conversations" onClick={onNavigate} />
+      <SideLink to="/hrp" icon="🗨️" img="/icons/hrp.png?v=1" label="Salon HRP" onClick={onNavigate} />
 
       {cats.map(({ category, channels }) => (
         <div key={category}>
@@ -98,8 +108,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
               key={c.key}
               to={`/c/${c.key}`}
               icon={c.icon}
-              seal={c.kind === 'region' ? undefined : c.ruler}
-              img={c.kind === 'region' ? `/blasons/regions/${c.key}.png?v=3` : undefined}
+              img={c.kind === 'region' ? `/blasons/regions/${c.key}.png?v=3` : `/icons/${c.key}.png?v=1`}
               label={c.name}
               onClick={onNavigate}
               badge={counts[c.key] ?? 0}
@@ -109,20 +118,20 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       ))}
 
       <div className="side-cat">Le Monde</div>
-      <SideLink to="/armorial" icon="📜" label="Annuaire" onClick={onNavigate} />
-      <SideLink to="/chroniques" icon="📖" label="Chroniques" onClick={onNavigate} />
-      <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} />
+      <SideLink to="/armorial" icon="📜" img="/icons/armorial.png?v=1" label="Annuaire" onClick={onNavigate} />
+      <SideLink to="/chroniques" icon="📖" img="/icons/chroniques.png?v=1" label="Chroniques" onClick={onNavigate} />
+      <SideLink to="/pactes" icon="🤝" img="/icons/pactes.png?v=1" label="Pactes" onClick={onNavigate} />
       <SideLink to="/carte" icon="🗺️" label="La Carte" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
-      <SideLink to="/scrutins" icon="🗳️" label="Scrutins" onClick={onNavigate} />
-      <SideLink to="/sort" icon="🪙" label="Le Sort" onClick={onNavigate} />
+      <SideLink to="/scrutins" icon="🗳️" img="/icons/scrutins.png?v=1" label="Scrutins" onClick={onNavigate} />
+      <SideLink to="/sort" icon="🪙" img="/icons/sort.png?v=1" label="Le Sort" onClick={onNavigate} />
 
       <div className="side-cat">Toi</div>
-      <SideLink to="/requetes" icon="🎫" label="Requêtes" onClick={onNavigate} badge={tickets} />
-      <SideLink to="/destin" icon="⚰️" label="Mon destin" onClick={onNavigate} />
+      <SideLink to="/requetes" icon="🎫" img="/icons/requetes.png?v=1" label="Requêtes" onClick={onNavigate} badge={tickets} />
+      <SideLink to="/destin" icon="⚰️" img="/icons/destin.png?v=1" label="Mon destin" onClick={onNavigate} />
       {(profile?.is_admin || profile?.is_observer) && (
-        <SideLink to="/admin" icon="⚜️" label="La Citadelle" onClick={onNavigate} />
+        <SideLink to="/admin" icon="⚜️" img="/icons/admin.png?v=1" label="La Citadelle" onClick={onNavigate} />
       )}
     </nav>
   )
