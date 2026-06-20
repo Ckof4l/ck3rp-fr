@@ -503,7 +503,14 @@ function MestreRow({
           </div>
         )}
 
-        {!ro && !editing && (
+        {/* Le Grand Mestre est intouchable par quiconque n'est pas Grand Mestre. */}
+        {!ro && !editing && p.is_founder && !isFounder && !self && (
+          <div className="mestre-actions">
+            <span className="hint" style={{ margin: 0 }}>👑 Grand Mestre — intouchable.</span>
+          </div>
+        )}
+
+        {!ro && !editing && !(p.is_founder && !isFounder && !self) && (
           <div className="mestre-actions">
             {isFounder && (
               <button className="tiny" disabled={self} style={self ? { opacity: 0.4 } : undefined}
