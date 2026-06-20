@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { getHouse } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
-import { listDuels, createDuel, resolveDuel, deleteDuel, type Duel } from '../lib/duels'
+import { listDuels, createDuel, resolveDuel, cancelDuel, deleteDuel, type Duel } from '../lib/duels'
 import { listPlayers } from '../lib/directory'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
@@ -82,7 +82,10 @@ export function Sort() {
             {outgoing.map((d) => (
               <div key={d.id} className="report-card" style={{ borderColor: 'var(--line)' }}>
                 <DuelLine duel={d} />
-                <div style={{ color: '#9C8F71', fontSize: 12, marginTop: 4 }}>En attente de la réponse de l'adversaire…</div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
+                  <span style={{ color: '#9C8F71', fontSize: 12 }}>En attente de la réponse de l'adversaire…</span>
+                  <button className="tiny danger" style={{ marginLeft: 'auto' }} onClick={() => cancelDuel(d.id).then(refresh)}>✖ Annuler</button>
+                </div>
               </div>
             ))}
           </div>

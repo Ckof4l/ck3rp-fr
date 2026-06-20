@@ -85,8 +85,8 @@ export function canPostChannel(profile: Profile | null, key: string): boolean {
   if (key === 'rumeurs') return true
   const ch = BY_KEY[key]
   if (ch?.kind === 'region') {
-    // On ne publie que dans la région de sa maison.
-    return getHouse(profile.house).region === ch.region
+    // Sa région — ou n'importe laquelle pour un Mestre.
+    return getHouse(profile.house).region === ch.region || !!profile.is_admin
   }
   return true
 }

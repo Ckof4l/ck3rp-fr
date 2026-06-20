@@ -20,6 +20,8 @@ export interface Poll {
   status: 'open' | 'closed'
   closes_at: string
   created_at: string
+  is_global: boolean
+  is_hrp: boolean
   author?: { character_name: string; house: string } | null
   options: PollOption[]
   /** Les résultats sont-ils révélés (clôture atteinte) ? */
@@ -47,7 +49,7 @@ export async function listPolls(meId: string): Promise<Poll[]> {
   const { data, error } = await supabase
     .from('polls')
     .select(
-      `id, realm, title, description, author_profile, status, closes_at, created_at,
+      `id, realm, title, description, author_profile, status, closes_at, created_at, is_global, is_hrp,
        author:profiles!polls_author_profile_fkey(character_name, house),
        options:poll_options(id, label, position),
        votes:poll_votes(option_id, profile_id)`,
@@ -86,12 +88,16 @@ export async function createPoll(
   description: string,
   options: string[],
   closesAt: string,
+  isGlobal: boolean,
+  isHrp: boolean,
 ): Promise<void> {
   const { error } = await supabase.rpc('create_poll', {
     p_title: title,
     p_description: description,
     p_options: options,
     p_closes_at: closesAt,
+    p_global: isGlobal,
+    p_hrp: isHrp,
   })
   if (error) throw asError('création', error)
 }

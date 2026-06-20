@@ -37,7 +37,10 @@ export function Scrutins() {
   const meId = profile!.id
   const myRealm = playerRealm(profile)
   const isKing = !!profile?.is_king && !!myRealm
-  const canVoteRealm = !profile?.is_observer && !!myRealm
+  const isAdmin = !!profile?.is_admin
+  const notObserver = !profile?.is_observer
+  // Peut voter à ce scrutin : non-observateur, et (global) ou (mon royaume).
+  const canVotePoll = (p: Poll) => notObserver && (p.is_global || (!!myRealm && p.realm === myRealm))
 
   const [polls, setPolls] = useState<Poll[]>([])
   const [loading, setLoading] = useState(true)
@@ -96,12 +99,18 @@ export function Scrutins() {
         </ul>
       </HelpCard>
 
-      {isKing &&
+      {(isKing || isAdmin) &&
         (composing ? (
-          <PollForm realm={myRealm!} onDone={async () => { setComposing(false); await refresh() }} onCancel={() => setComposing(false)} />
+          <PollForm
+            realm={myRealm}
+            canKingdom={isKing}
+            canGlobal={isAdmin}
+            onDone={async () => { setComposing(false); await refresh() }}
+            onCancel={() => setComposing(false)}
+          />
         ) : (
           <button className="btn-seal" style={{ marginBottom: 18 }} onClick={() => setComposing(true)}>
-            ✒️ Ouvrir un scrutin ({realmName(myRealm!)})
+            ✒️ Ouvrir un scrutin
           </button>
         ))}
 
@@ -117,10 +126,10 @@ export function Scrutins() {
               poll={p}
               meId={meId}
               now={now}
-              mineRealm={p.realm === myRealm}
-              canVote={canVoteRealm && p.realm === myRealm}
-              canManage={!!profile?.is_admin || p.author_profile === meId}
-              canDelete={!!profile?.is_admin}
+              mineRealm={p.is_global || p.realm === myRealm}
+              canVote={canVotePoll(p)}
+              canManage={isAdmin || p.author_profile === meId}
+              canDelete={isAdmin}
               onChanged={refresh}
             />
           ))}
@@ -171,7 +180,12 @@ function PollCard({
   return (
     <div className="card" style={{ marginBottom: 0 }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-        <span className="kicker" style={{ fontSize: 11 }}>{realmIcon(poll.realm)} {realmName(poll.realm)}</span>
+        <span className="kicker" style={{ fontSize: 11 }}>
+          {poll.is_global ? '🌍 Tous les royaumes' : `${realmIcon(poll.realm)} ${realmName(poll.realm)}`}
+        </span>
+        <span className="tk-badge" style={{ background: poll.is_hrp ? '#2a2f3a' : '#2f2a22', color: poll.is_hrp ? '#9DB4D0' : '#D8C088' }}>
+          {poll.is_hrp ? 'HRP' : 'RP'}
+        </span>
         <h3 className="pact-title" style={{ margin: 0 }}>{poll.title}</h3>
         {poll.open ? (
           <span className="tk-badge wait">🔒 Scellé · {countdown(poll.closes_at, now)}</span>
@@ -234,9 +248,23 @@ function PollCard({
   )
 }
 
-function PollForm({ realm, onDone, onCancel }: { realm: string; onDone: () => void; onCancel: () => void }) {
+function PollForm({
+  realm,
+  canKingdom,
+  canGlobal,
+  onDone,
+  onCancel,
+}: {
+  realm: string | null
+  canKingdom: boolean
+  canGlobal: boolean
+  onDone: () => void
+  onCancel: () => void
+}) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [isGlobal, setIsGlobal] = useState(canGlobal && !canKingdom)
+  const [isHrp, setIsHrp] = useState(false)
   const [options, setOptions] = useState<string[]>(['', ''])
   const [closesAt, setClosesAt] = useState(() => {
     const d = new Date(Date.now() + 24 * 3600 * 1000)
@@ -258,9 +286,11 @@ function PollForm({ realm, onDone, onCancel }: { realm: string; onDone: () => vo
     if (clean.length < 2) return setStatus('Il faut au moins deux choix.')
     const iso = new Date(closesAt).toISOString()
     if (new Date(iso).getTime() <= Date.now()) return setStatus('La clôture doit être dans le futur.')
+    if (isGlobal && !canGlobal) return setStatus('Réservé aux Mestres.')
+    if (!isGlobal && (!canKingdom || !realm)) return setStatus("Tu ne peux pas ouvrir de scrutin de royaume.")
     setBusy(true)
     try {
-      await createPoll(title, description, clean, iso)
+      await createPoll(title, description, clean, iso, isGlobal, isHrp)
       onDone()
     } catch (e) {
       setStatus(e instanceof Error ? e.message : 'Échec.')
@@ -270,8 +300,26 @@ function PollForm({ realm, onDone, onCancel }: { realm: string; onDone: () => vo
 
   return (
     <div className="composer" style={{ marginBottom: 22 }}>
+      {canKingdom && canGlobal && (
+        <div className="field">
+          <label>Portée</label>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button type="button" className={isGlobal ? 'tiny' : 'tiny good'} onClick={() => setIsGlobal(false)}>
+              {realm ? `${realmIcon(realm)} ${realmName(realm)}` : 'Mon royaume'}
+            </button>
+            <button type="button" className={isGlobal ? 'tiny good' : 'tiny'} onClick={() => setIsGlobal(true)}>🌍 Tous les royaumes</button>
+          </div>
+        </div>
+      )}
       <div className="field">
-        <label>Question (royaume : {realmName(realm)})</label>
+        <label>Étiquette</label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button type="button" className={isHrp ? 'tiny' : 'tiny good'} onClick={() => setIsHrp(false)}>RP</button>
+          <button type="button" className={isHrp ? 'tiny good' : 'tiny'} onClick={() => setIsHrp(true)}>HRP</button>
+        </div>
+      </div>
+      <div className="field">
+        <label>Question {isGlobal ? '(tous les royaumes)' : realm ? `(royaume : ${realmName(realm)})` : ''}</label>
         <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="ex. Faut-il rejoindre la guerre du Nord ?" />
       </div>
       <div className="field">

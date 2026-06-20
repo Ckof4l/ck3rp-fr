@@ -170,6 +170,7 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="post-meta">
           {post.pinned && <span className="pin-tag">📌 Épinglé</span>}
+          {post.is_hrp && <span className="pin-tag" style={{ background: '#2a2f3a', color: '#9DB4D0' }}>HRP</span>}
           {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé</span>}
           <span className="post-author">{post.author?.character_name ?? 'Inconnu'}</span>
           <span className="post-house">Maison {h.nom}</span>
@@ -206,6 +207,7 @@ function Composer({
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [isPrivate, setIsPrivate] = useState(false)
+  const [isHrp, setIsHrp] = useState(false)
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState('')
 
@@ -223,12 +225,13 @@ function Composer({
     setBusy(true)
     setStatus('Publication…')
     try {
-      await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile, isPrivate })
+      await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile, isPrivate, isHrp })
       setTitle('')
       setBody('')
       setImageFile(null)
       setImageUrl(null)
       setIsPrivate(false)
+      setIsHrp(false)
       setStatus('')
       onPosted()
     } catch (e) {
@@ -283,6 +286,14 @@ function Composer({
             {isPrivate ? '🔒 Privé (ton royaume)' : '🌍 Public'}
           </button>
         )}
+        <button
+          type="button"
+          className={isHrp ? 'tiny good' : 'tiny'}
+          onClick={() => setIsHrp((v) => !v)}
+          title={isHrp ? 'Message hors-roleplay' : 'Message en roleplay'}
+        >
+          {isHrp ? 'HRP' : 'RP'}
+        </button>
         {status && <span className="sent-ok">{status}</span>}
       </div>
     </div>
@@ -322,7 +333,7 @@ function PostDetail({
     const [{ data }, cs] = await Promise.all([
       supabase
         .from('posts')
-        .select('id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned, is_private, author:profiles!posts_author_profile_fkey(id, character_name, house)')
+        .select('id, channel, author_profile, title, body, image_path, created_at, updated_at, pinned, is_private, is_hrp, author:profiles!posts_author_profile_fkey(id, character_name, house)')
         .eq('id', postId)
         .maybeSingle(),
       listComments(postId),
@@ -396,6 +407,7 @@ function PostDetail({
           <Seal house={post.author?.house} size="lg" />
           <div style={{ flex: 1 }}>
             {post.pinned && <span className="pin-tag">📌 Épinglé</span>}
+            {post.is_hrp && <span className="pin-tag" style={{ background: '#2a2f3a', color: '#9DB4D0' }}>HRP</span>}
             {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé · ton royaume</span>}
             {post.title && <h2 className="pm-subj">{post.title}</h2>}
             <p className="pm-meta">

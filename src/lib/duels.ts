@@ -64,6 +64,12 @@ export async function resolveDuel(duelId: string, accept: boolean): Promise<stri
   return data as string
 }
 
+/** Annule un duel encore en attente (le provocateur seul). */
+export async function cancelDuel(id: string): Promise<void> {
+  const { error } = await supabase.rpc('cancel_duel', { p_duel: id })
+  if (error) throw asError('annulation', error)
+}
+
 export async function deleteDuel(id: string): Promise<void> {
   const { error } = await supabase.from('duels').delete().eq('id', id)
   if (error) throw asError('suppression', error)
