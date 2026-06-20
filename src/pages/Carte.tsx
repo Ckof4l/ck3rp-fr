@@ -32,7 +32,7 @@ interface DeJureProv { c: string | null; ck: string | null; r: string }
 interface SaveProv { realm: string; holder: string | null }
 interface MapData { meta: { width: number; height: number }; regions: Record<string, RegionInfo>; provinces: Record<string, DeJureProv> }
 interface SaveData {
-  meta: { date: string; player: string; characters: number; houses: number; realms: number; titled: number }
+  meta: { date: string; player: string; era?: string; characters: number; houses: number; realms: number; titled: number }
   regions: Record<string, RegionInfo>
   provinces: Record<string, SaveProv>
 }
@@ -372,7 +372,7 @@ export function Carte() {
       {/* Bascule de calque — l'an 1 après le Fléau (la partie) est la vue principale */}
       <div className="carte-modes">
         <button className={mode === 'save' ? 'on' : ''} disabled={!hasSave} onClick={() => setMode('save')}>
-          ⚔️ An 1 après le Fléau
+          ⚔️ {hasSave && sm?.era ? sm.era : 'La partie'}
         </button>
         <button className={mode === 'dejure' ? 'on' : ''} onClick={() => setMode('dejure')}>Grandes régions</button>
       </div>

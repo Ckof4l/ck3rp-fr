@@ -14,6 +14,16 @@ OUT = r"D:/ck3fr-rp/public/carte"
 SAVE = sys.argv[1] if len(sys.argv) > 1 else \
     r"D:/Documents/Paradox Interactive/Crusader Kings III/save games/After The Doom.ck3"
 
+# Nom d'époque affiché pour cette save (modifiable par save ; plusieurs époques jouables).
+ERA = sys.argv[2] if len(sys.argv) > 2 else "An 1 après le Fléau"
+
+# Teinte fixe imposée à certaines grandes régions (par-dessus la couleur de facto).
+REGION_TINT = {
+    "e_the_north":      (236, 238, 240),  # blanc
+    "e_the_reach":      (76, 165, 80),    # vert
+    "e_the_riverlands": (34, 68, 140),    # bleu sombre (Trident)
+}
+
 # ---------------------------------------------------------------- couleurs nommées
 GAME = r"D:/Games/steamapps/common/Crusader Kings III/game"
 
@@ -255,17 +265,18 @@ def main():
             info = prov.get(str(pid))
             if not info:
                 continue
+            tint = REGION_TINT.get(info.get("r"))  # Nord blanc / Bief vert / Trident bleu
             cr = county_realm.get(info.get("ck"))
             if not cr:
-                opx[x, y] = (70, 70, 78)  # terre sans détenteur connu
+                opx[x, y] = tint or (70, 70, 78)  # terre sans détenteur connu
                 continue
-            opx[x, y] = tuple(realms[cr["realm"]]["color"])
+            opx[x, y] = tint or tuple(realms[cr["realm"]]["color"])
             if str(pid) not in prov_json:
                 prov_json[str(pid)] = {"realm": cr["realm"], "holder": cr["holder"]}
     out.save(os.path.join(OUT, "political_save.png"))
 
     save_json = {
-        "meta": {"date": meta_date, "player": player,
+        "meta": {"date": meta_date, "player": player, "era": ERA,
                  "characters": n_living, "houses": n_houses,
                  "realms": n_realms, "titled": n_titled},
         "regions": realms,  # même forme que map.json (clé -> {name,color,ruler})
