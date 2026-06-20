@@ -33,7 +33,8 @@ export async function setRole(
 }
 
 export async function banProfile(id: string): Promise<void> {
-  const { error } = await supabase.from('profiles').delete().eq('id', id)
+  // RPC : impose la hiérarchie (seul un Grand Mestre peut bannir un Mestre).
+  const { error } = await supabase.rpc('ban_profile', { p_id: id })
   if (error) throw asError('bannissement', error)
 }
 

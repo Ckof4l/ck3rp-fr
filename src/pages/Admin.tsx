@@ -506,9 +506,12 @@ function MestreRow({
                 <button className="tiny" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onMute(p.id, 10080)}>🔇 7j</button>
               </>
             )}
-            <button className="tiny danger" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onBan(p.id)}>
-              🚫 Bannir
-            </button>
+            {/* Hiérarchie : un Mestre ne peut bannir ni un Mestre ni un Grand Mestre. */}
+            {!p.is_founder && (!p.is_admin || isFounder) && (
+              <button className="tiny danger" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onBan(p.id)}>
+                🚫 Bannir
+              </button>
+            )}
           </div>
         )}
       </div>
