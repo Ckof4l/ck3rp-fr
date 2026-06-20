@@ -12,8 +12,9 @@ export interface Party {
 export interface Conversation {
   id: string
   title: string
-  creator: string
+  creator: string | null
   is_private: boolean
+  is_global: boolean
   created_at: string
   creatorP?: Party | null
   memberCount: number
@@ -36,18 +37,35 @@ function asError(step: string, e: unknown): Error {
   return new Error(`[${step}] ${String(e)}`)
 }
 
+const CONV_COLS =
+  `id, title, creator, is_private, is_global, created_at,
+   creatorP:profiles!conversations_creator_fkey(character_name, house),
+   members:conversation_members(count)`
+
+type ConvRow = Omit<Conversation, 'memberCount'> & { members: { count: number }[] }
+const withCount = (c: ConvRow): Conversation => ({ ...c, memberCount: c.members?.[0]?.count ?? 0 })
+
 export async function listConversations(): Promise<Conversation[]> {
+  // Exclut le salon global (HRP), qui a sa propre page.
   const { data, error } = await supabase
     .from('conversations')
-    .select(
-      `id, title, creator, is_private, created_at,
-       creatorP:profiles!conversations_creator_fkey(character_name, house),
-       members:conversation_members(count)`,
-    )
+    .select(CONV_COLS)
+    .eq('is_global', false)
     .order('created_at', { ascending: false })
   if (error) throw asError('conversations', error)
-  type Row = Omit<Conversation, 'memberCount'> & { members: { count: number }[] }
-  return (data as unknown as Row[]).map((c) => ({ ...c, memberCount: c.members?.[0]?.count ?? 0 }))
+  return (data as unknown as ConvRow[]).map(withCount)
+}
+
+/** La conversation globale permanente (Salon HRP). */
+export async function getGlobalConversation(): Promise<Conversation | null> {
+  const { data, error } = await supabase
+    .from('conversations')
+    .select(CONV_COLS)
+    .eq('is_global', true)
+    .limit(1)
+    .maybeSingle()
+  if (error) throw asError('salon HRP', error)
+  return data ? withCount(data as unknown as ConvRow) : null
 }
 
 export async function createConversation(title: string, isPrivate: boolean, memberIds: string[]): Promise<void> {

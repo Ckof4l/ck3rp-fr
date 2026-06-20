@@ -13,6 +13,7 @@ import { Charte, Mentions, Confidentialite, NotFound } from './pages/Static'
    pour alléger le bundle initial (la Porte et l'accueil restent immédiats). */
 const Chancellerie = lazy(() => import('./pages/Chancellerie').then((m) => ({ default: m.Chancellerie })))
 const Conversations = lazy(() => import('./pages/Conversations').then((m) => ({ default: m.Conversations })))
+const Hrp = lazy(() => import('./pages/Hrp').then((m) => ({ default: m.Hrp })))
 const Annuaire = lazy(() => import('./pages/Annuaire').then((m) => ({ default: m.Annuaire })))
 const Personnage = lazy(() => import('./pages/Personnage').then((m) => ({ default: m.Personnage })))
 const Requetes = lazy(() => import('./pages/Requetes').then((m) => ({ default: m.Requetes })))
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/c/decret-royal" replace />} />
         <Route path="/chancellerie" element={<Chancellerie />} />
         <Route path="/conversations" element={<Conversations />} />
+        <Route path="/hrp" element={<Hrp />} />
         <Route path="/c/:channelKey" element={<ChannelFeed />} />
         <Route path="/armorial" element={<Annuaire />} />
         <Route path="/joueurs" element={<Annuaire initial="cour" />} />

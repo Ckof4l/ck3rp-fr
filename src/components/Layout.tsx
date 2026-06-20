@@ -77,9 +77,10 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
   const cats = channelsByCategory()
   return (
     <nav className="side-nav">
-      <div className="side-cat">Messages privés</div>
+      <div className="side-cat">Messages</div>
       <SideLink to="/chancellerie" icon="🐦‍⬛" label="Corbeaux" onClick={onNavigate} badge={corbeaux} />
       <SideLink to="/conversations" icon="💬" label="Conversations" onClick={onNavigate} />
+      <SideLink to="/hrp" icon="🗨️" label="Salon HRP" onClick={onNavigate} />
 
       {cats.map(({ category, channels }) => (
         <div key={category}>

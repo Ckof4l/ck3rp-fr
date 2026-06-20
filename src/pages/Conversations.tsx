@@ -125,7 +125,7 @@ export function Conversations() {
   )
 }
 
-function ConversationView({
+export function ConversationView({
   conv,
   meId,
   players,
@@ -139,8 +139,8 @@ function ConversationView({
   players: Profile[]
   canWrite: boolean
   isAdmin: boolean
-  onBack: () => void
-  onDeleted: () => void
+  onBack?: () => void
+  onDeleted?: () => void
 }) {
   const [messages, setMessages] = useState<ConvMessage[]>([])
   const [loading, setLoading] = useState(true)
@@ -198,17 +198,19 @@ function ConversationView({
 
   return (
     <section>
-      <button className="linkbtn" onClick={onBack}>← Conversations</button>
+      {onBack && <button className="linkbtn" onClick={onBack}>← Conversations</button>}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-        <span className="si" style={{ fontSize: 20 }}>{conv.is_private ? '🔒' : '💬'}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginTop: onBack ? 12 : 0 }}>
+        <span className="si" style={{ fontSize: 20 }}>{conv.is_global ? '🗨️' : conv.is_private ? '🔒' : '💬'}</span>
         <h2 className="section-h" style={{ margin: 0 }}>{conv.title}</h2>
-        <span className={`tk-badge ${conv.is_private ? 'no' : 'ok'}`}>{conv.is_private ? 'Privée' : 'Publique'}</span>
+        {!conv.is_global && (
+          <span className={`tk-badge ${conv.is_private ? 'no' : 'ok'}`}>{conv.is_private ? 'Privée' : 'Publique'}</span>
+        )}
         <span style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-          {conv.creator !== meId && (
+          {!conv.is_global && onDeleted && conv.creator !== meId && (
             <button className="tiny" onClick={() => leaveConversation(conv.id, meId).then(onDeleted)}>Quitter</button>
           )}
-          {canManage && (
+          {!conv.is_global && onDeleted && canManage && (
             <button className="tiny danger" onClick={() => confirm('Supprimer cette conversation ?') && deleteConversation(conv.id).then(onDeleted)}>🗑️ Supprimer</button>
           )}
         </span>
