@@ -25,10 +25,29 @@ OVERRIDE = {
     "martell": "house_Martell",  # soleil rouge + lance d'or (contraste correct)
 }
 
+# Blasons reconstruits à la main quand l'original est illisible en petit.
+CUSTOM = {
+    # Celtigar : l'original est un champ semé de 35 crabes (bouillie en petit).
+    # On garde un seul gros crabe doré sur champ rouge — lisible et héraldique.
+    "celtigar": {
+        "pattern": "pattern_solid.dds",
+        "colors": {1: "agot_red", 2: "agot_red", 3: "agot_red"},
+        "emblems": [{
+            "texture": "cl_celtigar_crab.dds",
+            "colors": {1: "agot_gold", 2: "agot_gold", 3: "agot_gold"},
+            "instances": [{"pos": (0.5, 0.5), "scale": (0.82, 0.82), "rot": 0}],
+        }],
+    },
+}
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ok, miss = [], []
     for key, names in MAP.items():
+        if key in CUSTOM:
+            rc.render(CUSTOM[key], size=SIZE).save(os.path.join(OUT, f"{key}.png"))
+            ok.append(f"{key}<-custom")
+            continue
         cands = ([OVERRIDE[key]] if key in OVERRIDE else []) \
             + [f"dynn_{n}" for n in names] + [f"house_{n}" for n in names] + [f"k_{n.lower()}" for n in names]
         body = None
