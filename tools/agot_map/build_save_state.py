@@ -202,6 +202,30 @@ def main():
                             "ruler": holder_label(rt.get("holder"))}
         county_realm[t["key"]] = {"realm": rkey, "holder": holder_label(t["holder"])}
 
+    # seigneurs par royaume (souverain + vassaux : titres roi/duc/comté détenus)
+    print("Seigneurs (vassaux) par royaume…")
+    TIER = {"k": 3, "d": 2, "c": 1}
+    realm_lords = {}
+    for tid, t in titles.items():
+        k, h = t["key"], t["holder"]
+        if not k or not h or k[0] not in "kdc":
+            continue
+        rk = titles.get(realm_of(tid), {}).get("key")
+        if not rk:
+            continue
+        realm_lords.setdefault(rk, []).append((TIER.get(k[0], 0), holder_label(h), t.get("name") or k))
+    for rk, lst in realm_lords.items():
+        seen, out = set(), []
+        for tier, name, title in sorted(lst, key=lambda x: -x[0]):
+            if not name or name in seen:
+                continue
+            seen.add(name)
+            out.append({"name": name, "title": title})
+            if len(out) >= 40:
+                break
+        if rk in realms:
+            realms[rk]["lords"] = out
+
     # ---- statistiques ----
     print("Statistiques (personnages, maisons)…")
     ls = section_start(gs, "living")

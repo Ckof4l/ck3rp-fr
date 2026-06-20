@@ -1029,3 +1029,10 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 }
 .carte-stats span { white-space: nowrap; }
 .carte-side .carte-legend { max-height: min(52vh, 520px); overflow-y: auto; }
+
+/* ── Carte : liste des seigneurs / joueurs d'une région ──────────────────── */
+.carte-lords { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; max-height: 40vh; overflow-y: auto; }
+.carte-lords li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 6px; border-radius: 6px; }
+.carte-lords li:nth-child(odd) { background: rgba(255, 255, 255, 0.03); }
+.carte-lords .ln { color: var(--parch); font-size: 13px; }
+.carte-lords .lt { color: var(--muted); font-size: 12px; white-space: nowrap; text-align: right; }

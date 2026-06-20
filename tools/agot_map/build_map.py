@@ -36,6 +36,13 @@ REGION_FR = {
     "e_the_wall":         "Le Mur",
 }
 
+# Couleurs imposées pour certaines grandes régions (priorité sur la couleur du mod).
+REGION_COLOR = {
+    "e_the_north":      [236, 238, 240],  # blanc
+    "e_the_reach":      [76, 165, 80],    # vert
+    "e_the_riverlands": [34, 68, 140],    # bleu plus sombre (Trident)
+}
+
 def pretty(key):
     """Nom lisible dérivé d'une clé de titre (fallback hors Westeros)."""
     s = key.split("_", 1)[1] if "_" in key else key
@@ -188,7 +195,7 @@ def main():
     for pid, t in prov2title.items():
         r = region_of(t)
         if r and r not in regions:
-            col = title_color.get(r, [128, 128, 128])
+            col = REGION_COLOR.get(r) or title_color.get(r, [128, 128, 128])
             name = REGION_FR.get(r) or names.get(r) or pretty(r)
             regions[r] = {"name": name, "color": col}
 

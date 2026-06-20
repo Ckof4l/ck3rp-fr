@@ -1,4 +1,21 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { supabase } from '../lib/supabase'
+import { playerRealm } from '../lib/channels'
+import { getHouse } from '../lib/houses'
+
+/* Correspondance clé de salon régional du site → grande région (empire) de la carte. */
+const SITE_TO_REGION: Record<string, string> = {
+  'le-nord': 'e_the_north',
+  'le-val': 'e_the_vale',
+  'le-roc': 'e_the_westerlands',
+  'le-trident': 'e_the_riverlands',
+  'le-bief': 'e_the_reach',
+  'dorne': 'e_dorne',
+  'les-iles-de-fer': 'e_the_iron_islands',
+  'peyredragon': 'e_the_crownlands',
+}
+
+interface SitePlayer { name: string; house: string; king: boolean }
 
 /* ============================================================================
    La Carte — carte politique interactive de Westeros (mod AGOT).
@@ -10,7 +27,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
    Hit-test commun via index.png (province_id encodé R+G*256).
    ========================================================================== */
 
-interface RegionInfo { name: string; color: [number, number, number]; ruler?: string | null }
+interface RegionInfo { name: string; color: [number, number, number]; ruler?: string | null; lords?: { name: string; title: string }[] }
 interface DeJureProv { c: string | null; ck: string | null; r: string }
 interface SaveProv { realm: string; holder: string | null }
 interface MapData { meta: { width: number; height: number }; regions: Record<string, RegionInfo>; provinces: Record<string, DeJureProv> }
@@ -54,6 +71,7 @@ export function Carte() {
   const [, force] = useState(0)
   const [hover, setHover] = useState<{ region: string; sub: string | null; px: number; py: number } | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  const [players, setPlayers] = useState<Record<string, SitePlayer[]>>({})
 
   const layer = (): Layer | null => layersRef.current[mode]
 
@@ -230,6 +248,28 @@ export function Carte() {
 
   useEffect(() => { draw() }, [draw])
 
+  // Joueurs du site rangés par grande région (d'après la maison de chaque profil).
+  useEffect(() => {
+    let alive = true
+    supabase
+      .from('profiles')
+      .select('character_name, house, is_king')
+      .eq('onboarded', true)
+      .then(({ data }) => {
+        if (!alive || !data) return
+        const by: Record<string, SitePlayer[]> = {}
+        for (const p of data as { character_name: string; house: string; is_king: boolean }[]) {
+          const sk = playerRealm({ house: p.house } as never)
+          const rk = sk ? SITE_TO_REGION[sk] : null
+          if (!rk) continue
+          ;(by[rk] ??= []).push({ name: p.character_name, house: p.house, king: !!p.is_king })
+        }
+        for (const k of Object.keys(by)) by[k].sort((a, b) => Number(b.king) - Number(a.king))
+        setPlayers(by)
+      })
+    return () => { alive = false }
+  }, [])
+
   const toImage = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current!
     const rect = canvas.getBoundingClientRect()
@@ -385,12 +425,36 @@ export function Carte() {
                   <h3 style={{ margin: 0 }}>{selInfo.name}</h3>
                 </div>
                 {mode === 'save' ? (
-                  <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--parch)' }}>
-                    Seigneur : <b>{selInfo.ruler || '—'}</b>
-                  </p>
+                  <>
+                    <p style={{ margin: '8px 0 2px', fontSize: 13, color: 'var(--parch)' }}>
+                      Souverain : <b>{selInfo.ruler || '—'}</b>
+                    </p>
+                    {selInfo.lords && selInfo.lords.length > 0 && (
+                      <>
+                        <div className="side-cat" style={{ margin: '8px 0 4px' }}>Seigneurs ({selInfo.lords.length})</div>
+                        <ul className="carte-lords">
+                          {selInfo.lords.map((l, i) => (
+                            <li key={i}><span className="ln">{l.name}</span><span className="lt">{l.title}</span></li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </>
+                ) : selected && players[selected]?.length ? (
+                  <>
+                    <div className="side-cat" style={{ margin: '8px 0 4px' }}>Joueurs ici ({players[selected].length})</div>
+                    <ul className="carte-lords">
+                      {players[selected].map((p, i) => (
+                        <li key={i}>
+                          <span className="ln">{p.king ? '👑 ' : ''}{p.name}</span>
+                          <span className="lt">Maison {getHouse(p.house).nom}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 ) : (
                   <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--muted)' }}>
-                    Grande région de jure. Bascule sur « La partie » pour voir qui la tient réellement.
+                    Aucun joueur du site dans cette région. Bascule sur « La partie » pour voir les seigneurs de la save.
                   </p>
                 )}
                 <button className="linkbtn" style={{ marginTop: 8 }} onClick={() => setSelected(null)}>Fermer</button>
