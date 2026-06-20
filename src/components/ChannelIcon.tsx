@@ -8,18 +8,15 @@ export function ChannelIcon({ channel, size = 'sm' }: { channel?: Channel; size?
   if (channel?.ruler) return <Seal house={channel.ruler} size={size} />
   if (channel?.key) {
     return (
-      <span className={size === 'md' ? 'seal' : 'seal sm'}>
-        <img
-          className="seal-img"
-          src={`/icons/${channel.key}.png?v=1`}
-          alt=""
-          onError={(e) => {
-            // Repli sur l'emoji si l'icône n'existe pas encore.
-            const span = e.currentTarget.parentElement
-            if (span) span.outerHTML = `<span class="ch-emoji">${channel.icon ?? '📜'}</span>`
-          }}
-        />
-      </span>
+      <img
+        className={size === 'md' ? 'ch-ico md' : 'ch-ico'}
+        src={`/icons/${channel.key}.png?v=2`}
+        alt=""
+        onError={(e) => {
+          // Repli sur l'emoji si l'icône n'existe pas encore.
+          e.currentTarget.outerHTML = `<span class="ch-emoji">${channel.icon ?? '📜'}</span>`
+        }}
+      />
     )
   }
   return <span className="ch-emoji">{channel?.icon ?? '📜'}</span>

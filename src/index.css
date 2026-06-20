@@ -162,6 +162,10 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .side-link:hover { background: #1B140D; text-decoration: none; color: #E7DBBE; }
 .side-link.on { background: linear-gradient(#33271A, #241B12); color: var(--gold); border-color: var(--gold-dim); }
 .side-link .si { width: 20px; text-align: center; flex: none; }
+/* Icônes héraldiques transparentes, affichées comme des emojis (sans cadre). */
+.side-link .nav-ico { width: 26px; height: 26px; object-fit: contain; flex: none; }
+.ch-ico { width: 1.65em; height: 1.65em; object-fit: contain; vertical-align: -0.4em; }
+.ch-ico.md { width: 2.2em; height: 2.2em; }
 .side-link .sl { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side-badge {
   flex: none; margin-left: auto;
