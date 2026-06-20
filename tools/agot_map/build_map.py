@@ -27,7 +27,7 @@ REGION_FR = {
     "e_the_north":        "Le Nord",
     "e_the_vale":         "Le Val",
     "e_the_westerlands":  "Les Terres de l'Ouest",
-    "e_the_riverlands":   "Le Conflans",
+    "e_the_riverlands":   "Le Trident",
     "e_the_reach":        "Le Bief",
     "e_dorne":            "Dorne",
     "e_the_iron_islands": "Les Îles de Fer",
@@ -39,8 +39,8 @@ REGION_FR = {
 # Grandes régions de Westeros à conserver (exclut Essos, Stepstones via e_narrow_sea, junk).
 WESTEROS = {
     "e_the_north", "e_the_vale", "e_the_westerlands", "e_the_riverlands", "e_the_reach",
-    "e_dorne", "e_the_iron_islands", "e_the_stormlands", "e_the_crownlands", "e_the_wall",
-    "e_beyond_the_wall",
+    "e_dorne", "e_the_iron_islands", "e_the_stormlands", "e_the_crownlands",
+    # Exclus : pas de RP au-delà du Mur (e_the_wall = « Le Mur », e_beyond_the_wall = Thenn & co).
 }
 
 # Couleurs imposées pour certaines grandes régions (priorité sur la couleur du mod).

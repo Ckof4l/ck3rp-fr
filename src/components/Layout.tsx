@@ -119,7 +119,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
               key={c.key}
               to={`/c/${c.key}`}
               icon={c.icon}
-              img={c.kind === 'region' ? `/blasons/regions/${c.key}.png?v=3` : undefined}
+              img={c.kind === 'region' ? `/blasons/regions/${c.key}.png?v=4` : undefined}
               ico={c.kind === 'region' ? undefined : `/icons/${c.key}.png?v=2`}
               label={c.name}
               onClick={onNavigate}
@@ -133,7 +133,6 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       <SideLink to="/armorial" icon="📜" ico="/icons/armorial.png?v=2" label="Annuaire" onClick={onNavigate} />
       <SideLink to="/chroniques" icon="📖" ico="/icons/chroniques.png?v=2" label="Chroniques" onClick={onNavigate} />
       <SideLink to="/pactes" icon="🤝" ico="/icons/pactes.png?v=2" label="Pactes" onClick={onNavigate} />
-      <SideLink to="/carte" icon="🗺️" label="La Carte" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
       <SideLink to="/scrutins" icon="🗳️" ico="/icons/scrutins.png?v=2" label="Scrutins" onClick={onNavigate} />

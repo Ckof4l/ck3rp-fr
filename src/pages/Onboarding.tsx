@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { HOUSES, FREE_HOUSE_KEY, getHouse } from '../lib/houses'
+import { HOUSES, FREE_HOUSE_KEY, getHouse, KING_HOUSES } from '../lib/houses'
 import { HousePicker } from '../components/HousePicker'
 import { takenHouses, completeOnboarding } from '../lib/onboarding'
 
@@ -79,6 +79,11 @@ export function Onboarding() {
         <div className="field">
           <label>Ta maison</label>
           <HousePicker selected={house} taken={taken} onPick={pick} />
+          {KING_HOUSES.has(house) && (
+            <p className="hint" style={{ color: 'var(--gold)' }}>
+              👑 En tenant cette grande maison régnante, tu seras nommé <b>Roi</b>.
+            </p>
+          )}
           <p className="hint">
             Une maison ne peut être tenue que par un seul joueur. « {getHouse(FREE_HOUSE_KEY).nom} » reste ouverte à tous.
           </p>

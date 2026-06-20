@@ -24,7 +24,6 @@ HOUSES = [
     ("vance",     "Vance",      "Le Trident", "Vance",     "Garde contre la nuit."),
     ("piper",     "Piper",      "Le Trident", "Piper",     "Brave et docile."),
     ("darry",     "Darry",      "Le Trident", "Darry",     "Le laboureur reste."),
-    ("mooton",    "Mooton",     "Le Trident", "Mooton",    "Rouge comme l'aurore."),
     ("whent",     "Whent",      "Le Trident", "Whent",     "Noires chauves-souris d'Harrenhal."),
     # ── Le Roc ──
     ("clegane",   "Clegane",    "Le Roc", "Clegane",   "Les chiens mordent."),

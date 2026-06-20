@@ -20,7 +20,6 @@ const Chroniques = lazy(() => import('./pages/Chroniques').then((m) => ({ defaul
 const Destin = lazy(() => import('./pages/Destin').then((m) => ({ default: m.Destin })))
 const Scrutins = lazy(() => import('./pages/Scrutins').then((m) => ({ default: m.Scrutins })))
 const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })))
-const Carte = lazy(() => import('./pages/Carte').then((m) => ({ default: m.Carte })))
 const Pactes = lazy(() => import('./pages/Pactes').then((m) => ({ default: m.Pactes })))
 const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 
@@ -89,8 +88,6 @@ export default function App() {
         <Route path="/pactes" element={<Pactes />} />
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
-        <Route path="/carte" element={<Carte />} />
-        <Route path="/trone" element={<Navigate to="/carte" replace />} />
         <Route path="/scrutins" element={<Scrutins />} />
         <Route path="/sort" element={<Sort />} />
         <Route path="/destin" element={<Destin />} />

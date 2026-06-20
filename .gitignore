@@ -34,3 +34,4 @@ supabase/.temp
 # Python
 __pycache__/
 *.pyc
+*.tsbuildinfo

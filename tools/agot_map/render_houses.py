@@ -17,7 +17,7 @@ MAP = {
     "rowan": ["Rowan"], "martell": ["Martell"], "dayne": ["Dayne"],
     "noirmont": ["Blackmont"], "ferboy": ["Qorgyle", "Wyl", "Vaith"], "chenu": ["Greyiron", "Hoare", "Drumm"],
     "greyjoy": ["Greyjoy"], "harloi": ["Harlaw"], "targaryen": ["Targaryen"],
-    "velaryon": ["Velaryon"], "celtigar": ["Celtigar"],
+    "velaryon": ["Velaryon"], "celtigar": ["Celtigar"], "mooton": ["Mooton"],
 }
 
 # Clé CoA imposée pour certaines maisons (meilleure variante que dynn_).
@@ -35,6 +35,36 @@ CUSTOM = {
         "emblems": [{
             "texture": "cl_celtigar_crab.dds",
             "colors": {1: "agot_gold", 2: "agot_gold", 3: "agot_gold"},
+            "instances": [{"pos": (0.5, 0.5), "scale": (0.82, 0.82), "rot": 0}],
+        }],
+    },
+    # Ferboy (Qorgyle) : un seul gros scorpion d'or sur rouge — lisible.
+    "ferboy": {
+        "pattern": "pattern_solid.dds",
+        "colors": {1: "rgb {142 36 36}", 2: "rgb {142 36 36}", 3: "rgb {142 36 36}"},
+        "emblems": [{
+            "texture": "do_qorgyle_scorpion.dds",
+            "colors": {1: "agot_gold", 2: "agot_gold", 3: "agot_gold"},
+            "instances": [{"pos": (0.5, 0.5), "scale": (0.8, 0.8), "rot": 0}],
+        }],
+    },
+    # Velaryon : hippocampe blanc bien visible sur sarcelle sombre.
+    "velaryon": {
+        "pattern": "pattern_solid.dds",
+        "colors": {1: "rgb {34 100 100}", 2: "rgb {34 100 100}", 3: "rgb {34 100 100}"},
+        "emblems": [{
+            "texture": "cl_velaryon.dds",
+            "colors": {1: "rgb {240 240 232}", 2: "rgb {240 240 232}", 3: "rgb {240 240 232}"},
+            "instances": [{"pos": (0.5, 0.5), "scale": (0.88, 0.88), "rot": 0}],
+        }],
+    },
+    # Mooton : saumon rouge bien visible sur champ crème/or.
+    "mooton": {
+        "pattern": "pattern_solid.dds",
+        "colors": {1: "rgb {232 222 196}", 2: "rgb {232 222 196}", 3: "rgb {232 222 196}"},
+        "emblems": [{
+            "texture": "rl_mooton_salmon.dds",
+            "colors": {1: "rgb {160 44 40}", 2: "rgb {160 44 40}", 3: "rgb {160 44 40}"},
             "instances": [{"pos": (0.5, 0.5), "scale": (0.82, 0.82), "rot": 0}],
         }],
     },

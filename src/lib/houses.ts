@@ -143,6 +143,12 @@ export function regionColor(region: string | null | undefined): string {
   return (region && REGION_COLORS[region]) || '#7C715A'
 }
 
+/** Grandes familles régnantes : Roi automatique à l'inscription.
+   Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0039). */
+export const KING_HOUSES = new Set([
+  'stark', 'arryn', 'lannister', 'durrandon', 'jardinier', 'martell', 'greyjoy', 'targaryen',
+])
+
 /** Liste des maisons groupées par région, dans l'ordre de déclaration. */
 export function housesByRegion(): { region: string; houses: House[] }[] {
   const order: string[] = []

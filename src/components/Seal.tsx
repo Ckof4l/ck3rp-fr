@@ -29,7 +29,7 @@ export function Seal({
       {noImg ? (
         h.sig
       ) : (
-        <img className="seal-img" src={`/blasons/${h.key}.png?v=3`} alt="" onError={() => setNoImg(true)} />
+        <img className="seal-img" src={`/blasons/${h.key}.png?v=4`} alt="" onError={() => setNoImg(true)} />
       )}
     </span>
   )

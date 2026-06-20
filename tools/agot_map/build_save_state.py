@@ -42,7 +42,7 @@ def region_tint(info):
 # Noms FR de secours pour les titres d'empire/royaume non localisés dans la save.
 NAMES_FR = {
     "e_the_north": "Le Nord", "e_the_vale": "Le Val", "e_the_westerlands": "Les Terres de l'Ouest",
-    "e_the_riverlands": "Le Conflans", "e_the_reach": "Le Bief", "e_dorne": "Dorne",
+    "e_the_riverlands": "Le Trident", "e_the_reach": "Le Bief", "e_dorne": "Dorne",
     "e_the_iron_islands": "Les Îles de Fer", "e_the_stormlands": "Les Terres de l'Orage",
     "e_the_crownlands": "Les Terres de la Couronne", "e_the_wall": "Le Mur",
     "e_beyond_the_wall": "Au-delà du Mur", "k_dragonstone": "Peyredragon",
@@ -316,11 +316,14 @@ def main():
             realms[rk]["region"] = max(counts, key=counts.get)
     out.save(os.path.join(OUT, "political_save.png"))
 
+    # La légende ne liste que les royaumes réellement présents sur la carte
+    # (exclut Le Mur / Thenn et tout royaume sans province rendue).
+    rendered_realms = {p["realm"] for p in prov_json.values()}
     save_json = {
         "meta": {"date": meta_date, "player": player, "era": ERA,
                  "characters": n_living, "houses": n_houses,
                  "realms": n_realms, "titled": n_titled},
-        "regions": realms,  # même forme que map.json (clé -> {name,color,ruler})
+        "regions": {k: v for k, v in realms.items() if k in rendered_realms},
         "provinces": prov_json,
     }
     json.dump(save_json, open(os.path.join(OUT, "save.json"), "w", encoding="utf-8"),
