@@ -115,7 +115,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   border-bottom: 1px solid var(--line);
   background:
     linear-gradient(rgba(15, 11, 7, 0.82), rgba(15, 11, 7, 0.9)),
-    url('/bg/banniere.jpg') center / cover no-repeat;
+    url('/bg/fond-global.jpg') center / cover no-repeat;
   backdrop-filter: blur(8px);
 }
 .burger { display: none; background: transparent; border: 1px solid var(--line); color: var(--parch); border-radius: 8px; padding: 6px 10px; font-size: 16px; }
@@ -542,6 +542,28 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 
 /* ── Salons : description, composer, fil, posts, commentaires ── */
 .channel-desc { color: #A99C7E; font-size: 14px; margin: -8px 0 18px; font-style: italic; }
+
+/* ── Bandeau-héros d'un salon régional : fond thématique du royaume ── */
+.region-hero {
+  position: relative;
+  margin: 0 0 20px;
+  padding: 32px 24px 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center 35%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+.region-hero::before {
+  content: "";
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(15, 11, 7, 0.4) 0%, rgba(15, 11, 7, 0.88) 100%);
+}
+.region-hero > * { position: relative; z-index: 1; }
+.region-hero .section-h { color: var(--gold); margin-bottom: 10px; text-shadow: 0 2px 8px #000a; }
+.region-hero .section-h::after { background: rgba(201, 162, 75, 0.4); }
+.region-hero .channel-desc { color: #E6D9B8; margin: 0; text-shadow: 0 1px 6px #000a; }
 .composer {
   background: linear-gradient(#2A211733, #1C150E66);
   border: 1px solid var(--line); border-radius: 12px;

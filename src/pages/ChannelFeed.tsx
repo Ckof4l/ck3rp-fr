@@ -107,10 +107,24 @@ export function ChannelFeed() {
 
   return (
     <section>
-      <h2 className="section-h">
-        <ChannelIcon channel={channel} /> {channel.name}
-      </h2>
-      <p className="channel-desc">{channel.description}</p>
+      {channel.kind === 'region' ? (
+        <div
+          className="region-hero"
+          style={{ backgroundImage: `url(/bg/regions/${channel.key}.jpg)` }}
+        >
+          <h2 className="section-h">
+            <ChannelIcon channel={channel} /> {channel.name}
+          </h2>
+          <p className="channel-desc">{channel.description}</p>
+        </div>
+      ) : (
+        <>
+          <h2 className="section-h">
+            <ChannelIcon channel={channel} /> {channel.name}
+          </h2>
+          <p className="channel-desc">{channel.description}</p>
+        </>
+      )}
 
       {isMuted(profile) && profile?.muted_until && (
         <div className="err">
