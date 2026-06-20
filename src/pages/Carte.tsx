@@ -21,6 +21,11 @@ const SITE_TO_REGION: Record<string, string> = {
 
 interface SitePlayer { id: string; name: string; house: string; king: boolean }
 
+/* Version des données de carte (public/carte/*). À incrémenter à chaque
+   régénération pour casser le cache du navigateur (évitait l'affichage incohérent
+   de l'index.png à la place de la carte colorée). */
+const CV = '?v=5'
+
 /* ============================================================================
    La Carte — carte politique interactive de Westeros (mod AGOT).
    Deux calques :
@@ -202,9 +207,9 @@ export function Carte() {
     ;(async () => {
       try {
         const [data, pol, idxImg] = await Promise.all([
-          fetch('/carte/map.json').then((r) => { if (!r.ok) throw new Error('map.json'); return r.json() as Promise<MapData> }),
-          loadImg('/carte/political.png'),
-          loadImg('/carte/index.png'),
+          fetch(`/carte/map.json${CV}`).then((r) => { if (!r.ok) throw new Error('map.json'); return r.json() as Promise<MapData> }),
+          loadImg(`/carte/political.png${CV}`),
+          loadImg(`/carte/index.png${CV}`),
         ])
         if (!alive) return
         const W = data.meta.width, H = data.meta.height
@@ -227,8 +232,8 @@ export function Carte() {
         // Calque « partie » (facultatif : présent seulement si une save a été importée).
         try {
           const [sdata, spol] = await Promise.all([
-            fetch('/carte/save.json').then((r) => { if (!r.ok) throw new Error('no save'); return r.json() as Promise<SaveData> }),
-            loadImg('/carte/political_save.png'),
+            fetch(`/carte/save.json${CV}`).then((r) => { if (!r.ok) throw new Error('no save'); return r.json() as Promise<SaveData> }),
+            loadImg(`/carte/political_save.png${CV}`),
           ])
           if (!alive) return
           saveMetaRef.current = sdata.meta
