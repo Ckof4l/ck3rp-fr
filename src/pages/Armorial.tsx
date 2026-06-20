@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { housesByRegion, FREE_HOUSE_KEY } from '../lib/houses'
+import { housesByRegion, FREE_HOUSE_KEY, rkStyle } from '../lib/houses'
 import { listPlayers, holdersByHouse } from '../lib/directory'
 import { Seal } from '../components/Seal'
 import type { Profile } from '../types/database'
@@ -55,11 +55,11 @@ export function Armorial() {
                 )
                 // Fiche entièrement cliquable vers le profil quand un joueur la tient.
                 return holder ? (
-                  <Link key={h.key} to={`/personnage/${holder.id}`} className="armorial-card linked">
+                  <Link key={h.key} to={`/personnage/${holder.id}`} className="armorial-card linked" style={rkStyle(h.key)}>
                     {body}
                   </Link>
                 ) : (
-                  <div key={h.key} className="armorial-card">{body}</div>
+                  <div key={h.key} className="armorial-card" style={rkStyle(h.key)}>{body}</div>
                 )
               })}
           </div>

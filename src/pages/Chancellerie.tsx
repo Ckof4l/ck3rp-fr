@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse, housesByRegion } from '../lib/houses'
+import { getHouse, housesByRegion, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { publicImageUrl, supabase } from '../lib/supabase'
 import {
@@ -299,6 +299,7 @@ function ThreadList({
         <button
           key={r.threadId}
           className={`raven-row${r.unreadCount > 0 ? ' unread' : ''}`}
+          style={rkStyle(r.house)}
           onClick={() => onOpen(r.threadId)}
         >
           <Seal house={r.house} />
@@ -448,7 +449,7 @@ function Message({ letter, mine, canDelete, onDelete }: { letter: Letter; mine: 
   const h = getHouse(letter.sender?.house)
   const img = publicImageUrl(letter.image_path)
   return (
-    <div className={`msg${mine ? ' mine' : ''}`}>
+    <div className={`msg${mine ? ' mine' : ''}`} style={rkStyle(letter.sender?.house)}>
       <div className="msg-head">
         <Seal house={letter.sender?.house} size="sm" />
         <span className="msg-who">{mine ? 'Toi' : <CharLink id={letter.from_profile}>{letter.sender?.character_name ?? 'Inconnu'}</CharLink>}</span>

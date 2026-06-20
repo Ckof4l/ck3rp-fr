@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useUnread } from '../context/UnreadContext'
 import { getChannel, canPostChannel, canComment, isMuted } from '../lib/channels'
-import { getHouse, regionColor } from '../lib/houses'
+import { getHouse, regionColor, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { publicImageUrl, supabase } from '../lib/supabase'
 import {
@@ -530,7 +530,7 @@ function PostDetail({
           const ch = getHouse(c.author?.house)
           const mine = c.author_profile === meId
           return (
-            <div key={c.id} className="comment">
+            <div key={c.id} className="comment" style={rkStyle(c.author?.house)}>
               <Seal house={c.author?.house} size="sm" />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="c-meta">

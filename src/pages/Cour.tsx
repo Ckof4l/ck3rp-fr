@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getHouse } from '../lib/houses'
+import { getHouse, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { listPlayers } from '../lib/directory'
 import { Seal } from '../components/Seal'
@@ -32,7 +32,7 @@ export function Cour() {
         {players.map((p) => {
           const h = getHouse(p.house)
           return (
-            <Link key={p.id} to={`/personnage/${p.id}`} className="raven-row" style={{ textDecoration: 'none' }}>
+            <Link key={p.id} to={`/personnage/${p.id}`} className="raven-row" style={{ textDecoration: 'none', ...rkStyle(p.house) }}>
               <Seal house={p.house} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { getHouse } from '../lib/houses'
+import { getHouse, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import {
@@ -169,7 +169,7 @@ export function Requetes() {
           {shown.map((t) => {
             const h = getHouse(t.author?.house)
             return (
-              <button key={t.id} className="raven-row" onClick={() => setOpenId(t.id)}>
+              <button key={t.id} className="raven-row" style={rkStyle(t.author?.house)} onClick={() => setOpenId(t.id)}>
                 <Seal house={t.author?.house} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -371,7 +371,7 @@ function TicketDetail({
       <h3 className="section-h" style={{ fontSize: 12, marginTop: 24 }}>Discussion</h3>
       <div className="thread">
         {messages.map((m) => (
-          <div key={m.id} className={`msg${m.author_profile === meId ? ' mine' : ''}`}>
+          <div key={m.id} className={`msg${m.author_profile === meId ? ' mine' : ''}`} style={rkStyle(m.author?.house)}>
             <div className="msg-head">
               <Seal house={m.author?.house} size="sm" />
               <span className="msg-who">{m.author_profile === meId ? 'Toi' : <CharLink id={m.author_profile}>{m.author?.character_name ?? 'Inconnu'}</CharLink>}</span>

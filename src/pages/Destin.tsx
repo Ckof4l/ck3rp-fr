@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { getHouse } from '../lib/houses'
+import { getHouse, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { Seal } from '../components/Seal'
 import { HelpCard } from '../components/HelpCard'
@@ -190,7 +190,7 @@ function GraveList({ graves }: { graves: Grave[] }) {
       {graves.map((g) => {
         const gh = getHouse(g.house)
         return (
-          <div key={g.id} className="grave-row">
+          <div key={g.id} className="grave-row" style={rkStyle(g.house)}>
             <Seal house={g.house} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ color: '#C7B894', fontSize: 15 }}>

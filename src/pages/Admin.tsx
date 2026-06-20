@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse, housesByRegion, FREE_HOUSE_KEY } from '../lib/houses'
+import { getHouse, housesByRegion, FREE_HOUSE_KEY, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import {
   listProfiles,
@@ -457,7 +457,7 @@ function MestreRow({
   const muted = !!p.muted_until && new Date(p.muted_until) > new Date()
 
   return (
-    <div className="mestre-row">
+    <div className="mestre-row" style={rkStyle(p.house)}>
       <Seal house={p.house} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>

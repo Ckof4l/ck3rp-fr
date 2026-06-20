@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse } from '../lib/houses'
+import { getHouse, rkStyle } from '../lib/houses'
 import { getChannel } from '../lib/channels'
 import { fmtDate } from '../lib/format'
 import { getPlayer, listPlayerPosts, listPlayerGraves, type PlayerPost } from '../lib/directory'
@@ -105,7 +105,7 @@ export function Personnage() {
           {posts.map((p) => {
             const c = getChannel(p.channel)
             return (
-              <Link key={p.id} to={`/c/${p.channel}`} className="raven-row" style={{ textDecoration: 'none' }}>
+              <Link key={p.id} to={`/c/${p.channel}`} className="raven-row" style={{ textDecoration: 'none', ...rkStyle(player.house) }}>
                 <ChannelIcon channel={c} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
@@ -132,7 +132,7 @@ export function Personnage() {
             {graves.map((g) => {
               const gh = getHouse(g.house)
               return (
-                <div key={g.id} className="grave-row">
+                <div key={g.id} className="grave-row" style={rkStyle(g.house)}>
                   <Seal house={g.house} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: '#C7B894', fontSize: 15 }}>

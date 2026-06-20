@@ -5,6 +5,8 @@
    personnage canonique et devise vivent ici.
    ========================================================================== */
 
+import type { CSSProperties } from 'react'
+
 export interface House {
   /** Clé stable utilisée en base (house_key / profiles.house). */
   key: string
@@ -141,6 +143,13 @@ export const REGION_COLORS: Record<string, string> = {
 /** Couleur du royaume d'une maison (repli neutre hors allégeance). */
 export function regionColor(region: string | null | undefined): string {
   return (region && REGION_COLORS[region]) || '#7C715A'
+}
+
+/** Pose la couleur du royaume d'une maison dans la variable CSS `--rk`, utilisée
+   pour teinter une carte au survol (cf. `.…:hover` dans index.css). À étaler dans
+   l'attribut `style` du conteneur de la carte. */
+export function rkStyle(houseKey: string | null | undefined): CSSProperties {
+  return { ['--rk']: regionColor(getHouse(houseKey).region) } as CSSProperties
 }
 
 /** Grandes familles régnantes : Roi automatique à l'inscription.

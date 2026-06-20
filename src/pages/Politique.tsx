@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse, housesByRegion, FREE_HOUSE_KEY } from '../lib/houses'
+import { getHouse, housesByRegion, FREE_HOUSE_KEY, rkStyle } from '../lib/houses'
 import { supabase } from '../lib/supabase'
 import {
   listKings,
@@ -88,7 +88,7 @@ export function Politique() {
           {claims.map((c) => {
             const h = getHouse(c.house_key)
             return (
-              <div key={c.house_key} className="raven-row">
+              <div key={c.house_key} className="raven-row" style={rkStyle(c.house_key)}>
                 <Seal house={c.house_key} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ color: '#E7DBBE', fontSize: 15 }}>Maison {h.nom}</div>
@@ -114,7 +114,7 @@ export function Politique() {
           {kings.map((k) => {
             const h = getHouse(k.house)
             return (
-              <Link key={k.id} to={`/personnage/${k.id}`} className="armorial-card" style={{ textDecoration: 'none' }}>
+              <Link key={k.id} to={`/personnage/${k.id}`} className="armorial-card" style={{ textDecoration: 'none', ...rkStyle(k.house) }}>
                 <Seal house={k.house} size="lg" />
                 <div style={{ minWidth: 0 }}>
                   <div className="armorial-name">👑 {k.character_name}</div>

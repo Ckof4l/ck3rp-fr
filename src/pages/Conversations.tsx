@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getHouse } from '../lib/houses'
+import { getHouse, rkStyle } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { listPlayers } from '../lib/directory'
@@ -121,7 +121,7 @@ export function Conversations() {
           {convs.map((c) => {
             const h = getHouse(c.creatorP?.house)
             return (
-              <button key={c.id} className="raven-row" style={{ textAlign: 'left', cursor: 'pointer' }} onClick={() => setOpenId(c.id)}>
+              <button key={c.id} className="raven-row" style={{ textAlign: 'left', cursor: 'pointer', ...rkStyle(c.creatorP?.house) }} onClick={() => setOpenId(c.id)}>
                 <span className="si" style={{ fontSize: 20 }}>{c.is_private ? '🔒' : '💬'}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -267,7 +267,7 @@ export function ConversationView({
             const h = getHouse(m.author?.house)
             const mine = m.author_profile === meId
             return (
-              <div key={m.id} className="comment" style={mine ? { background: '#ffffff08', borderRadius: 8 } : undefined}>
+              <div key={m.id} className="comment" style={{ ...rkStyle(m.author?.house), ...(mine ? { background: '#ffffff08', borderRadius: 8 } : {}) }}>
                 <Seal house={m.author?.house} size="sm" />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="c-meta">
