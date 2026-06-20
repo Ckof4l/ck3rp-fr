@@ -71,6 +71,8 @@ export function Carte() {
   const [, force] = useState(0)
   const [hover, setHover] = useState<{ region: string; sub: string | null; px: number; py: number } | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
+  // Grande région (de jure) de la zone cliquée — sert à retrouver les joueurs du site.
+  const [clickRegion, setClickRegion] = useState<string | null>(null)
   const [players, setPlayers] = useState<Record<string, SitePlayer[]>>({})
 
   const layer = (): Layer | null => layersRef.current[mode]
@@ -319,6 +321,8 @@ export function Carte() {
       const { ix, iy } = toImage(e.clientX, e.clientY)
       const pid = pidAt(ix, iy)
       const k = pid ? L.provKey(pid) : null
+      // grande région de jure de la zone (pour les joueurs du site)
+      setClickRegion(pid ? layersRef.current.dejure?.provKey(pid) ?? null : null)
       if (k) { ensureHighlight(k); setSelected(k) } else setSelected(null)
     }
   }
@@ -354,6 +358,9 @@ export function Carte() {
     : []
   const selInfo = selected && L ? L.regions[selected] : null
   const sm = saveMetaRef.current
+  // Joueurs du site de la zone : en mode « partie » via la grande région cliquée.
+  const panelRegion = mode === 'dejure' ? selected : clickRegion
+  const panelPlayers = panelRegion ? players[panelRegion] : undefined
 
   return (
     <div className="wrap">
@@ -425,27 +432,16 @@ export function Carte() {
                   <span style={{ width: 16, height: 16, borderRadius: 3, background: rgb(selInfo.color), boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.4)' }} />
                   <h3 style={{ margin: 0 }}>{selInfo.name}</h3>
                 </div>
-                {mode === 'save' ? (
+                {mode === 'save' && selInfo.ruler && (
+                  <p style={{ margin: '8px 0 2px', fontSize: 13, color: 'var(--parch)' }}>
+                    Souverain : <b>{selInfo.ruler}</b>
+                  </p>
+                )}
+                {panelPlayers && panelPlayers.length > 0 ? (
                   <>
-                    <p style={{ margin: '8px 0 2px', fontSize: 13, color: 'var(--parch)' }}>
-                      Souverain : <b>{selInfo.ruler || '—'}</b>
-                    </p>
-                    {selInfo.lords && selInfo.lords.length > 0 && (
-                      <>
-                        <div className="side-cat" style={{ margin: '8px 0 4px' }}>Seigneurs ({selInfo.lords.length})</div>
-                        <ul className="carte-lords">
-                          {selInfo.lords.map((l, i) => (
-                            <li key={i}><span className="ln">{l.name}</span><span className="lt">{l.title}</span></li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                  </>
-                ) : selected && players[selected]?.length ? (
-                  <>
-                    <div className="side-cat" style={{ margin: '8px 0 4px' }}>Joueurs ici ({players[selected].length})</div>
+                    <div className="side-cat" style={{ margin: '8px 0 4px' }}>Joueurs ici ({panelPlayers.length})</div>
                     <ul className="carte-lords">
-                      {players[selected].map((p, i) => (
+                      {panelPlayers.map((p, i) => (
                         <li key={i}>
                           <span className="ln">{p.king ? '👑 ' : ''}{p.name}</span>
                           <span className="lt">Maison {getHouse(p.house).nom}</span>
@@ -455,7 +451,7 @@ export function Carte() {
                   </>
                 ) : (
                   <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--muted)' }}>
-                    Aucun joueur du site dans cette région. Bascule sur « La partie » pour voir les seigneurs de la save.
+                    Aucun joueur du site dans cette région pour l'instant.
                   </p>
                 )}
                 <button className="linkbtn" style={{ marginTop: 8 }} onClick={() => setSelected(null)}>Fermer</button>
