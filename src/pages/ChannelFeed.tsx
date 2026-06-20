@@ -53,6 +53,19 @@ export function ChannelFeed() {
     if (channel) markSeen(channel.key)
   }, [refresh, channel, markSeen])
 
+  // Fond propre à la région : la colonne de contenu prend la scène du royaume.
+  useEffect(() => {
+    const el = document.documentElement
+    if (channel?.kind === 'region') {
+      el.style.setProperty('--region-bg', `url(/bg/regions/${channel.key}.jpg)`)
+      el.setAttribute('data-region', '')
+    }
+    return () => {
+      el.style.removeProperty('--region-bg')
+      el.removeAttribute('data-region')
+    }
+  }, [channel])
+
   // Stable pour ne pas re-souscrire les abonnements temps réel de PostDetail.
   const handleDeleted = useCallback(async () => {
     setOpenPost(null)
@@ -107,24 +120,10 @@ export function ChannelFeed() {
 
   return (
     <section>
-      {channel.kind === 'region' ? (
-        <div
-          className="region-hero"
-          style={{ backgroundImage: `url(/bg/regions/${channel.key}.jpg)` }}
-        >
-          <h2 className="section-h">
-            <ChannelIcon channel={channel} /> {channel.name}
-          </h2>
-          <p className="channel-desc">{channel.description}</p>
-        </div>
-      ) : (
-        <>
-          <h2 className="section-h">
-            <ChannelIcon channel={channel} /> {channel.name}
-          </h2>
-          <p className="channel-desc">{channel.description}</p>
-        </>
-      )}
+      <h2 className="section-h">
+        <ChannelIcon channel={channel} /> {channel.name}
+      </h2>
+      <p className="channel-desc">{channel.description}</p>
 
       {isMuted(profile) && profile?.muted_until && (
         <div className="err">
