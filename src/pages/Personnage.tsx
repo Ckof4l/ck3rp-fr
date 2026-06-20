@@ -91,9 +91,14 @@ export function Personnage() {
             💬 Inviter à une conversation
           </button>
           {!me.is_observer && (
-            <button className="btn-seal" onClick={() => navigate('/sort?defi=' + player.id)}>
-              🪙 Défier au Sort
-            </button>
+            <>
+              <button className="btn-seal" onClick={() => navigate('/alliances?propose=' + player.id)}>
+                🤝 Proposer une alliance
+              </button>
+              <button className="btn-seal" onClick={() => navigate('/sort?defi=' + player.id)}>
+                🪙 Défier au Sort
+              </button>
+            </>
           )}
           <ReportButton meId={me.id} targetType="profile" targetId={player.id} />
         </div>

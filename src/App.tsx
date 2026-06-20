@@ -22,6 +22,7 @@ const Destin = lazy(() => import('./pages/Destin').then((m) => ({ default: m.Des
 const Scrutins = lazy(() => import('./pages/Scrutins').then((m) => ({ default: m.Scrutins })))
 const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })))
 const Pactes = lazy(() => import('./pages/Pactes').then((m) => ({ default: m.Pactes })))
+const Alliances = lazy(() => import('./pages/Alliances').then((m) => ({ default: m.Alliances })))
 const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 
 /* ============================================================================
@@ -92,6 +93,7 @@ export default function App() {
         <Route path="/joueurs" element={<Annuaire initial="cour" />} />
         <Route path="/personnage/:id" element={<Personnage />} />
         <Route path="/pactes" element={<Pactes />} />
+        <Route path="/alliances" element={<Alliances />} />
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
         <Route path="/scrutins" element={<Scrutins />} />

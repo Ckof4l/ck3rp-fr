@@ -136,7 +136,8 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
         </div>
       ))}
 
-      <div className="side-cat">Le Monde</div>
+      <div className="side-cat">Alliance</div>
+      <SideLink to="/alliances" icon="🤝" label="Alliances" onClick={onNavigate} />
       <SideLink to="/pactes" icon="🤝" ico="/icons/pactes.png?v=2" label="Pactes" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
