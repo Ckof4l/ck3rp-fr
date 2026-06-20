@@ -6,6 +6,7 @@ import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { listPolls, createPoll, castVote, closePoll, deletePoll, type Poll } from '../lib/polls'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -229,7 +230,7 @@ function PollCard({
 
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 12, flexWrap: 'wrap' }}>
         <span style={{ color: '#9C8F71', fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <Seal house={poll.author?.house} size="sm" /> Ouvert par {poll.author?.character_name ?? 'le Roi'} · Maison {h.nom}
+          <Seal house={poll.author?.house} size="sm" /> Ouvert par <CharLink id={poll.author_profile}>{poll.author?.character_name ?? 'le Roi'}</CharLink> · Maison {h.nom}
           {poll.revealed && <> · {poll.total} voix</>}
         </span>
         {!poll.revealed && !mineRealm && <span className="hint" style={{ margin: 0 }}>👁️ Autre royaume — lecture seule.</span>}

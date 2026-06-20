@@ -16,6 +16,7 @@ import {
   type Fealty,
 } from '../lib/politics'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -91,7 +92,7 @@ export function Politique() {
                 <Seal house={c.house_key} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ color: '#E7DBBE', fontSize: 15 }}>Maison {h.nom}</div>
-                  <div style={{ color: '#9C8F71', fontSize: 12 }}>Porté par {c.claimant?.character_name ?? 'un seigneur'}</div>
+                  <div style={{ color: '#9C8F71', fontSize: 12 }}>Porté par <CharLink id={c.claimant_profile}>{c.claimant?.character_name ?? 'un seigneur'}</CharLink></div>
                   {c.justification && <div className="pact-body" style={{ marginTop: 6, marginBottom: 0 }}>« {c.justification} »</div>}
                 </div>
               </div>

@@ -33,6 +33,7 @@ import { publicImageUrl } from '../lib/supabase'
 import { getAnnouncement, setAnnouncement, clearAnnouncement } from '../lib/realm'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { ChannelIcon } from '../components/ChannelIcon'
 
 /* ============================================================================
@@ -434,7 +435,7 @@ function MestreRow({
       <Seal house={p.house} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ color: '#E7DBBE', fontSize: 15 }}>{p.character_name}</span>
+          <CharLink id={p.id} className="charlink-strong">{p.character_name}</CharLink>
           {p.is_king && <span className="badge king">👑 Roi</span>}
           {p.is_founder ? (
             <span className="badge gm">Grand Mestre</span>

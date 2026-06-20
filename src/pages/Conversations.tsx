@@ -19,6 +19,7 @@ import {
 } from '../lib/conversations'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -226,7 +227,7 @@ export function ConversationView({
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: canManage ? 12 : 0 }}>
                 {members.map((m) => (
                   <span key={m.profile_id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#E7DBBE', fontSize: 13 }}>
-                    <Seal house={m.member?.house} size="sm" /> {m.member?.character_name ?? '—'}
+                    <Seal house={m.member?.house} size="sm" /> <CharLink id={m.profile_id}>{m.member?.character_name ?? '—'}</CharLink>
                   </span>
                 ))}
               </div>
@@ -255,7 +256,7 @@ export function ConversationView({
                 <Seal house={m.author?.house} size="sm" />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="c-meta">
-                    <span className="c-who">{m.author?.character_name ?? 'Inconnu'}</span>
+                    <CharLink id={m.author_profile} className="c-who">{m.author?.character_name ?? 'Inconnu'}</CharLink>
                     <span className="c-house">Maison {h.nom}</span>
                     <span className="c-date">{fmtDate(m.created_at)}</span>
                   </div>

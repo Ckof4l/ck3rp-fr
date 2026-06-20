@@ -17,6 +17,7 @@ import {
   type TicketStatus,
 } from '../lib/tickets'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -329,7 +330,7 @@ function TicketDetail({
               <StatusBadge status={ticket.status} />
             </div>
             <div style={{ color: '#9C8F71', fontSize: 12, marginTop: 2 }}>
-              {ticket.author?.character_name ?? 'Inconnu'} · Maison {h.nom} · {fmtDate(ticket.created_at)}
+              <CharLink id={ticket.author_profile}>{ticket.author?.character_name ?? 'Inconnu'}</CharLink> · Maison {h.nom} · {fmtDate(ticket.created_at)}
             </div>
           </div>
           {canDelete && (
@@ -345,7 +346,7 @@ function TicketDetail({
       {ticket.status !== 'pending' && (
         <div className={`verdict ${ticket.status}`}>
           <b>{ticket.status === 'accepted' ? '✓ Requête acceptée' : '✗ Requête refusée'}</b>
-          {ticket.resolver ? ` par ${ticket.resolver.character_name}` : ''}
+          {ticket.resolver && <> par <CharLink id={ticket.resolved_by}>{ticket.resolver.character_name}</CharLink></>}
           {ticket.resolution && <div className="verdict-note">« {ticket.resolution} »</div>}
         </div>
       )}
@@ -372,7 +373,7 @@ function TicketDetail({
           <div key={m.id} className={`msg${m.author_profile === meId ? ' mine' : ''}`}>
             <div className="msg-head">
               <Seal house={m.author?.house} size="sm" />
-              <span className="msg-who">{m.author_profile === meId ? 'Toi' : m.author?.character_name ?? 'Inconnu'}</span>
+              <span className="msg-who">{m.author_profile === meId ? 'Toi' : <CharLink id={m.author_profile}>{m.author?.character_name ?? 'Inconnu'}</CharLink>}</span>
               <span className="msg-date">{fmtDate(m.created_at)}</span>
             </div>
             <div className="msg-body">{m.body}</div>

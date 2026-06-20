@@ -20,6 +20,7 @@ import {
   type CommentRow,
 } from '../lib/posts'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { Lettrine } from '../components/Lettrine'
 import { ReportButton } from '../components/ReportButton'
 import { HelpCard } from '../components/HelpCard'
@@ -179,9 +180,12 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
   const h = getHouse(post.author?.house)
   const col = regionColor(h.region)
   return (
-    <button
+    <div
       className="post-card"
+      role="button"
+      tabIndex={0}
       onClick={onOpen}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
       style={{ background: `linear-gradient(${col}33, ${col}5C), #1C150E`, borderColor: `${col}99` }}
     >
       <Seal house={post.author?.house} />
@@ -190,7 +194,11 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
           {post.pinned && <span className="pin-tag">📌 Épinglé</span>}
           {post.is_hrp && <span className="pin-tag" style={{ background: '#2a2f3a', color: '#9DB4D0' }}>HRP</span>}
           {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé</span>}
-          <span className="post-author">{post.author?.character_name ?? 'Inconnu'}</span>
+          <span onClick={(e) => e.stopPropagation()}>
+            <CharLink id={post.author_profile} className="post-author">
+              {post.author?.character_name ?? 'Inconnu'}
+            </CharLink>
+          </span>
           <span className="post-house">Maison {h.nom}</span>
           <span className="post-date">{fmtDate(post.created_at)}</span>
         </div>
@@ -201,7 +209,7 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
         </div>
         <div className="post-foot">💬 {post.commentCount} · Ouvrir ›</div>
       </div>
-    </button>
+    </div>
   )
 }
 
@@ -429,7 +437,7 @@ function PostDetail({
             {post.is_private && <span className="pin-tag" style={{ background: '#3a2a2a', color: '#E0B0B0' }}>🔒 Privé · ton royaume</span>}
             {post.title && <h2 className="pm-subj">{post.title}</h2>}
             <p className="pm-meta">
-              {post.author?.character_name ?? 'Inconnu'} · Maison {h.nom} · {fmtDate(post.created_at)}
+              <CharLink id={post.author_profile}>{post.author?.character_name ?? 'Inconnu'}</CharLink> · Maison {h.nom} · {fmtDate(post.created_at)}
               {edited && <span style={{ fontStyle: 'normal', color: 'var(--muted)' }}> · modifié</span>}
             </p>
           </div>
@@ -515,7 +523,7 @@ function PostDetail({
               <Seal house={c.author?.house} size="sm" />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="c-meta">
-                  <span className="c-who">{c.author?.character_name ?? 'Inconnu'}</span>
+                  <CharLink id={c.author_profile} className="c-who">{c.author?.character_name ?? 'Inconnu'}</CharLink>
                   <span className="c-house">Maison {ch.nom}</span>
                   <span className="c-date">
                     {fmtDate(c.created_at)}

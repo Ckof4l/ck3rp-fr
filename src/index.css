@@ -621,6 +621,11 @@ a.armorial-card.linked:hover {
 a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .armorial-name { font-family: var(--display); font-size: 15px; color: var(--parch); }
 .armorial-devise { font-size: 12.5px; color: var(--gold-dim); font-style: italic; margin: 2px 0 4px; }
+/* Nom de personnage cliquable (composant CharLink), partout dans le site. */
+.charlink { color: inherit; text-decoration: none; cursor: pointer; transition: color 0.1s; }
+.charlink:hover { color: var(--gold); text-decoration: none; }
+.charlink-strong { color: #E7DBBE; font-size: 15px; }
+
 .armorial-holder { font-size: 13px; }
 .armorial-holder.held { color: #C7B894; text-decoration: none; }
 .armorial-holder.held:hover { color: var(--gold); }

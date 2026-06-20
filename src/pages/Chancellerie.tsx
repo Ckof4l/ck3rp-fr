@@ -20,6 +20,7 @@ import {
   type SentItem,
 } from '../lib/letters'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 import type { RavenScope } from '../types/database'
 
@@ -433,7 +434,7 @@ function Message({ letter, mine }: { letter: Letter; mine: boolean }) {
     <div className={`msg${mine ? ' mine' : ''}`}>
       <div className="msg-head">
         <Seal house={letter.sender?.house} size="sm" />
-        <span className="msg-who">{mine ? 'Toi' : (letter.sender?.character_name ?? 'Inconnu')}</span>
+        <span className="msg-who">{mine ? 'Toi' : <CharLink id={letter.from_profile}>{letter.sender?.character_name ?? 'Inconnu'}</CharLink>}</span>
         <span className="msg-house">Maison {h.nom}</span>
         <span className="msg-date">{fmtDate(letter.sent_at)}</span>
       </div>

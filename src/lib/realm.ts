@@ -16,6 +16,7 @@ export interface Chronicle {
   body: string
   event_date: string | null
   created_at: string
+  author_profile: string
   author?: { character_name: string; house: string } | null
 }
 
@@ -55,7 +56,7 @@ export async function clearAnnouncement(): Promise<void> {
 export async function listChronicles(): Promise<Chronicle[]> {
   const { data, error } = await supabase
     .from('chronicles')
-    .select('id, title, body, event_date, created_at, author:profiles!chronicles_author_profile_fkey(character_name, house)')
+    .select('id, title, body, event_date, created_at, author_profile, author:profiles!chronicles_author_profile_fkey(character_name, house)')
     .order('created_at', { ascending: false })
     .limit(200)
   if (error) throw asError('chroniques', error)

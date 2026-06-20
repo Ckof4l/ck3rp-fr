@@ -12,6 +12,7 @@ export interface King {
 
 export interface ThroneClaim {
   house_key: string
+  claimant_profile: string
   justification: string | null
   created_at: string
   claimant?: { character_name: string } | null
@@ -46,7 +47,7 @@ export async function listKings(): Promise<King[]> {
 export async function listThroneClaims(): Promise<ThroneClaim[]> {
   const { data } = await supabase
     .from('throne_claims')
-    .select('house_key, justification, created_at, claimant:profiles!throne_claims_claimant_profile_fkey(character_name)')
+    .select('house_key, claimant_profile, justification, created_at, claimant:profiles!throne_claims_claimant_profile_fkey(character_name)')
     .order('created_at', { ascending: true })
   return (data as unknown as ThroneClaim[]) ?? []
 }

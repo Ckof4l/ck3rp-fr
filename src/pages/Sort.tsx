@@ -7,6 +7,7 @@ import { listDuels, createDuel, resolveDuel, cancelDuel, deleteDuel, type Duel }
 import { listPlayers } from '../lib/directory'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -132,14 +133,15 @@ function DuelLine({ duel }: { duel: Duel }) {
   const left = assigned && !pileIsChal ? duel.opponentP : duel.challengerP
   const leftId = assigned && !pileIsChal ? duel.opponent : duel.challenger
   const right = leftId === duel.challenger ? duel.opponentP : duel.challengerP
+  const rightId = leftId === duel.challenger ? duel.opponent : duel.challenger
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
       <Seal house={left?.house} size="sm" />
-      <span style={{ color: '#E7DBBE' }}>{left?.character_name ?? 'Inconnu'}</span>
+      <span style={{ color: '#E7DBBE' }}><CharLink id={leftId}>{left?.character_name ?? 'Inconnu'}</CharLink></span>
       {assigned && <span className="kicker" style={{ fontSize: 11 }}>Pile</span>}
       <span style={{ color: '#9C8F71' }}>⚔️</span>
       <Seal house={right?.house} size="sm" />
-      <span style={{ color: '#E7DBBE' }}>{right?.character_name ?? 'Inconnu'}</span>
+      <span style={{ color: '#E7DBBE' }}><CharLink id={rightId}>{right?.character_name ?? 'Inconnu'}</CharLink></span>
       {assigned && <span className="kicker" style={{ fontSize: 11 }}>Face</span>}
       {duel.reason && <span style={{ fontStyle: 'italic', color: '#9C8F71', fontSize: 12, width: '100%' }}>« {duel.reason} »</span>}
     </div>

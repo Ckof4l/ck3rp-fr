@@ -5,6 +5,7 @@ import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { listPacts, createPact, signPact, deletePact, type Pact } from '../lib/pacts'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -134,7 +135,7 @@ function PactCard({
         </span>
       </div>
       <div className="pact-meta">
-        Proposé par {pact.author?.character_name ?? 'Inconnu'}
+        Proposé par <CharLink id={pact.author_profile}>{pact.author?.character_name ?? 'Inconnu'}</CharLink>
         {pact.author?.house ? ` · Maison ${getHouse(pact.author.house).nom}` : ''} · {fmtDate(pact.created_at)}
       </div>
 

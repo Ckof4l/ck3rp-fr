@@ -5,6 +5,7 @@ import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
 import { listChronicles, addChronicle, deleteChronicle, type Chronicle } from '../lib/realm'
 import { Seal } from '../components/Seal'
+import { CharLink } from '../components/CharLink'
 import { Lettrine } from '../components/Lettrine'
 
 /* ============================================================================
@@ -66,7 +67,7 @@ export function Chroniques() {
                   <h3 className="chr-title">{c.title}</h3>
                   {c.body && (c.title ? <Lettrine>{c.body}</Lettrine> : <div className="pact-body">{c.body}</div>)}
                   <div className="chr-author">
-                    <Seal house={c.author?.house} size="sm" /> Consigné par {c.author?.character_name ?? 'un mestre'} · Maison {h.nom}
+                    <Seal house={c.author?.house} size="sm" /> Consigné par <CharLink id={c.author_profile}>{c.author?.character_name ?? 'un mestre'}</CharLink> · Maison {h.nom}
                   </div>
                   {isAdmin && (
                     <button className="tiny danger" style={{ marginTop: 8 }} onClick={() => confirm('Supprimer cette chronique ?') && deleteChronicle(c.id).then(refresh)}>
