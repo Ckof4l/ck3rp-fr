@@ -574,7 +574,13 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
   border: 1px solid var(--line); border-radius: 12px;
   padding: 14px 16px; color: inherit; transition: transform 0.1s, border-color 0.1s;
 }
-.post-card:hover { transform: translateY(-1px); border-color: var(--gold-dim); }
+/* Au survol : la carte se teinte de la couleur du royaume de l'auteur (--rk),
+   en opacité légère. Repli neutre si la variable n'est pas posée. */
+.post-card:hover {
+  transform: translateY(-1px);
+  border-color: var(--rk, var(--gold-dim));
+  background-color: color-mix(in srgb, var(--rk, #1C150E) 20%, #1C150E);
+}
 .post-meta { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .post-author { font-size: 15px; color: #E7DBBE; }
 .post-house { font-size: 11px; color: #9C8F71; }

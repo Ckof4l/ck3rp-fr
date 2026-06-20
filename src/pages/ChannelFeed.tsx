@@ -66,8 +66,8 @@ export function ChannelFeed() {
           : null
     if (bg) {
       el.style.setProperty('--region-bg', `url(${bg})`)
-      // Rumeurs : la scène (les gens à la taverne) est en bas de l'image → on la cale en bas.
-      el.style.setProperty('--region-bg-pos', channel?.key === 'rumeurs' ? 'center bottom' : 'center top')
+      // Rumeurs : la scène (les gens attablés) est au centre du tableau → on la centre.
+      el.style.setProperty('--region-bg-pos', channel?.key === 'rumeurs' ? 'center center' : 'center top')
       el.setAttribute('data-region', '')
     }
     return () => {
@@ -196,7 +196,8 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
       tabIndex={0}
       onClick={onOpen}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen() } }}
-      style={{ background: `linear-gradient(${col}33, ${col}5C), #1C150E`, borderColor: `${col}99` }}
+      // --rk = couleur du royaume de l'auteur ; révélée au survol (cf. .post-card:hover).
+      style={{ ['--rk' as string]: col } as React.CSSProperties}
     >
       <Seal house={post.author?.house} />
       <div style={{ flex: 1, minWidth: 0 }}>
