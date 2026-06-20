@@ -182,7 +182,7 @@ function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
     <button
       className="post-card"
       onClick={onOpen}
-      style={{ background: `linear-gradient(${col}22, ${col}3C), #1C150E`, borderColor: `${col}66` }}
+      style={{ background: `linear-gradient(${col}33, ${col}5C), #1C150E`, borderColor: `${col}99` }}
     >
       <Seal house={post.author?.house} />
       <div style={{ flex: 1, minWidth: 0 }}>
