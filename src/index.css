@@ -963,11 +963,12 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 /* ── La Carte (Westeros interactive) ─────────────────────────────────────── */
 .carte-grid {
   display: grid;
-  grid-template-columns: 1fr 280px;
+  grid-template-columns: minmax(0, 1fr) 260px;
   gap: 14px;
   align-items: start;
 }
 .carte-stage {
+  min-width: 0;
   height: min(90vh, 1320px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1103,6 +1104,15 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 }
 .carte-vassals-toggle:hover { background: rgba(201, 162, 75, 0.14); }
 
-/* ── Carte : déborde de la colonne de contenu pour un cadre plus large ───── */
-.carte-page { max-width: min(1340px, 95vw); margin-left: 50%; transform: translateX(-50%); }
-@media (max-width: 860px) { .carte-page { max-width: 100%; margin-left: 0; transform: none; } }
+/* ── Carte : déborde de la colonne de contenu pour un cadre bien plus large.
+   width (pas max-width) basé sur le viewport moins la barre latérale (244px),
+   recentré sur le centre de la zone de contenu via margin-left/translate. ─── */
+.carte-page {
+  width: calc(100vw - 244px - 56px);
+  max-width: 1500px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+@media (max-width: 860px) {
+  .carte-page { width: auto; max-width: 100%; margin-left: 0; transform: none; }
+}
