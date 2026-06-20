@@ -6,7 +6,6 @@ import { Layout } from './components/Layout'
 import { Gate } from './pages/Gate'
 import { Onboarding } from './pages/Onboarding'
 import { ChannelFeed } from './pages/ChannelFeed'
-import { Soon } from './components/Soon'
 import { Charte, Mentions, Confidentialite, NotFound } from './pages/Static'
 
 /* Routes lourdes ou rarement affichées au premier rendu : chargées à la demande
@@ -22,6 +21,7 @@ const Destin = lazy(() => import('./pages/Destin').then((m) => ({ default: m.Des
 const Scrutins = lazy(() => import('./pages/Scrutins').then((m) => ({ default: m.Scrutins })))
 const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })))
 const Carte = lazy(() => import('./pages/Carte').then((m) => ({ default: m.Carte })))
+const Pactes = lazy(() => import('./pages/Pactes').then((m) => ({ default: m.Pactes })))
 const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 
 /* ============================================================================
@@ -86,7 +86,7 @@ export default function App() {
         <Route path="/armorial" element={<Annuaire />} />
         <Route path="/joueurs" element={<Annuaire initial="cour" />} />
         <Route path="/personnage/:id" element={<Personnage />} />
-        <Route path="/pactes" element={<Soon icon="🤝" title="Pactes & Diplomatie" desc="Les traités scellés entre maisons arriveront prochainement." />} />
+        <Route path="/pactes" element={<Pactes />} />
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
         <Route path="/carte" element={<Carte />} />

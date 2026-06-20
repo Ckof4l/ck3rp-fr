@@ -111,7 +111,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
       <div className="side-cat">Le Monde</div>
       <SideLink to="/armorial" icon="📜" label="Annuaire" onClick={onNavigate} />
       <SideLink to="/chroniques" icon="📖" label="Chroniques" onClick={onNavigate} />
-      <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} soon />
+      <SideLink to="/pactes" icon="🤝" label="Pactes" onClick={onNavigate} />
       <SideLink to="/carte" icon="🗺️" label="La Carte" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
