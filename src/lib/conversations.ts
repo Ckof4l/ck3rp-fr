@@ -120,6 +120,12 @@ export async function deleteConversation(id: string): Promise<void> {
   if (error) throw asError('suppression', error)
 }
 
+/** Retire un message (son auteur ou un Mestre — RLS). */
+export async function deleteMessage(id: string): Promise<void> {
+  const { error } = await supabase.from('conversation_messages').delete().eq('id', id)
+  if (error) throw asError('suppression', error)
+}
+
 export async function leaveConversation(convId: string, meId: string): Promise<void> {
   const { error } = await supabase
     .from('conversation_members')

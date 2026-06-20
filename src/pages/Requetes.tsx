@@ -12,6 +12,7 @@ import {
   deleteTicket,
   listTicketMessages,
   addTicketMessage,
+  deleteTicketMessage,
   type Ticket,
   type TicketMessage,
   type TicketStatus,
@@ -314,7 +315,7 @@ function TicketDetail({
   if (!ticket) return <div className="empty">Cette requête est introuvable.</div>
 
   const h = getHouse(ticket.author?.house)
-  const canDelete = isAdmin // un joueur ne retire pas ses propres traces
+  const canDelete = isAdmin || ticket.author_profile === meId
 
   return (
     <div>
@@ -375,6 +376,16 @@ function TicketDetail({
               <Seal house={m.author?.house} size="sm" />
               <span className="msg-who">{m.author_profile === meId ? 'Toi' : <CharLink id={m.author_profile}>{m.author?.character_name ?? 'Inconnu'}</CharLink>}</span>
               <span className="msg-date">{fmtDate(m.created_at)}</span>
+              {(m.author_profile === meId || isAdmin) && (
+                <button
+                  className="c-del"
+                  title="Supprimer"
+                  style={{ marginLeft: 'auto' }}
+                  onClick={() => confirm('Supprimer ce message ?') && deleteTicketMessage(m.id).then(() => listTicketMessages(ticketId).then(setMessages))}
+                >
+                  ✕
+                </button>
+              )}
             </div>
             <div className="msg-body">{m.body}</div>
           </div>

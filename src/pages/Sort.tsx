@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getHouse } from '../lib/houses'
 import { fmtDate } from '../lib/format'
@@ -19,6 +20,8 @@ export function Sort() {
   const meId = profile!.id
   const isAdmin = !!profile?.is_admin
   const canPlay = !profile?.is_observer
+  const [params, setParams] = useSearchParams()
+  const defi = params.get('defi')
 
   const [duels, setDuels] = useState<Duel[]>([])
   const [players, setPlayers] = useState<Profile[]>([])
@@ -60,7 +63,13 @@ export function Sort() {
       </HelpCard>
 
       {canPlay ? (
-        <ChallengeForm meId={meId} players={players} onDone={refresh} />
+        <ChallengeForm
+          meId={meId}
+          players={players}
+          initialOpponent={defi}
+          onConsumeInitial={() => { params.delete('defi'); setParams(params, { replace: true }) }}
+          onDone={refresh}
+        />
       ) : (
         <p className="hint">Mode observateur — tu peux lire le registre mais pas défier.</p>
       )}
@@ -173,13 +182,34 @@ function IncomingDuel({ duel, onChanged }: { duel: Duel; onChanged: () => void }
   )
 }
 
-function ChallengeForm({ meId, players, onDone }: { meId: string; players: Profile[]; onDone: () => void }) {
+function ChallengeForm({
+  meId,
+  players,
+  initialOpponent,
+  onConsumeInitial,
+  onDone,
+}: {
+  meId: string
+  players: Profile[]
+  initialOpponent?: string | null
+  onConsumeInitial?: () => void
+  onDone: () => void
+}) {
   const [opponent, setOpponent] = useState('')
   const [reason, setReason] = useState('')
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState('')
 
   const others = players.filter((p) => p.id !== meId)
+
+  // Pré-sélection depuis « Défier au Sort » sur une fiche de personnage.
+  useEffect(() => {
+    if (initialOpponent && initialOpponent !== meId && others.some((p) => p.id === initialOpponent)) {
+      setOpponent(initialOpponent)
+      onConsumeInitial?.()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialOpponent, players])
 
   async function submit() {
     if (!opponent) return setStatus('Choisis un adversaire.')

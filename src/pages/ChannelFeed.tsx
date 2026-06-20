@@ -417,7 +417,7 @@ function PostDetail({
   const h = getHouse(post.author?.house)
   const img = publicImageUrl(post.image_path)
   const canEdit = post.author_profile === meId || isAdmin
-  const canDeletePost = isAdmin // un joueur ne retire pas ses propres traces
+  const canDeletePost = post.author_profile === meId || isAdmin
   const edited = !!post.updated_at && post.updated_at !== post.created_at
   const channelKind = getChannel(post.channel)?.kind
   const useTitle = channelKind === 'decree' || channelKind === 'lore'
@@ -539,11 +539,11 @@ function PostDetail({
                       ✏️
                     </button>
                   )}
-                  {isAdmin && (
+                  {(mine || isAdmin) && (
                     <button
                       className="c-del"
                       title="Supprimer"
-                      onClick={() => deleteComment(c.id).then(() => listComments(postId).then(setComments))}
+                      onClick={() => confirm('Supprimer ce commentaire ?') && deleteComment(c.id).then(() => listComments(postId).then(setComments))}
                     >
                       ✕
                     </button>

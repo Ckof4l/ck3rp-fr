@@ -7,6 +7,7 @@ import { publicImageUrl, supabase } from '../lib/supabase'
 import {
   archiveThread,
   countUnread,
+  deleteLetter,
   getThread,
   listArchivedThreadIds,
   listInbox,
@@ -373,6 +374,8 @@ function ThreadView({
   onChanged: () => void
   onToggleArchive: () => void
 }) {
+  const { profile } = useAuth()
+  const isAdmin = !!profile?.is_admin
   const [messages, setMessages] = useState<Letter[] | null>(null)
   const [route, setRoute] = useState<ReplyRoute | null>(null)
 
@@ -392,6 +395,14 @@ function ThreadView({
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [threadId, tick])
+
+  async function handleDelete(id: string) {
+    await deleteLetter(id)
+    const msgs = await getThread(threadId)
+    onChanged()
+    if (!msgs.length) return onBack()
+    setMessages(msgs)
+  }
 
   if (!messages) return <div className="empty">Décachetage du fil…</div>
   if (!messages.length) return <div className="empty">Ce fil est introuvable.</div>
@@ -414,7 +425,13 @@ function ThreadView({
 
       <div className="thread">
         {messages.map((m) => (
-          <Message key={m.id} letter={m} mine={m.from_profile === meId} />
+          <Message
+            key={m.id}
+            letter={m}
+            mine={m.from_profile === meId}
+            canDelete={m.from_profile === meId || isAdmin}
+            onDelete={() => handleDelete(m.id)}
+          />
         ))}
       </div>
 
@@ -427,7 +444,7 @@ function ThreadView({
   )
 }
 
-function Message({ letter, mine }: { letter: Letter; mine: boolean }) {
+function Message({ letter, mine, canDelete, onDelete }: { letter: Letter; mine: boolean; canDelete?: boolean; onDelete?: () => void | Promise<void> }) {
   const h = getHouse(letter.sender?.house)
   const img = publicImageUrl(letter.image_path)
   return (
@@ -437,6 +454,16 @@ function Message({ letter, mine }: { letter: Letter; mine: boolean }) {
         <span className="msg-who">{mine ? 'Toi' : <CharLink id={letter.from_profile}>{letter.sender?.character_name ?? 'Inconnu'}</CharLink>}</span>
         <span className="msg-house">Maison {h.nom}</span>
         <span className="msg-date">{fmtDate(letter.sent_at)}</span>
+        {canDelete && onDelete && (
+          <button
+            className="c-del"
+            title="Supprimer ce corbeau"
+            style={{ marginLeft: 'auto' }}
+            onClick={() => confirm('Supprimer ce corbeau ? (définitif)') && onDelete()}
+          >
+            ✕
+          </button>
+        )}
       </div>
       <div className="msg-body">{letter.body}</div>
       {img && <img className="letter-img" src={img} alt="pièce jointe" />}

@@ -87,6 +87,14 @@ export function Personnage() {
           <button className="btn-seal" onClick={() => navigate('/chancellerie?to=' + player.id)}>
             🐦‍⬛ Envoyer un corbeau
           </button>
+          <button className="btn-seal" onClick={() => navigate('/conversations?inviter=' + player.id)}>
+            💬 Inviter à une conversation
+          </button>
+          {!me.is_observer && (
+            <button className="btn-seal" onClick={() => navigate('/sort?defi=' + player.id)}>
+              🪙 Défier au Sort
+            </button>
+          )}
           <ReportButton meId={me.id} targetType="profile" targetId={player.id} />
         </div>
       )}

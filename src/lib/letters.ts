@@ -227,3 +227,11 @@ export async function archiveThread(meId: string, threadId: string): Promise<voi
 export async function unarchiveThread(meId: string, threadId: string): Promise<void> {
   await supabase.from('archives').delete().eq('profile_id', meId).eq('thread_id', threadId)
 }
+
+/* ── Suppression d'une lettre ──────────────────────────────────────────────
+   L'expéditeur retire son propre corbeau, un Mestre n'importe lequel (RLS).
+   Les destinataires (raven_recipients) partent en cascade. */
+export async function deleteLetter(id: string): Promise<void> {
+  const { error } = await supabase.from('ravens').delete().eq('id', id)
+  if (error) throw asError('suppression', error)
+}

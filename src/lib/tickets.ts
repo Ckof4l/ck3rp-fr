@@ -138,3 +138,9 @@ export async function addTicketMessage(p: { meId: string; ticketId: string; body
     .insert({ ticket_id: p.ticketId, author_profile: p.meId, body: p.body.trim() })
   if (error) throw asError('message', error)
 }
+
+/** Retire un message d'une requête (son auteur ou un Mestre — RLS). */
+export async function deleteTicketMessage(id: string): Promise<void> {
+  const { error } = await supabase.from('ticket_messages').delete().eq('id', id)
+  if (error) throw asError('suppression', error)
+}

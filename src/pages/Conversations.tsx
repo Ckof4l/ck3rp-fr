@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { getHouse } from '../lib/houses'
 import { fmtDate } from '../lib/format'
@@ -13,6 +14,7 @@ import {
   leaveConversation,
   listMembers,
   addMember,
+  deleteMessage,
   type Conversation,
   type ConvMessage,
   type ConvMember,
@@ -36,6 +38,18 @@ export function Conversations() {
   const [loading, setLoading] = useState(true)
   const [openId, setOpenId] = useState<string | null>(null)
   const [composing, setComposing] = useState(false)
+  const [params, setParams] = useSearchParams()
+  const inviter = params.get('inviter')
+
+  // Arrivée depuis « Inviter à une conversation » sur une fiche de personnage :
+  // on ouvre directement le formulaire (le joueur sera pré-coché en privé).
+  useEffect(() => {
+    if (inviter && inviter !== meId) setComposing(true)
+  }, [inviter, meId])
+
+  const clearInviter = useCallback(() => {
+    if (inviter) { params.delete('inviter'); setParams(params, { replace: true }) }
+  }, [inviter, params, setParams])
 
   const refresh = useCallback(async () => {
     setConvs(await listConversations())
@@ -88,8 +102,9 @@ export function Conversations() {
           <CreateForm
             meId={meId}
             players={players}
-            onDone={async (id) => { setComposing(false); await refresh(); if (id) setOpenId(id) }}
-            onCancel={() => setComposing(false)}
+            initialMember={inviter && inviter !== meId ? inviter : null}
+            onDone={async (id) => { setComposing(false); clearInviter(); await refresh(); if (id) setOpenId(id) }}
+            onCancel={() => { setComposing(false); clearInviter() }}
           />
         ) : (
           <button className="btn-seal" style={{ marginBottom: 18 }} onClick={() => setComposing(true)}>
@@ -259,6 +274,16 @@ export function ConversationView({
                     <CharLink id={m.author_profile} className="c-who">{m.author?.character_name ?? 'Inconnu'}</CharLink>
                     <span className="c-house">Maison {h.nom}</span>
                     <span className="c-date">{fmtDate(m.created_at)}</span>
+                    {(mine || isAdmin) && (
+                      <button
+                        className="c-del"
+                        title="Supprimer"
+                        style={{ marginLeft: 'auto' }}
+                        onClick={() => confirm('Supprimer ce message ?') && deleteMessage(m.id).then(() => load())}
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
                   <div className="c-body">{m.body}</div>
                 </div>
@@ -293,17 +318,19 @@ export function ConversationView({
 function CreateForm({
   meId,
   players,
+  initialMember,
   onDone,
   onCancel,
 }: {
   meId: string
   players: Profile[]
+  initialMember?: string | null
   onDone: (id?: string) => void
   onCancel: () => void
 }) {
   const [title, setTitle] = useState('')
-  const [isPrivate, setIsPrivate] = useState(false)
-  const [members, setMembers] = useState<string[]>([])
+  const [isPrivate, setIsPrivate] = useState(!!initialMember)
+  const [members, setMembers] = useState<string[]>(initialMember && initialMember !== meId ? [initialMember] : [])
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState('')
 
