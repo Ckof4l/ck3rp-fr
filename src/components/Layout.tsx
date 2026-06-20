@@ -113,6 +113,13 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
 
       {cats.map(({ category, channels }) => (
         <div key={category}>
+          {/* Alliance se place juste avant « Le Royaume ». */}
+          {category === 'Le Royaume' && (
+            <>
+              <div className="side-cat">Alliance</div>
+              <SideLink to="/alliances" icon="🤝" ico="/icons/alliances.png?v=1" label="Alliances" onClick={onNavigate} />
+            </>
+          )}
           <div className="side-cat">{category}</div>
           {channels.map((c) => (
             <SideLink
@@ -135,10 +142,6 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
           )}
         </div>
       ))}
-
-      <div className="side-cat">Alliance</div>
-      <SideLink to="/alliances" icon="🤝" label="Alliances" onClick={onNavigate} />
-      <SideLink to="/pactes" icon="🤝" ico="/icons/pactes.png?v=2" label="Pactes" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
       <SideLink to="/scrutins" icon="🗳️" ico="/icons/scrutins.png?v=2" label="Scrutins" onClick={onNavigate} />
