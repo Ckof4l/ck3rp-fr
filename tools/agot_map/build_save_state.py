@@ -19,10 +19,25 @@ ERA = sys.argv[2] if len(sys.argv) > 2 else "An 1 après le Fléau"
 
 # Teinte fixe imposée à certaines grandes régions (par-dessus la couleur de facto).
 REGION_TINT = {
-    "e_the_north":      (236, 238, 240),  # blanc
-    "e_the_reach":      (76, 165, 80),    # vert
-    "e_the_riverlands": (34, 68, 140),    # bleu sombre (Trident)
+    "e_the_north": (236, 238, 240),  # blanc
+    "e_the_reach": (76, 165, 80),    # vert
 }
+
+# Le « Trident » du RP regroupe Conflans + Terres de l'Orage + Terres de la Couronne,
+# en bleu sombre — SAUF la Pince (k_the_claw) et Peyredragon (k_dragonstone),
+# qui gardent leur couleur de royaume.
+TRIDENT_BLUE = (34, 68, 140)
+TRIDENT_EMPIRES = {"e_the_riverlands", "e_the_stormlands", "e_the_crownlands"}
+TRIDENT_EXCLUDE_KINGDOMS = {"k_the_claw", "k_dragonstone"}
+
+def region_tint(info):
+    """Teinte fixe d'une province selon sa grande région / son royaume de-jure."""
+    t = REGION_TINT.get(info.get("r"))
+    if t:
+        return t
+    if info.get("r") in TRIDENT_EMPIRES and info.get("k") not in TRIDENT_EXCLUDE_KINGDOMS:
+        return TRIDENT_BLUE
+    return None
 
 # Noms FR de secours pour les titres d'empire/royaume non localisés dans la save.
 NAMES_FR = {
@@ -283,7 +298,7 @@ def main():
             info = prov.get(str(pid))
             if not info:
                 continue
-            tint = REGION_TINT.get(info.get("r"))  # Nord blanc / Bief vert / Trident bleu
+            tint = region_tint(info)  # Nord blanc / Bief vert / Trident bleu élargi
             cr = county_realm.get(info.get("ck"))
             if not cr:
                 opx[x, y] = tint or (70, 70, 78)  # terre sans détenteur connu

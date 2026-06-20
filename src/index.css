@@ -968,7 +968,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   align-items: start;
 }
 .carte-stage {
-  height: min(86vh, 980px);
+  height: min(90vh, 1320px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:

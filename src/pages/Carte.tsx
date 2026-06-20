@@ -24,7 +24,7 @@ interface SitePlayer { id: string; name: string; house: string; king: boolean }
 /* Version des données de carte (public/carte/*). À incrémenter à chaque
    régénération pour casser le cache du navigateur (évitait l'affichage incohérent
    de l'index.png à la place de la carte colorée). */
-const CV = '?v=5'
+const CV = '?v=6'
 
 /* ============================================================================
    La Carte — carte politique interactive de Westeros (mod AGOT).
@@ -227,7 +227,7 @@ export function Carte() {
           HIDE_FROM_LEGEND,
         )
         setLoading(false)
-        requestAnimationFrame(() => { resize(); const lb = layersRef.current.dejure!.landBox; if (lb.count) fitTo(lb, 0.06) })
+        requestAnimationFrame(() => { resize(); const lb = layersRef.current.dejure!.landBox; if (lb.count) fitTo(lb, 0.03) })
 
         // Calque « partie » (facultatif : présent seulement si une save a été importée).
         try {
@@ -276,7 +276,7 @@ export function Carte() {
     highlightRef.current = null
     setHover(null); setSelected(null)
     const L = layersRef.current[mode]
-    if (L) { draw(); if (L.landBox.count) fitTo(L.landBox, 0.06) }
+    if (L) { draw(); if (L.landBox.count) fitTo(L.landBox, 0.03) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode])
 
@@ -447,7 +447,7 @@ export function Carte() {
             <div className="carte-zoom">
               <button onClick={() => zoomBtn(1.3)} aria-label="Zoom avant">＋</button>
               <button onClick={() => zoomBtn(1 / 1.3)} aria-label="Zoom arrière">－</button>
-              <button onClick={() => L && fitTo(L.landBox, 0.06)} aria-label="Vue d'ensemble">⤢</button>
+              <button onClick={() => L && fitTo(L.landBox, 0.03)} aria-label="Vue d'ensemble">⤢</button>
             </div>
             {hover && L && hover.px > -500 && (
               <div className="carte-tip" style={{ left: hover.px + 14, top: hover.py + 14 }}>

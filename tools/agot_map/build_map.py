@@ -236,6 +236,7 @@ def main():
                     "c": names.get(c, c) if c else None,
                     "ck": c,  # clé du comté (jointure avec la sauvegarde)
                     "r": r,
+                    "k": t.get("k"),  # royaume de-jure (pour teintes par royaume)
                 }
 
     political.save(os.path.join(OUT, "political.png"))
