@@ -65,7 +65,9 @@ export function ChannelFeed() {
           ? '/bg/rumeurs.jpg'
           : channel?.key === 'lore'
             ? '/bg/pages/lore.jpg'
-            : null
+            : channel?.kind === 'decree'
+              ? `/bg/pages/${channel.key}.jpg` // decret-royal / decret-noble
+              : null
     if (bg) {
       el.style.setProperty('--region-bg', `url(${bg})`)
       // Les régions se calent en haut ; les scènes peintes (Rumeurs, Lore) au centre.
