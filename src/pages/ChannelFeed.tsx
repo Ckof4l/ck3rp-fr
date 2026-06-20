@@ -54,11 +54,18 @@ export function ChannelFeed() {
     if (channel) markSeen(channel.key)
   }, [refresh, channel, markSeen])
 
-  // Fond propre à la région : la colonne de contenu prend la scène du royaume.
+  // Fond propre au salon : la colonne de contenu prend une scène peinte.
+  // Les régions ont leur royaume ; Rumeurs prend sa taverne.
   useEffect(() => {
     const el = document.documentElement
-    if (channel?.kind === 'region') {
-      el.style.setProperty('--region-bg', `url(/bg/regions/${channel.key}.jpg)`)
+    const bg =
+      channel?.kind === 'region'
+        ? `/bg/regions/${channel.key}.jpg`
+        : channel?.key === 'rumeurs'
+          ? '/bg/rumeurs.jpg'
+          : null
+    if (bg) {
+      el.style.setProperty('--region-bg', `url(${bg})`)
       el.setAttribute('data-region', '')
     }
     return () => {
