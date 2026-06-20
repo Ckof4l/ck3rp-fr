@@ -5,7 +5,7 @@ import { supabase } from './supabase'
    Convention : le challenger prend PILE, l'adversaire prend FACE.
    ========================================================================== */
 
-export type DuelStatus = 'pending' | 'done' | 'declined'
+export type DuelStatus = 'awaiting' | 'pending' | 'done' | 'declined'
 
 export interface Party {
   character_name: string
@@ -62,6 +62,12 @@ export async function resolveDuel(duelId: string, accept: boolean): Promise<stri
   const { data, error } = await supabase.rpc('resolve_duel', { p_duel: duelId, p_accept: accept })
   if (error) throw asError('réponse', error)
   return data as string
+}
+
+/** Valider / refuser un duel en attente de validation (Mestre). */
+export async function validateDuel(id: string, accept: boolean): Promise<void> {
+  const { error } = await supabase.rpc('validate_duel', { p_duel: id, p_accept: accept })
+  if (error) throw asError('validation', error)
 }
 
 /** Annule un duel encore en attente (le provocateur seul). */

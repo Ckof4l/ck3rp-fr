@@ -4,7 +4,7 @@ import { getHouse } from '../lib/houses'
 import { getChannel, playerRealm } from '../lib/channels'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
-import { listPolls, createPoll, castVote, closePoll, deletePoll, type Poll } from '../lib/polls'
+import { listPolls, createPoll, castVote, closePoll, deletePoll, validatePoll, type Poll } from '../lib/polls'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
@@ -127,6 +127,7 @@ export function Scrutins() {
               poll={p}
               meId={meId}
               now={now}
+              isAdmin={isAdmin}
               mineRealm={p.is_global || p.realm === myRealm}
               canVote={canVotePoll(p)}
               canManage={isAdmin || p.author_profile === meId}
@@ -144,6 +145,7 @@ function PollCard({
   poll,
   meId,
   now,
+  isAdmin,
   mineRealm,
   canVote,
   canManage,
@@ -153,6 +155,7 @@ function PollCard({
   poll: Poll
   meId: string
   now: number
+  isAdmin: boolean
   mineRealm: boolean
   canVote: boolean
   canManage: boolean
@@ -188,7 +191,11 @@ function PollCard({
           {poll.is_hrp ? 'HRP' : 'RP'}
         </span>
         <h3 className="pact-title" style={{ margin: 0 }}>{poll.title}</h3>
-        {poll.open ? (
+        {poll.status === 'pending' ? (
+          <span className="tk-badge wait">⏳ En attente d'un Mestre</span>
+        ) : poll.status === 'refused' ? (
+          <span className="tk-badge no">✗ Refusé par un Mestre</span>
+        ) : poll.open ? (
           <span className="tk-badge wait">🔒 Scellé · {countdown(poll.closes_at, now)}</span>
         ) : (
           <span className="tk-badge ok">✓ Dépouillé</span>
@@ -238,8 +245,14 @@ function PollCard({
         {!poll.revealed && mineRealm && poll.open && canVote && (
           <span style={{ color: '#C7B894', fontSize: 12 }}>{poll.hasVoted ? '✓ Ton vote est enregistré (modifiable).' : 'Clique un choix pour voter.'}</span>
         )}
-        {(canManage || canDelete) && (
+        {(canManage || canDelete || (isAdmin && poll.status === 'pending')) && (
           <span style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+            {isAdmin && poll.status === 'pending' && (
+              <>
+                <button className="tiny good" onClick={() => validatePoll(poll.id, true).then(onChanged)}>✓ Valider</button>
+                <button className="tiny danger" onClick={() => validatePoll(poll.id, false).then(onChanged)}>✗ Refuser</button>
+              </>
+            )}
             {canManage && poll.open && <button className="tiny" onClick={() => closePoll(poll.id).then(onChanged)}>🔓 Clore & révéler</button>}
             {canDelete && <button className="tiny danger" onClick={() => confirm('Supprimer ce scrutin et ses votes ?') && deletePoll(poll.id).then(onChanged)}>🗑️ Supprimer</button>}
           </span>

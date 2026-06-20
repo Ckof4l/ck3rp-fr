@@ -17,7 +17,7 @@ export interface Poll {
   title: string
   description: string
   author_profile: string
-  status: 'open' | 'closed'
+  status: 'pending' | 'open' | 'closed' | 'refused'
   closes_at: string
   created_at: string
   is_global: boolean
@@ -107,6 +107,12 @@ export async function castVote(pollId: string, optionId: string, meId: string): 
     .from('poll_votes')
     .upsert({ poll_id: pollId, option_id: optionId, profile_id: meId }, { onConflict: 'poll_id,profile_id' })
   if (error) throw asError('vote', error)
+}
+
+/** Valider / refuser un scrutin en attente (Mestre). */
+export async function validatePoll(id: string, accept: boolean): Promise<void> {
+  const { error } = await supabase.rpc('validate_poll', { p_poll: id, p_accept: accept })
+  if (error) throw asError('validation', error)
 }
 
 export async function closePoll(id: string): Promise<void> {

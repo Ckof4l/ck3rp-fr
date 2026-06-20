@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { getHouse } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { supabase } from '../lib/supabase'
-import { listDuels, createDuel, resolveDuel, cancelDuel, deleteDuel, type Duel } from '../lib/duels'
+import { listDuels, createDuel, resolveDuel, cancelDuel, validateDuel, deleteDuel, type Duel } from '../lib/duels'
 import { listPlayers } from '../lib/directory'
 import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
@@ -44,9 +44,10 @@ export function Sort() {
     }
   }, [refresh])
 
+  const toValidate = duels.filter((d) => d.status === 'awaiting') // visibles aux Mestres + au provocateur
   const incoming = duels.filter((d) => d.status === 'pending' && d.opponent === meId)
-  const outgoing = duels.filter((d) => d.status === 'pending' && d.challenger === meId)
-  const resolved = duels.filter((d) => d.status !== 'pending')
+  const outgoing = duels.filter((d) => (d.status === 'pending' || d.status === 'awaiting') && d.challenger === meId)
+  const resolved = duels.filter((d) => d.status === 'done' || d.status === 'declined')
 
   return (
     <section>
@@ -74,6 +75,23 @@ export function Sort() {
         <p className="hint">Mode observateur — tu peux lire le registre mais pas défier.</p>
       )}
 
+      {isAdmin && toValidate.length > 0 && (
+        <>
+          <h3 className="section-h" style={{ fontSize: 12, marginTop: 8 }}>⚖️ À valider</h3>
+          <div className="ravens" style={{ marginBottom: 18 }}>
+            {toValidate.map((d) => (
+              <div key={d.id} className="report-card" style={{ borderColor: 'var(--gold-dim)' }}>
+                <DuelLine duel={d} />
+                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                  <button className="tiny good" onClick={() => validateDuel(d.id, true).then(refresh)}>✓ Valider le duel</button>
+                  <button className="tiny danger" onClick={() => validateDuel(d.id, false).then(refresh)}>✗ Refuser</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {incoming.length > 0 && (
         <>
           <h3 className="section-h" style={{ fontSize: 12, marginTop: 8 }}>⚔️ Défis reçus</h3>
@@ -93,7 +111,9 @@ export function Sort() {
               <div key={d.id} className="report-card" style={{ borderColor: 'var(--line)' }}>
                 <DuelLine duel={d} />
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginTop: 6 }}>
-                  <span style={{ color: '#9C8F71', fontSize: 12 }}>En attente de la réponse de l'adversaire…</span>
+                  <span style={{ color: '#9C8F71', fontSize: 12 }}>
+                    {d.status === 'awaiting' ? '⏳ En attente de validation d\'un Mestre…' : 'En attente de la réponse de l\'adversaire…'}
+                  </span>
                   <button className="tiny danger" style={{ marginLeft: 'auto' }} onClick={() => cancelDuel(d.id).then(refresh)}>✖ Annuler</button>
                 </div>
               </div>
