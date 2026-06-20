@@ -177,8 +177,13 @@ function lockReason(key: string): string {
 
 function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
   const h = getHouse(post.author?.house)
+  const col = h.col || '#7C715A'
   return (
-    <button className="post-card" onClick={onOpen}>
+    <button
+      className="post-card"
+      onClick={onOpen}
+      style={{ background: `linear-gradient(${col}22, ${col}3C), #1C150E`, borderColor: `${col}66` }}
+    >
       <Seal house={post.author?.house} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="post-meta">
