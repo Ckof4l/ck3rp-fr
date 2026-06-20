@@ -63,11 +63,13 @@ export function ChannelFeed() {
         ? `/bg/regions/${channel.key}.jpg`
         : channel?.key === 'rumeurs'
           ? '/bg/rumeurs.jpg'
-          : null
+          : channel?.key === 'lore'
+            ? '/bg/pages/lore.jpg'
+            : null
     if (bg) {
       el.style.setProperty('--region-bg', `url(${bg})`)
-      // Rumeurs : la scène (les gens attablés) est au centre du tableau → on la centre.
-      el.style.setProperty('--region-bg-pos', channel?.key === 'rumeurs' ? 'center center' : 'center top')
+      // Les régions se calent en haut ; les scènes peintes (Rumeurs, Lore) au centre.
+      el.style.setProperty('--region-bg-pos', channel?.kind === 'region' ? 'center top' : 'center center')
       el.setAttribute('data-region', '')
     }
     return () => {

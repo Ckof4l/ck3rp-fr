@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import { usePageBg } from './lib/usePageBg'
 import { UnreadProvider } from './context/UnreadContext'
 import { Layout } from './components/Layout'
 import { Gate } from './pages/Gate'
@@ -31,6 +32,21 @@ const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin
    - Connecté : la coquille (Layout) avec les rubriques.
    ========================================================================== */
 
+/* Fond de scène par page (les salons /c/* sont gérés par ChannelFeed). */
+const PAGE_BG: Record<string, string> = {
+  '/alliances': '/bg/pages/alliances.jpg',
+  '/chroniques': '/bg/pages/chroniques.jpg',
+  '/armorial': '/bg/pages/annuaire.jpg',
+  '/joueurs': '/bg/pages/annuaire.jpg',
+  '/scrutins': '/bg/pages/scrutins.jpg',
+  '/sort': '/bg/pages/sort.jpg',
+  '/requetes': '/bg/pages/requetes.jpg',
+  '/destin': '/bg/pages/destin.jpg',
+  '/chancellerie': '/bg/pages/chancellerie.jpg',
+  '/conversations': '/bg/pages/conversations.jpg',
+  '/hrp': '/bg/pages/hrp.jpg',
+}
+
 function FullScreen({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', padding: 24 }}>
@@ -42,6 +58,7 @@ function FullScreen({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { session, profile, ban, loading, configured } = useAuth()
   const location = useLocation()
+  usePageBg(PAGE_BG[location.pathname] ?? null)
 
   if (loading) {
     return (
