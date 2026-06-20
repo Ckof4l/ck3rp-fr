@@ -211,6 +211,7 @@ export function Carte() {
             new Set(),
           )
           setHasSave(true)
+          setMode('save')  // l'an 1 après le Fléau est la vue principale
         } catch { /* pas de save importée : seul le calque de jure existe */ }
       } catch (e) {
         if (alive) setError(e instanceof Error ? e.message : String(e))
@@ -361,12 +362,12 @@ export function Carte() {
         <h1 style={{ margin: 0 }}>La Carte de Westeros</h1>
       </div>
 
-      {/* Bascule de calque */}
+      {/* Bascule de calque — l'an 1 après le Fléau (la partie) est la vue principale */}
       <div className="carte-modes">
-        <button className={mode === 'dejure' ? 'on' : ''} onClick={() => setMode('dejure')}>Grandes régions</button>
         <button className={mode === 'save' ? 'on' : ''} disabled={!hasSave} onClick={() => setMode('save')}>
-          {hasSave && sm ? `⚔️ La partie (an ${sm.date.split('.')[0]})` : '⚔️ La partie'}
+          ⚔️ An 1 après le Fléau
         </button>
+        <button className={mode === 'dejure' ? 'on' : ''} onClick={() => setMode('dejure')}>Grandes régions</button>
       </div>
 
       {mode === 'save' && sm && (
