@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useUnread } from '../context/UnreadContext'
 import { getChannel, canPostChannel, canComment, isMuted } from '../lib/channels'
-import { getHouse } from '../lib/houses'
+import { getHouse, regionColor } from '../lib/houses'
 import { fmtDate } from '../lib/format'
 import { publicImageUrl, supabase } from '../lib/supabase'
 import {
@@ -177,7 +177,7 @@ function lockReason(key: string): string {
 
 function PostCard({ post, onOpen }: { post: PostRow; onOpen: () => void }) {
   const h = getHouse(post.author?.house)
-  const col = h.col || '#7C715A'
+  const col = regionColor(h.region)
   return (
     <button
       className="post-card"

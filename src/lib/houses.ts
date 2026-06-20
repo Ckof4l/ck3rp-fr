@@ -125,6 +125,24 @@ export function getHouse(key: string | null | undefined): House {
   return (key && HOUSES[key]) || HOUSES[FREE_HOUSE_KEY]
 }
 
+/** Couleur emblématique d'un royaume : tous les vassaux d'une région la partagent
+   (teinte des cartes de message). Clé = House.region. */
+export const REGION_COLORS: Record<string, string> = {
+  'Le Nord': '#7E8B99',                 // gris-glace Stark
+  'La Montagne et le Val': '#4F79B0',   // bleu ciel Arryn
+  'Le Roc': '#A32E28',                  // rouge Lannister
+  'Le Trident': '#2F5D9E',              // bleu rivière
+  'Le Bief': '#3F8A4E',                 // vert Jardinier
+  'Dorne': '#D08A2A',                   // orange Martell
+  'Les Îles de Fer': '#3F525C',         // ardoise des Fer-nés
+  'Peyredragon': '#7A241F',             // rouge braise Targaryen
+}
+
+/** Couleur du royaume d'une maison (repli neutre hors allégeance). */
+export function regionColor(region: string | null | undefined): string {
+  return (region && REGION_COLORS[region]) || '#7C715A'
+}
+
 /** Liste des maisons groupées par région, dans l'ordre de déclaration. */
 export function housesByRegion(): { region: string; houses: House[] }[] {
   const order: string[] = []
