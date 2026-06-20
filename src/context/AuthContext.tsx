@@ -50,6 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     let mounted = true
 
+    // Filet de sécurité : quoi qu'il arrive (getSession ou loadProfile qui pend,
+    // réseau, jeton bloqué), le spinner ne doit JAMAIS tourner indéfiniment.
+    const safety = setTimeout(() => {
+      if (mounted) setLoading(false)
+    }, 6000)
+
     // detectSessionInUrl traite le retour OAuth (#access_token) ; getSession
     // récupère la session (de l'URL au 1ᵉʳ retour, du stockage ensuite).
     supabase.auth
@@ -57,23 +63,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(async ({ data }) => {
         if (!mounted) return
         setSession(data.session)
-        if (data.session?.user) await loadProfile(data.session.user.id)
+        // Le chargement du profil ne doit pas pouvoir bloquer le spinner :
+        // s'il traîne, on laisse l'app s'ouvrir (le profil arrivera en arrière-plan).
+        if (data.session?.user) {
+          await Promise.race([
+            loadProfile(data.session.user.id),
+            new Promise((r) => setTimeout(r, 5000)),
+          ])
+        }
       })
       // Une session illisible (réseau, jeton expiré) ne doit pas figer le spinner.
       .catch(() => {})
       .finally(() => {
-        if (mounted) setLoading(false)
+        if (mounted) {
+          clearTimeout(safety)
+          setLoading(false)
+        }
       })
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, newSession) => {
       if (!mounted) return
       setSession(newSession)
-      if (newSession?.user) await loadProfile(newSession.user.id)
-      else setProfile(null)
+      // IMPORTANT : ne JAMAIS appeler d'autres méthodes supabase directement dans
+      // ce callback — il s'exécute sous le verrou d'auth et un appel imbriqué peut
+      // le deadlocker (spinner figé). On diffère donc loadProfile hors du callback.
+      if (newSession?.user) {
+        const uid = newSession.user.id
+        setTimeout(() => { if (mounted) loadProfile(uid) }, 0)
+      } else {
+        setProfile(null)
+      }
     })
 
     return () => {
       mounted = false
+      clearTimeout(safety)
       sub.subscription.unsubscribe()
     }
   }, [loadProfile])
