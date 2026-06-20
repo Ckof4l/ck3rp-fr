@@ -24,6 +24,23 @@ REGION_TINT = {
     "e_the_riverlands": (34, 68, 140),    # bleu sombre (Trident)
 }
 
+# Noms FR de secours pour les titres d'empire/royaume non localisés dans la save.
+NAMES_FR = {
+    "e_the_north": "Le Nord", "e_the_vale": "Le Val", "e_the_westerlands": "Les Terres de l'Ouest",
+    "e_the_riverlands": "Le Conflans", "e_the_reach": "Le Bief", "e_dorne": "Dorne",
+    "e_the_iron_islands": "Les Îles de Fer", "e_the_stormlands": "Les Terres de l'Orage",
+    "e_the_crownlands": "Les Terres de la Couronne", "e_the_wall": "Le Mur",
+    "e_beyond_the_wall": "Au-delà du Mur", "k_dragonstone": "Peyredragon",
+}
+
+def pretty_name(key, raw):
+    if raw and raw != key and not raw.startswith(("e_", "k_", "d_", "c_")):
+        return raw
+    if key in NAMES_FR:
+        return NAMES_FR[key]
+    s = key.split("_", 1)[1] if "_" in key else key
+    return s.replace("_", " ").title()
+
 # ---------------------------------------------------------------- couleurs nommées
 GAME = r"D:/Games/steamapps/common/Crusader Kings III/game"
 
@@ -206,7 +223,7 @@ def main():
         rt = titles.get(rtid, {})
         rkey = rt.get("key") or ("realm_" + str(rtid))
         color = coa_color.get(rt.get("coa")) or (130, 130, 130)
-        rname = rt.get("name") or rkey
+        rname = pretty_name(rkey, rt.get("name"))
         if rkey not in realms:
             realms[rkey] = {"name": rname, "color": list(color),
                             "ruler": holder_label(rt.get("holder"))}
@@ -256,6 +273,7 @@ def main():
     out = Image.new("RGB", (W, H), (12, 16, 24))
     opx = out.load()
     prov_json = {}
+    realm_region = {}  # royaume -> compteur de grandes régions de jure
     for y in range(H):
         for x in range(W):
             r, g, b = ipx[x, y]
@@ -271,8 +289,16 @@ def main():
                 opx[x, y] = tint or (70, 70, 78)  # terre sans détenteur connu
                 continue
             opx[x, y] = tint or tuple(realms[cr["realm"]]["color"])
+            reg = info.get("r")
+            if reg:
+                rc = realm_region.setdefault(cr["realm"], {})
+                rc[reg] = rc.get(reg, 0) + 1
             if str(pid) not in prov_json:
                 prov_json[str(pid)] = {"realm": cr["realm"], "holder": cr["holder"]}
+    # grande région dominante de chaque royaume (pour rattacher les joueurs du site)
+    for rk, counts in realm_region.items():
+        if rk in realms:
+            realms[rk]["region"] = max(counts, key=counts.get)
     out.save(os.path.join(OUT, "political_save.png"))
 
     save_json = {

@@ -36,6 +36,13 @@ REGION_FR = {
     "e_the_wall":         "Le Mur",
 }
 
+# Grandes régions de Westeros à conserver (exclut Essos, Stepstones via e_narrow_sea, junk).
+WESTEROS = {
+    "e_the_north", "e_the_vale", "e_the_westerlands", "e_the_riverlands", "e_the_reach",
+    "e_dorne", "e_the_iron_islands", "e_the_stormlands", "e_the_crownlands", "e_the_wall",
+    "e_beyond_the_wall",
+}
+
 # Couleurs imposées pour certaines grandes régions (priorité sur la couleur du mod).
 REGION_COLOR = {
     "e_the_north":      [236, 238, 240],  # blanc
@@ -194,7 +201,7 @@ def main():
     regions = {}
     for pid, t in prov2title.items():
         r = region_of(t)
-        if r and r not in regions:
+        if r and r in WESTEROS and r not in regions:
             col = REGION_COLOR.get(r) or title_color.get(r, [128, 128, 128])
             name = REGION_FR.get(r) or names.get(r) or pretty(r)
             regions[r] = {"name": name, "color": col}
@@ -219,8 +226,8 @@ def main():
                 continue
             t = prov2title.get(pid)
             r = region_of(t) if t else None
-            if not r:
-                continue  # mer / hors région -> fond
+            if not r or r not in WESTEROS:
+                continue  # mer / Essos / Stepstones / hors Westeros -> fond
             pol[x, y] = tuple(regions[r]["color"])
             idx[x, y] = (pid & 255, (pid >> 8) & 255, 0)
             if pid not in provinces_json:

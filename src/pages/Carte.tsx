@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 import { playerRealm } from '../lib/channels'
 import { getHouse } from '../lib/houses'
+import { createConversation } from '../lib/conversations'
+import { createTicket } from '../lib/tickets'
 
 /* Correspondance clé de salon régional du site → grande région (empire) de la carte. */
 const SITE_TO_REGION: Record<string, string> = {
@@ -15,7 +19,7 @@ const SITE_TO_REGION: Record<string, string> = {
   'peyredragon': 'e_the_crownlands',
 }
 
-interface SitePlayer { name: string; house: string; king: boolean }
+interface SitePlayer { id: string; name: string; house: string; king: boolean }
 
 /* ============================================================================
    La Carte — carte politique interactive de Westeros (mod AGOT).
@@ -27,7 +31,7 @@ interface SitePlayer { name: string; house: string; king: boolean }
    Hit-test commun via index.png (province_id encodé R+G*256).
    ========================================================================== */
 
-interface RegionInfo { name: string; color: [number, number, number]; ruler?: string | null; lords?: { name: string; title: string }[] }
+interface RegionInfo { name: string; color: [number, number, number]; ruler?: string | null; region?: string; lords?: { name: string; title: string }[] }
 interface DeJureProv { c: string | null; ck: string | null; r: string }
 interface SaveProv { realm: string; holder: string | null }
 interface MapData { meta: { width: number; height: number }; regions: Record<string, RegionInfo>; provinces: Record<string, DeJureProv> }
@@ -71,9 +75,31 @@ export function Carte() {
   const [, force] = useState(0)
   const [hover, setHover] = useState<{ region: string; sub: string | null; px: number; py: number } | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
-  // Grande région (de jure) de la zone cliquée — sert à retrouver les joueurs du site.
-  const [clickRegion, setClickRegion] = useState<string | null>(null)
   const [players, setPlayers] = useState<Record<string, SitePlayer[]>>({})
+  const [showVassals, setShowVassals] = useState(false)
+  const [openPlayer, setOpenPlayer] = useState<string | null>(null)
+  const navigate = useNavigate()
+  const { profile } = useAuth()
+
+  const startConv = async (p: SitePlayer, hrp: boolean) => {
+    try {
+      await createConversation(`${hrp ? 'HRP' : 'RP'} — ${p.name}`, true, [p.id])
+      navigate('/conversations')
+    } catch (e) {
+      alert('Échec de la conversation : ' + (e instanceof Error ? e.message : String(e)))
+    }
+  }
+  const reportPlayer = async (p: SitePlayer) => {
+    if (!profile) return
+    const reason = window.prompt(`Signaler ${p.name} aux Mestres — raison :`)
+    if (!reason) return
+    try {
+      await createTicket({ meId: profile.id, category: 'signalement', subject: `Signalement — ${p.name}`, body: reason })
+      alert('Signalement transmis aux Mestres.')
+    } catch (e) {
+      alert('Échec du signalement : ' + (e instanceof Error ? e.message : String(e)))
+    }
+  }
 
   const layer = (): Layer | null => layersRef.current[mode]
 
@@ -256,16 +282,16 @@ export function Carte() {
     let alive = true
     supabase
       .from('profiles')
-      .select('character_name, house, is_king')
+      .select('id, character_name, house, is_king')
       .eq('onboarded', true)
       .then(({ data }) => {
         if (!alive || !data) return
         const by: Record<string, SitePlayer[]> = {}
-        for (const p of data as { character_name: string; house: string; is_king: boolean }[]) {
+        for (const p of data as { id: string; character_name: string; house: string; is_king: boolean }[]) {
           const sk = playerRealm({ house: p.house } as never)
           const rk = sk ? SITE_TO_REGION[sk] : null
           if (!rk) continue
-          ;(by[rk] ??= []).push({ name: p.character_name, house: p.house, king: !!p.is_king })
+          ;(by[rk] ??= []).push({ id: p.id, name: p.character_name, house: p.house, king: !!p.is_king })
         }
         for (const k of Object.keys(by)) by[k].sort((a, b) => Number(b.king) - Number(a.king))
         setPlayers(by)
@@ -321,8 +347,7 @@ export function Carte() {
       const { ix, iy } = toImage(e.clientX, e.clientY)
       const pid = pidAt(ix, iy)
       const k = pid ? L.provKey(pid) : null
-      // grande région de jure de la zone (pour les joueurs du site)
-      setClickRegion(pid ? layersRef.current.dejure?.provKey(pid) ?? null : null)
+      setShowVassals(false)
       if (k) { ensureHighlight(k); setSelected(k) } else setSelected(null)
     }
   }
@@ -352,18 +377,20 @@ export function Carte() {
   const regionsList = L
     ? Object.entries(L.regions)
         .filter(([k]) => !L.hideKeys.has(k))
+        // En mode « partie » : seulement les royaumes (e_/k_), pas les fiefs vassaux (d_/c_).
+        .filter(([k]) => mode === 'dejure' || k.startsWith('e_') || k.startsWith('k_'))
         .map(([k, v]) => ({ key: k, ...v, count: L.boxes[k]?.count ?? 0 }))
         .filter((r) => r.count > 0)
         .sort((a, b) => b.count - a.count)
     : []
   const selInfo = selected && L ? L.regions[selected] : null
   const sm = saveMetaRef.current
-  // Joueurs du site de la zone : en mode « partie » via la grande région cliquée.
-  const panelRegion = mode === 'dejure' ? selected : clickRegion
+  // Joueurs du site de la zone : en mode « partie » via la grande région du royaume.
+  const panelRegion = mode === 'dejure' ? selected : selInfo?.region ?? null
   const panelPlayers = panelRegion ? players[panelRegion] : undefined
 
   return (
-    <div className="wrap">
+    <div className="wrap carte-page">
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap', marginBottom: 6 }}>
         <span className="kicker">Le Royaume</span>
         <h1 style={{ margin: 0 }}>La Carte de Westeros</h1>
@@ -441,10 +468,24 @@ export function Carte() {
                   <>
                     <div className="side-cat" style={{ margin: '8px 0 4px' }}>Joueurs ici ({panelPlayers.length})</div>
                     <ul className="carte-lords">
-                      {panelPlayers.map((p, i) => (
-                        <li key={i}>
-                          <span className="ln">{p.king ? '👑 ' : ''}{p.name}</span>
-                          <span className="lt">Maison {getHouse(p.house).nom}</span>
+                      {panelPlayers.map((p) => (
+                        <li key={p.id} className="carte-player">
+                          <button className="cp-name" onClick={() => setOpenPlayer(openPlayer === p.id ? null : p.id)}>
+                            <span className="ln">{p.king ? '👑 ' : ''}{p.name}</span>
+                            <span className="lt">Maison {getHouse(p.house).nom}</span>
+                          </button>
+                          {openPlayer === p.id && p.id !== profile?.id && (
+                            <div className="cp-actions">
+                              <button onClick={() => navigate('/personnage/' + p.id)}>👤 Profil</button>
+                              <button onClick={() => navigate('/chancellerie?to=' + p.id)}>🐦‍⬛ Corbeau</button>
+                              <button onClick={() => startConv(p, false)}>🎭 Conv. RP</button>
+                              <button onClick={() => startConv(p, true)}>🗨️ Conv. HRP</button>
+                              <button onClick={() => reportPlayer(p)}>🚩 Signaler</button>
+                            </div>
+                          )}
+                          {openPlayer === p.id && p.id === profile?.id && (
+                            <div className="cp-actions"><span style={{ color: 'var(--muted)', fontSize: 12, padding: '2px 4px' }}>C'est toi.</span></div>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -453,6 +494,20 @@ export function Carte() {
                   <p style={{ margin: '8px 0 0', fontSize: 13, color: 'var(--muted)' }}>
                     Aucun joueur du site dans cette région pour l'instant.
                   </p>
+                )}
+                {mode === 'save' && selInfo.lords && selInfo.lords.length > 0 && (
+                  <>
+                    <button className="carte-vassals-toggle" onClick={() => setShowVassals((v) => !v)}>
+                      {showVassals ? '▾' : '▸'} Vassaux du royaume ({selInfo.lords.length})
+                    </button>
+                    {showVassals && (
+                      <ul className="carte-lords">
+                        {selInfo.lords.map((l, i) => (
+                          <li key={i}><span className="ln">{l.name}</span><span className="lt">{l.title}</span></li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
                 )}
                 <button className="linkbtn" style={{ marginTop: 8 }} onClick={() => setSelected(null)}>Fermer</button>
               </div>
