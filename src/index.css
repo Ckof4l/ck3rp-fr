@@ -98,7 +98,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 /* ============================================================================
    COQUILLE — barre du haut + barre latérale (type Discord)
    ========================================================================== */
-.app-shell { position: relative; z-index: 1; min-height: 100vh; }
+.app-shell { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
 
 .site-banner {
   background: linear-gradient(#8E2F2A, #6E211D);
@@ -133,7 +133,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .badge.king { background: linear-gradient(#E7C04A, #A9791F); }
 .badge.gm { background: linear-gradient(#C24A3F, #8E2F2A); color: #FCEFD9; }
 
-.app-body { display: flex; align-items: flex-start; }
+.app-body { display: flex; align-items: stretch; flex: 1; }
 
 .sidebar {
   width: 244px; flex: none;
