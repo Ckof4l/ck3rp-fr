@@ -45,6 +45,7 @@ const PAGE_BG: Record<string, string> = {
   '/chancellerie': '/bg/pages/chancellerie.jpg',
   '/conversations': '/bg/pages/conversations.jpg',
   '/hrp': '/bg/pages/hrp.jpg',
+  '/admin': '/bg/pages/citadelle.jpg',
 }
 
 function FullScreen({ children }: { children: React.ReactNode }) {
