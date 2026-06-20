@@ -20,11 +20,17 @@ MAP = {
     "velaryon": ["Velaryon"], "celtigar": ["Celtigar"],
 }
 
+# Clé CoA imposée pour certaines maisons (meilleure variante que dynn_).
+OVERRIDE = {
+    "martell": "house_Martell",  # soleil rouge + lance d'or (contraste correct)
+}
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     ok, miss = [], []
     for key, names in MAP.items():
-        cands = [f"dynn_{n}" for n in names] + [f"house_{n}" for n in names] + [f"k_{n.lower()}" for n in names]
+        cands = ([OVERRIDE[key]] if key in OVERRIDE else []) \
+            + [f"dynn_{n}" for n in names] + [f"house_{n}" for n in names] + [f"k_{n.lower()}" for n in names]
         body = None
         used = None
         for c in cands:
