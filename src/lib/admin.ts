@@ -57,23 +57,38 @@ export async function setPlayer(id: string, character: string, house: string): P
 
 export async function overview(): Promise<{
   players: number
+  houses: number
   posts: number
   letters: number
+  pacts: number
+  openPolls: number
   openReports: number
   pendingTickets: number
 }> {
   const head = { count: 'exact' as const, head: true }
-  const [players, posts, letters, openReports, pendingTickets] = await Promise.all([
-    supabase.from('profiles').select('*', head),
-    supabase.from('posts').select('*', head),
-    supabase.from('ravens').select('*', head),
-    supabase.from('reports').select('*', head).eq('resolved', false),
-    supabase.from('tickets').select('*', head).eq('status', 'pending'),
-  ])
+  const [players, posts, letters, openReports, pendingTickets, pacts, openPolls, housesData] =
+    await Promise.all([
+      supabase.from('profiles').select('*', head).eq('onboarded', true),
+      supabase.from('posts').select('*', head),
+      supabase.from('ravens').select('*', head),
+      supabase.from('reports').select('*', head).eq('resolved', false),
+      supabase.from('tickets').select('*', head).eq('status', 'pending'),
+      supabase.from('pacts').select('*', head),
+      supabase.from('polls').select('*', head).eq('status', 'open'),
+      supabase.from('profiles').select('house').eq('onboarded', true),
+    ])
+  const houses = new Set(
+    ((housesData.data as { house: string }[] | null) ?? [])
+      .map((r) => r.house)
+      .filter((h) => h && h !== 'autre'),
+  ).size
   return {
     players: players.count ?? 0,
+    houses,
     posts: posts.count ?? 0,
     letters: letters.count ?? 0,
+    pacts: pacts.count ?? 0,
+    openPolls: openPolls.count ?? 0,
     openReports: openReports.count ?? 0,
     pendingTickets: pendingTickets.count ?? 0,
   }

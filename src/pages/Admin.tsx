@@ -50,7 +50,7 @@ export function Admin() {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [letters, setLetters] = useState<AdminLetter[]>([])
   const [audit, setAudit] = useState<AuditEntry[]>([])
-  const [stats, setStats] = useState({ players: 0, posts: 0, letters: 0, openReports: 0, pendingTickets: 0 })
+  const [stats, setStats] = useState({ players: 0, houses: 0, posts: 0, letters: 0, pacts: 0, openPolls: 0, openReports: 0, pendingTickets: 0 })
   const [loading, setLoading] = useState(true)
 
   const ro = !!profile?.is_observer && !profile?.is_admin
@@ -102,9 +102,12 @@ export function Admin() {
       <h2 className="section-h">La Citadelle · {roleLabel}</h2>
 
       <div className="stat-row">
-        <Stat n={stats.players} l="Mestres" />
+        <Stat n={stats.players} l="Joueurs" />
+        <Stat n={stats.houses} l="Maisons" />
         <Stat n={stats.posts} l="Posts" />
         <Stat n={stats.letters} l="Lettres" />
+        <Stat n={stats.pacts} l="Pactes" />
+        <Stat n={stats.openPolls} l="Scrutins" highlight={stats.openPolls > 0} />
         <Stat n={stats.openReports} l="Signalements" highlight={stats.openReports > 0} />
         <Stat n={stats.pendingTickets} l="Requêtes" highlight={stats.pendingTickets > 0} />
       </div>
