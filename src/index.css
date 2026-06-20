@@ -998,3 +998,34 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   .carte-grid { grid-template-columns: 1fr; }
   .carte-stage { height: 56vh; }
 }
+
+/* ── Carte : bascule de calque + statistiques de partie ──────────────────── */
+.carte-modes { display: flex; gap: 6px; margin-bottom: 8px; }
+.carte-modes button {
+  padding: 6px 14px;
+  font-family: var(--display);
+  font-size: 13px;
+  color: var(--parch);
+  background: rgba(20, 16, 11, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.carte-modes button:hover:not(:disabled) { background: rgba(201, 162, 75, 0.12); }
+.carte-modes button.on { background: var(--gold-dim); color: #1b140a; border-color: var(--gold); font-weight: 600; }
+.carte-modes button:disabled { opacity: 0.4; cursor: not-allowed; }
+.carte-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: var(--parch);
+  background: rgba(20, 16, 11, 0.45);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.carte-stats span { white-space: nowrap; }
+.carte-side .carte-legend { max-height: min(52vh, 520px); overflow-y: auto; }

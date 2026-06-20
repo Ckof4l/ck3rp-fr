@@ -220,6 +220,7 @@ def main():
                 c = t.get("c")
                 provinces_json[pid] = {
                     "c": names.get(c, c) if c else None,
+                    "ck": c,  # clé du comté (jointure avec la sauvegarde)
                     "r": r,
                 }
 
