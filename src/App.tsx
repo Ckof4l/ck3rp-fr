@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext'
 import { UnreadProvider } from './context/UnreadContext'
 import { Layout } from './components/Layout'
 import { Gate } from './pages/Gate'
+import { Banned } from './pages/Banned'
 import { Onboarding } from './pages/Onboarding'
 import { ChannelFeed } from './pages/ChannelFeed'
 import { Charte, Mentions, Confidentialite, NotFound } from './pages/Static'
@@ -38,7 +39,7 @@ function FullScreen({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { session, profile, loading, configured } = useAuth()
+  const { session, profile, ban, loading, configured } = useAuth()
   const location = useLocation()
 
   if (loading) {
@@ -50,6 +51,11 @@ export default function App() {
         </div>
       </FullScreen>
     )
+  }
+
+  // ── Compte banni (session Discord valide mais blocage permanent) ──
+  if (session && ban) {
+    return <Banned />
   }
 
   // ── Visiteur (non connecté ou base non configurée) ──

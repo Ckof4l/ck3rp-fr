@@ -6,7 +6,10 @@ import { fmtDate } from '../lib/format'
 import {
   listProfiles,
   setRole,
-  banProfile,
+  excludeProfile,
+  banUserHard,
+  unbanUser,
+  listBanned,
   mutePlayer,
   unmutePlayer,
   setPlayer,
@@ -26,6 +29,7 @@ import {
   type ReportTarget,
   type AdminLetter,
   type AuditEntry,
+  type BannedUser,
 } from '../lib/admin'
 import { CHANNELS } from '../lib/channels'
 import { listAllTickets, decideTicket, type Ticket } from '../lib/tickets'
@@ -41,7 +45,7 @@ import { ChannelIcon } from '../components/ChannelIcon'
    Onglets : Mestres · Signalements · Zone de danger.
    ========================================================================== */
 
-type Tab = 'mestres' | 'reports' | 'tickets' | 'corbeaux' | 'journal' | 'danger'
+type Tab = 'mestres' | 'reports' | 'tickets' | 'corbeaux' | 'bannis' | 'journal' | 'danger'
 
 export function Admin() {
   const { profile, refreshProfile } = useAuth()
@@ -50,6 +54,7 @@ export function Admin() {
   const [reports, setReports] = useState<ReportRow[]>([])
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [letters, setLetters] = useState<AdminLetter[]>([])
+  const [banned, setBanned] = useState<BannedUser[]>([])
   const [audit, setAudit] = useState<AuditEntry[]>([])
   const [stats, setStats] = useState({ players: 0, houses: 0, posts: 0, letters: 0, pacts: 0, openPolls: 0, openReports: 0, pendingTickets: 0 })
   const [loading, setLoading] = useState(true)
@@ -58,12 +63,13 @@ export function Admin() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const [ps, rs, ov, tk, lt, au] = await Promise.all([
+    const [ps, rs, ov, tk, lt, bn, au] = await Promise.all([
       listProfiles(),
       listOpenReports(),
       overview(),
       listAllTickets(),
       listAllLetters(),
+      listBanned(),
       listAuditLog(),
     ])
     setProfiles(ps)
@@ -71,6 +77,7 @@ export function Admin() {
     setStats(ov)
     setTickets(tk)
     setLetters(lt)
+    setBanned(bn)
     setAudit(au)
     setLoading(false)
   }, [])
@@ -134,6 +141,9 @@ export function Admin() {
         <button className={tab === 'corbeaux' ? 'on' : ''} onClick={() => setTab('corbeaux')}>
           🐦‍⬛ Corbeaux
         </button>
+        <button className={tab === 'bannis' ? 'on' : ''} onClick={() => setTab('bannis')}>
+          🚫 Bannis {banned.length > 0 && <span className="pill">{banned.length}</span>}
+        </button>
         <button className={tab === 'journal' ? 'on' : ''} onClick={() => setTab('journal')}>
           📜 Journal
         </button>
@@ -156,8 +166,14 @@ export function Admin() {
             onRole: (id, patch, self) =>
               act(() => setRole(id, patch), self, `Rôle modifié (${Object.keys(patch).join(', ')}) → ${nameOf(id)}`),
             onBan: (id) => {
-              if (confirm('Bannir ce mestre ? Son compte et tout son contenu seront supprimés.'))
-                act(() => banProfile(id), false, `Banni : ${nameOf(id)}`)
+              const reason = prompt(
+                `BANNIR ${nameOf(id)} ?\n\nBlocage PERMANENT du compte Discord : la personne ne pourra plus se reconnecter ni se réinscrire (jusqu'à un débannissement). Son contenu sera supprimé.\n\nMotif (facultatif) :`,
+              )
+              if (reason !== null) act(() => banUserHard(id, reason), false, `Banni (définitif) : ${nameOf(id)}`)
+            },
+            onExclude: (id) => {
+              if (confirm(`Exclure ${nameOf(id)} ?\n\nSon personnage et son contenu sont supprimés, mais la personne PEUT revenir (elle repassera l'inscription).`))
+                act(() => excludeProfile(id), false, `Exclu (reset) : ${nameOf(id)}`)
             },
             onMute: (id, minutes) => act(() => mutePlayer(id, minutes), false, `Sourdine ${minutes} min → ${nameOf(id)}`),
             onUnmute: (id) => act(() => unmutePlayer(id), false, `Sourdine levée → ${nameOf(id)}`),
@@ -170,6 +186,15 @@ export function Admin() {
         <TicketsQueue tickets={tickets} meId={profile.id} ro={ro} onChanged={refresh} />
       ) : tab === 'corbeaux' ? (
         <LettersOversight letters={letters} ro={ro} onChanged={refresh} />
+      ) : tab === 'bannis' ? (
+        <BannedList
+          banned={banned}
+          ro={ro}
+          onUnban={(id, name) => {
+            if (confirm(`Débannir ${name} ? La personne pourra se réinscrire.`))
+              act(() => unbanUser(id), false, `Débanni : ${name}`)
+          }}
+        />
       ) : tab === 'journal' ? (
         <AuditList entries={audit} />
       ) : (
@@ -384,6 +409,7 @@ function AnnouncementControl({ meId }: { meId: string }) {
 interface MestresActions {
   onRole: (id: string, patch: Partial<Profile>, self: boolean) => void
   onBan: (id: string) => void
+  onExclude: (id: string) => void
   onMute: (id: string, minutes: number) => void
   onUnmute: (id: string) => void
   onSave: (id: string, character: string, house: string) => void
@@ -510,15 +536,60 @@ function MestreRow({
                 <button className="tiny" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onMute(p.id, 10080)}>🔇 7j</button>
               </>
             )}
-            {/* Hiérarchie : un Mestre ne peut bannir ni un Mestre ni un Grand Mestre. */}
+            {/* Hiérarchie : un Mestre ne peut exclure/bannir ni un Mestre ni un Grand Mestre. */}
             {!p.is_founder && (!p.is_admin || isFounder) && (
-              <button className="tiny danger" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onBan(p.id)}>
-                🚫 Bannir
-              </button>
+              <>
+                <button className="tiny" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onExclude(p.id)}>
+                  👋 Exclure
+                </button>
+                <button className="tiny danger" disabled={self} style={self ? { opacity: 0.4 } : undefined} onClick={() => actions.onBan(p.id)}>
+                  🚫 Bannir
+                </button>
+              </>
             )}
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+/* ── Bannis ────────────────────────────────────────────────────────────── */
+
+function BannedList({
+  banned,
+  ro,
+  onUnban,
+}: {
+  banned: BannedUser[]
+  ro: boolean
+  onUnban: (userId: string, name: string) => void
+}) {
+  if (!banned.length) return <div className="empty">Aucun compte banni. 🕊️</div>
+  return (
+    <div className="ravens">
+      {banned.map((b) => {
+        const name = b.character_name || b.discord || `compte ${b.user_id.slice(0, 8)}`
+        return (
+          <div key={b.user_id} className="mestre-row">
+            <span className="si" style={{ fontSize: 22 }}>🚫</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ color: '#E7DBBE', fontSize: 15 }}>{name}</span>
+                {b.discord && <span className="badge" style={{ background: '#2a2f3a', color: '#9DB4D0' }}>🎮 {b.discord}</span>}
+              </div>
+              <div style={{ color: '#9C8F71', fontSize: 12 }}>
+                Banni le {fmtDate(b.banned_at)}
+                {b.by?.character_name ? ` · par ${b.by.character_name}` : ''}
+              </div>
+              {b.reason && <div style={{ color: '#A99C7E', fontSize: 13, fontStyle: 'italic', marginTop: 2 }}>« {b.reason} »</div>}
+            </div>
+            {!ro && (
+              <button className="tiny good" onClick={() => onUnban(b.user_id, name)}>↩️ Débannir</button>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }

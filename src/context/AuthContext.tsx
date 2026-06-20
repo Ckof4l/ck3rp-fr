@@ -8,9 +8,16 @@ import type { Profile } from '../types/database'
    (personnage / maison / rôles) du joueur connecté.
    ========================================================================== */
 
+/** Présent quand le compte connecté est banni (blocage Discord permanent). */
+export interface BanInfo {
+  reason: string | null
+  banned_at: string
+}
+
 interface AuthState {
   session: Session | null
   profile: Profile | null
+  ban: BanInfo | null
   loading: boolean
   configured: boolean
   /** Recharge le profil depuis la base (après mort/renaissance, modération…). */
@@ -23,17 +30,30 @@ const AuthContext = createContext<AuthState | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [ban, setBan] = useState<BanInfo | null>(null)
   const [loading, setLoading] = useState(true)
 
   const loadProfile = useCallback(async (userId: string) => {
     let { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
     if (!data) {
-      // Session valide sans profil (ex. après un bannissement) : on en recrée un
-      // pour permettre une nouvelle inscription, au lieu de boucler sur la Porte.
+      // Session valide sans profil : soit le compte est BANNI (blocage permanent),
+      // soit il a juste été exclu (reset) → on recrée un profil vierge. ensure_profile
+      // refuse de recréer pour un banni, donc on vérifie d'abord la liste des bannis.
+      const { data: b } = await supabase
+        .from('banned_users')
+        .select('reason, banned_at')
+        .eq('user_id', userId)
+        .maybeSingle()
+      if (b) {
+        setBan(b as BanInfo)
+        setProfile(null)
+        return
+      }
       await supabase.rpc('ensure_profile')
       const retry = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
       data = retry.data
     }
+    setBan(null)
     setProfile((data as Profile | null) ?? null)
   }, [])
 
@@ -92,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setTimeout(() => { if (mounted) loadProfile(uid) }, 0)
       } else {
         setProfile(null)
+        setBan(null)
       }
     })
 
@@ -106,11 +127,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
     setSession(null)
     setProfile(null)
+    setBan(null)
   }, [])
 
   const value = useMemo<AuthState>(
-    () => ({ session, profile, loading, configured: supabaseConfigured, refreshProfile, signOut }),
-    [session, profile, loading, refreshProfile, signOut],
+    () => ({ session, profile, ban, loading, configured: supabaseConfigured, refreshProfile, signOut }),
+    [session, profile, ban, loading, refreshProfile, signOut],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

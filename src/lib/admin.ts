@@ -32,10 +32,42 @@ export async function setRole(
   if (error) throw asError('rôle', error)
 }
 
-export async function banProfile(id: string): Promise<void> {
-  // RPC : impose la hiérarchie (seul un Grand Mestre peut bannir un Mestre).
+/** Exclure = reset : supprime le profil, le joueur peut revenir (re-onboarding). */
+export async function excludeProfile(id: string): Promise<void> {
+  // RPC : impose la hiérarchie (seul un Grand Mestre peut exclure un Mestre).
   const { error } = await supabase.rpc('ban_profile', { p_id: id })
+  if (error) throw asError('exclusion', error)
+}
+
+/** Bannir = blocage permanent du compte Discord (survit à la suppression du profil). */
+export async function banUserHard(id: string, reason: string): Promise<void> {
+  const { error } = await supabase.rpc('ban_user_hard', { p_id: id, p_reason: reason })
   if (error) throw asError('bannissement', error)
+}
+
+/** Débannir = retire le blocage, le joueur peut se réinscrire. */
+export async function unbanUser(userId: string): Promise<void> {
+  const { error } = await supabase.rpc('unban_user', { p_id: userId })
+  if (error) throw asError('débannissement', error)
+}
+
+export interface BannedUser {
+  user_id: string
+  character_name: string | null
+  discord: string | null
+  reason: string | null
+  banned_at: string
+  banned_by: string | null
+  by?: { character_name: string } | null
+}
+
+export async function listBanned(): Promise<BannedUser[]> {
+  const { data, error } = await supabase
+    .from('banned_users')
+    .select('user_id, character_name, discord, reason, banned_at, banned_by, by:profiles!banned_users_banned_by_fkey(character_name)')
+    .order('banned_at', { ascending: false })
+  if (error) throw asError('bannis', error)
+  return (data as unknown as BannedUser[]) ?? []
 }
 
 export async function mutePlayer(id: string, minutes: number): Promise<void> {
