@@ -113,11 +113,14 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
 
       {cats.map(({ category, channels }) => (
         <div key={category}>
-          {/* Alliance se place juste avant « Le Royaume ». */}
+          {/* Alliance & Décisions se placent juste avant « Le Royaume ». */}
           {category === 'Le Royaume' && (
             <>
               <div className="side-cat">Alliance</div>
               <SideLink to="/alliances" icon="🤝" ico="/icons/alliances.png?v=1" label="Alliances" onClick={onNavigate} />
+              <div className="side-cat">Décisions</div>
+              <SideLink to="/scrutins" icon="🗳️" ico="/icons/scrutins.png?v=2" label="Scrutins" onClick={onNavigate} />
+              <SideLink to="/sort" icon="🪙" ico="/icons/sort.png?v=2" label="Le Sort" onClick={onNavigate} />
             </>
           )}
           <div className="side-cat">{category}</div>
@@ -142,10 +145,6 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
           )}
         </div>
       ))}
-
-      <div className="side-cat">Décisions</div>
-      <SideLink to="/scrutins" icon="🗳️" ico="/icons/scrutins.png?v=2" label="Scrutins" onClick={onNavigate} />
-      <SideLink to="/sort" icon="🪙" ico="/icons/sort.png?v=2" label="Le Sort" onClick={onNavigate} />
 
       <div className="side-cat">Toi</div>
       <SideLink to="/requetes" icon="🎫" ico="/icons/requetes.png?v=2" label="Requêtes" onClick={onNavigate} badge={tickets} />
