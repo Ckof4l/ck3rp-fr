@@ -17,3 +17,12 @@ createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// PWA : enregistre le service worker (installation + cache hors-ligne).
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* sans SW, l'app fonctionne quand même (juste pas installable hors-ligne) */
+    })
+  })
+}
