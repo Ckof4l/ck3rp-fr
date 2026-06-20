@@ -126,12 +126,17 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
               badge={counts[c.key] ?? 0}
             />
           ))}
+          {/* Annuaire & Chroniques vivent avec La Cour (vie sociale du royaume). */}
+          {category === 'La Cour' && (
+            <>
+              <SideLink to="/armorial" icon="📜" ico="/icons/armorial.png?v=2" label="Annuaire" onClick={onNavigate} />
+              <SideLink to="/chroniques" icon="📖" ico="/icons/chroniques.png?v=2" label="Chroniques" onClick={onNavigate} />
+            </>
+          )}
         </div>
       ))}
 
       <div className="side-cat">Le Monde</div>
-      <SideLink to="/armorial" icon="📜" ico="/icons/armorial.png?v=2" label="Annuaire" onClick={onNavigate} />
-      <SideLink to="/chroniques" icon="📖" ico="/icons/chroniques.png?v=2" label="Chroniques" onClick={onNavigate} />
       <SideLink to="/pactes" icon="🤝" ico="/icons/pactes.png?v=2" label="Pactes" onClick={onNavigate} />
 
       <div className="side-cat">Décisions</div>
