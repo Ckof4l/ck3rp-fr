@@ -155,7 +155,7 @@ export function rkStyle(houseKey: string | null | undefined): CSSProperties {
 /** Grandes familles régnantes : Roi automatique à l'inscription.
    Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0039). */
 export const KING_HOUSES = new Set([
-  'stark', 'arryn', 'lannister', 'durrandon', 'jardinier', 'martell', 'greyjoy', 'targaryen',
+  'stark', 'arryn', 'lannister', 'durrandon', 'jardinier', 'martell', 'chenu', 'targaryen',
 ])
 
 /** Liste des maisons groupées par région, dans l'ordre de déclaration. */
