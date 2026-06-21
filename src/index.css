@@ -146,8 +146,18 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .me-name { display: block; color: #E7DBBE; font-size: 14px; }
 .me-house { display: block; color: #9C8F71; font-size: 11px; }
 .me-badges { display: flex; gap: 5px; flex-wrap: wrap; }
-.badge.king { background: linear-gradient(#E7C04A, #A9791F); }
-.badge.gm { background: linear-gradient(#C24A3F, #8E2F2A); color: #FCEFD9; }
+.badge.king {
+  background: linear-gradient(#F4D573, #B8851F);
+  border-color: #7E5E1C;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 0 13px rgba(214, 176, 80, 0.55), 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.badge.gm {
+  background: linear-gradient(#C8504A, #8E2F2A);
+  color: #FCEFD9;
+  border-color: #5E1D19;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 13px rgba(142, 47, 42, 0.6), 0 1px 2px rgba(0, 0, 0, 0.35);
+}
 
 .app-body { display: flex; align-items: stretch; flex: 1; }
 
@@ -423,12 +433,26 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 
 .empty {
   text-align: center;
-  color: #8E8268;
+  color: #A2906E;
   font-style: italic;
-  padding: 46px 20px;
-  border: 1px dashed var(--line);
+  padding: 38px 22px;
+  border: 1px solid var(--line);
   border-radius: var(--r-xl);
+  background: radial-gradient(120% 85% at 50% 0%, rgba(201, 162, 75, 0.08), transparent 70%);
 }
+/* Fleuron d'ouverture — coiffe une page vierge qui attend d'être écrite. */
+.empty::before {
+  content: "\2767";
+  display: block;
+  font-family: var(--display);
+  font-size: 28px;
+  color: var(--gold-dim);
+  opacity: 0.75;
+  margin-bottom: 8px;
+  text-shadow: 0 0 18px rgba(201, 162, 75, 0.3);
+}
+/* Pas de fleuron sur les écrans de chargement (ceux qui portent un spinner). */
+.empty:has(.spinner)::before { display: none; }
 
 /* ── Sous-navigation de la Chancellerie ── */
 .subnav { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 18px; }
@@ -1070,10 +1094,16 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   letter-spacing: 0.14em;
   color: #1A0F0D;
   background: linear-gradient(#E0BE63, #B8923A);
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: var(--r-pill);
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
-.badge.obs { background: linear-gradient(#A8AEB6, #6E7681); }
+.badge.obs {
+  background: linear-gradient(#A8AEB6, #6E7681);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
 
 .pill { font-size: 11px; background: var(--weirwood); color: #fff; border-radius: var(--r-pill); padding: 1px 7px; min-width: 18px; text-align: center; }
 
