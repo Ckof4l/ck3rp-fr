@@ -23,6 +23,7 @@ import {
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
+import { ZoomImg } from '../components/ZoomImg'
 import type { RavenScope } from '../types/database'
 
 /* ============================================================================
@@ -467,7 +468,7 @@ function Message({ letter, mine, canDelete, onDelete }: { letter: Letter; mine: 
         )}
       </div>
       <div className="msg-body">{letter.body}</div>
-      {img && <img className="letter-img" src={img} alt="pièce jointe" />}
+      {img && <ZoomImg className="letter-img" src={img} alt="pièce jointe" />}
     </div>
   )
 }

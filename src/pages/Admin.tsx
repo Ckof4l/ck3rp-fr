@@ -39,6 +39,7 @@ import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { ChannelIcon } from '../components/ChannelIcon'
+import { ZoomImg } from '../components/ZoomImg'
 
 /* ============================================================================
    La Citadelle — administration & modération.
@@ -764,7 +765,7 @@ function LettersOversight({
               {isOpen && (
                 <div style={{ marginTop: 10 }}>
                   <div className="report-target" style={{ whiteSpace: 'pre-wrap' }}>{l.body || '(vide)'}</div>
-                  {img && <img className="letter-img" src={img} alt="pièce jointe" style={{ marginTop: 10 }} />}
+                  {img && <ZoomImg className="letter-img" src={img} alt="pièce jointe" />}
                   {!ro && (
                     <button
                       className="tiny danger"

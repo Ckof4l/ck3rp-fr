@@ -25,6 +25,7 @@ import { Lettrine } from '../components/Lettrine'
 import { ReportButton } from '../components/ReportButton'
 import { HelpCard } from '../components/HelpCard'
 import { ChannelIcon } from '../components/ChannelIcon'
+import { ZoomImg } from '../components/ZoomImg'
 
 /* ============================================================================
    Page d'un salon — fil de posts + composer (selon le rôle) + commentaires.
@@ -457,7 +458,7 @@ function PostDetail({
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            {canEdit && (
+            {isAdmin && (
               <button className="tiny" onClick={() => setPinned(post.id, !post.pinned).then(loadAll)}>
                 📌 {post.pinned ? 'Désépingler' : 'Épingler'}
               </button>
@@ -522,7 +523,7 @@ function PostDetail({
         ) : (
           <div className="pm-body">{post.title ? <Lettrine>{post.body}</Lettrine> : post.body}</div>
         )}
-        {!editing && img && <img className="letter-img" src={img} alt="pièce jointe" />}
+        {!editing && img && <ZoomImg className="letter-img" src={img} alt="pièce jointe" />}
       </div>
 
       <h3 className="section-h" style={{ fontSize: 12, marginTop: 26 }}>
