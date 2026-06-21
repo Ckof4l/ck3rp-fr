@@ -116,6 +116,13 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
           {/* Décisions (avec Alliances) se place juste avant « Le Royaume ». */}
           {category === 'Le Royaume' && (
             <>
+              {/* « Toi » : tes affaires personnelles, placé juste avant Décisions. */}
+              <div className="side-cat">Toi</div>
+              <SideLink to="/requetes" icon="🎫" ico="/icons/requetes.png?v=2" label="Requêtes" onClick={onNavigate} badge={tickets} />
+              <SideLink to="/destin" icon="⚰️" ico="/icons/destin.png?v=2" label="Mon destin" onClick={onNavigate} />
+              {(profile?.is_admin || profile?.is_observer) && (
+                <SideLink to="/admin" icon="⚜️" ico="/icons/admin.png?v=2" label="La Citadelle" onClick={onNavigate} />
+              )}
               <div className="side-cat">Décisions</div>
               <SideLink to="/alliances" icon="🤝" ico="/icons/alliances.png?v=1" label="Alliances" onClick={onNavigate} />
               <SideLink to="/scrutins" icon="🗳️" ico="/icons/scrutins.png?v=2" label="Scrutins" onClick={onNavigate} />
@@ -145,12 +152,6 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
         </div>
       ))}
 
-      <div className="side-cat">Toi</div>
-      <SideLink to="/requetes" icon="🎫" ico="/icons/requetes.png?v=2" label="Requêtes" onClick={onNavigate} badge={tickets} />
-      <SideLink to="/destin" icon="⚰️" ico="/icons/destin.png?v=2" label="Mon destin" onClick={onNavigate} />
-      {(profile?.is_admin || profile?.is_observer) && (
-        <SideLink to="/admin" icon="⚜️" ico="/icons/admin.png?v=2" label="La Citadelle" onClick={onNavigate} />
-      )}
     </nav>
   )
 }
