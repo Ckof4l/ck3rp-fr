@@ -42,6 +42,10 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --t-fast: 0.12s;
   --t: 0.18s;
+
+  /* ── Profondeur — ombres communes : cartes posées comme des feuillets ── */
+  --sh-card: 0 3px 12px rgba(0, 0, 0, 0.35);   /* repos */
+  --sh-lift: 0 10px 26px rgba(0, 0, 0, 0.45);  /* survol / surélevé */
 }
 
 * { box-sizing: border-box; }
@@ -413,7 +417,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   transition: transform 0.1s, border-color 0.1s;
 }
 .raven-row:hover { transform: translateY(-1px); border-color: var(--gold-dim); }
-.raven-row.unread { border-color: var(--weirwood); box-shadow: inset 0 0 0 1px #8E2F2A55; }
+.raven-row.unread { border-color: var(--weirwood); box-shadow: var(--sh-card), inset 0 0 0 1px #8E2F2A55; }
 
 .ravens { display: flex; flex-direction: column; gap: 10px; }
 
@@ -603,6 +607,12 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
   border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 14px 16px; color: inherit; transition: transform 0.1s, border-color 0.1s;
 }
+/* Profondeur au repos : les cartes et panneaux se posent avec une ombre douce,
+   comme des feuillets sur la table de la Citadelle. */
+.card, .post-card, .raven-row, .armorial-card, .mestre-row,
+.pact-card, .report-card, .composer, .stat, .announce-box {
+  box-shadow: var(--sh-card);
+}
 /* Survol : TOUTE la carte se teinte de la couleur du royaume de l'auteur (--rk),
    en opacité basse, partout où une carte/ligne porte un personnage. Le box-shadow
    inset peint par-dessus n'importe quel fond (image, dégradé, solide), sous le
@@ -615,6 +625,7 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
 .post-card:hover, .raven-row:hover, .mestre-row:hover, .grave-row:hover,
 .armorial-card:hover, .comment:hover, .msg:hover, .report-card:hover {
   box-shadow:
+    var(--sh-lift),
     inset 0 0 0 999px color-mix(in srgb, var(--rk) 16%, transparent),
     inset 0 0 0 1px color-mix(in srgb, var(--rk) 55%, transparent);
 }
@@ -660,7 +671,7 @@ a.armorial-card.linked {
 }
 a.armorial-card.linked:hover {
   transform: translateY(-1px); border-color: var(--gold-dim);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--sh-lift);
 }
 a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .armorial-name { font-family: var(--display); font-size: 15px; color: var(--parch); }
