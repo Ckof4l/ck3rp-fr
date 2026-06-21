@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { listPacts, createPact, signPact, deletePact, type Pact } from '../lib/pacts'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
+import { AutoTextarea } from '../components/AutoTextarea'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -227,7 +228,7 @@ function PactForm({
       </div>
       <div className="field">
         <label>Termes du traité</label>
-        <textarea className="input" style={{ minHeight: 110 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Les clauses, serments et engagements…" />
+        <AutoTextarea className="input" style={{ minHeight: 110 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Les clauses, serments et engagements…" />
       </div>
       <div className="field">
         <label>Maisons signataires (en plus de la tienne, {getHouse(myHouse).nom})</label>

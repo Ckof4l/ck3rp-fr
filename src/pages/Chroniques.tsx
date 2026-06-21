@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase'
 import { listChronicles, addChronicle, deleteChronicle, type Chronicle } from '../lib/realm'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
+import { AutoTextarea } from '../components/AutoTextarea'
 import { Lettrine } from '../components/Lettrine'
 
 /* ============================================================================
@@ -115,7 +116,7 @@ function ChronicleForm({ meId, onDone, onCancel }: { meId: string; onDone: () =>
       </div>
       <div className="field">
         <label>Récit</label>
-        <textarea className="input" style={{ minHeight: 110 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Ce qui s'est passé…" />
+        <AutoTextarea className="input" style={{ minHeight: 110 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Ce qui s'est passé…" />
       </div>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="btn-seal" disabled={busy} onClick={submit}>📖 Consigner</button>

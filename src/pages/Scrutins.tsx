@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import { listPolls, createPoll, castVote, closePoll, deletePoll, validatePoll, type Poll } from '../lib/polls'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
+import { AutoTextarea } from '../components/AutoTextarea'
 import { HelpCard } from '../components/HelpCard'
 
 /* ============================================================================
@@ -338,7 +339,7 @@ function PollForm({
       </div>
       <div className="field">
         <label>Précisions (facultatif)</label>
-        <textarea className="input" style={{ minHeight: 70 }} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Contexte, enjeux…" />
+        <AutoTextarea className="input" style={{ minHeight: 70 }} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Contexte, enjeux…" />
       </div>
       <div className="field">
         <label>Clôture (les résultats se révèlent à cette date)</label>
