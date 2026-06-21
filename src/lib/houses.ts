@@ -54,7 +54,7 @@ export const HOUSES: Record<string, House> = {
   martell:   { key: 'martell',   nom: 'Nymeros Martell', region: 'Dorne',                  sig: '☀️', col: '#D08A2A', canon: 'Princesse Jinny Nymeros Martell', devise: "Insoumis, Invaincus, Intacts." },
   dayne:     { key: 'dayne',     nom: 'Dayne',           region: 'Dorne',                  sig: '🌠', col: '#7A6FB0', canon: 'Lord Franklyn Dayne',        devise: "De l'épée et de l'étoile." },
   noirmont:  { key: 'noirmont',  nom: 'Noirmont',        region: 'Dorne',                  sig: '🦅', col: '#3A3340', canon: 'Lady Giselle Noirmont',      devise: "Patient comme le vautour." },
-  ferboy:    { key: 'ferboy',    nom: 'Ferboy',          region: 'Dorne',                  sig: '🦂', col: '#B08A4A', canon: 'Lord Yormwell Ferboy',       devise: "Le dard guette dans le sable." },
+  ferboy:    { key: 'ferboy',    nom: 'Ironboy',         region: 'Dorne',                  sig: '🦂', col: '#B08A4A', canon: 'Lord Yormwell Ironboy',      devise: "Le dard guette dans le sable." },
   // ── Les Îles de Fer ──
   chenu:     { key: 'chenu',     nom: 'Chenu',           region: 'Les Îles de Fer',        sig: '⚔️', col: '#6E6A66', canon: 'Lord Qhorwyn Chenu',         devise: "Le sel et le fer." },
   greyjoy:   { key: 'greyjoy',   nom: 'Greyjoy',         region: 'Les Îles de Fer',        sig: '🐙', col: '#2E4A4A', canon: 'Lord Urron Greyjoy',         devise: "Nous ne semons pas." },
