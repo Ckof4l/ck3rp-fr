@@ -26,6 +26,7 @@ import { ReportButton } from '../components/ReportButton'
 import { HelpCard } from '../components/HelpCard'
 import { ChannelIcon } from '../components/ChannelIcon'
 import { ZoomImg } from '../components/ZoomImg'
+import { AutoTextarea } from '../components/AutoTextarea'
 
 /* ============================================================================
    Page d'un salon — fil de posts + composer (selon le rôle) + commentaires.
@@ -295,7 +296,7 @@ function Composer({
           placeholder="Titre (ex. Édit royal sur les péages)"
         />
       )}
-      <textarea
+      <AutoTextarea
         className="input"
         style={{ minHeight: 90 }}
         value={body}
@@ -497,7 +498,7 @@ function PostDetail({
                 placeholder="Titre"
               />
             )}
-            <textarea
+            <AutoTextarea
               className="input"
               style={{ minHeight: 150 }}
               value={editBody}
@@ -567,7 +568,7 @@ function PostDetail({
                 </div>
                 {editingC === c.id ? (
                   <div style={{ marginTop: 6 }}>
-                    <textarea
+                    <AutoTextarea
                       className="input"
                       style={{ minHeight: 60 }}
                       value={editCText}
@@ -602,7 +603,7 @@ function PostDetail({
 
       {mayComment ? (
         <div className="replybox">
-          <textarea
+          <AutoTextarea
             className="input"
             style={{ minHeight: 70 }}
             value={text}

@@ -24,6 +24,7 @@ import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
 import { ZoomImg } from '../components/ZoomImg'
+import { AutoTextarea } from '../components/AutoTextarea'
 import type { RavenScope } from '../types/database'
 
 /* ============================================================================
@@ -561,7 +562,7 @@ function ReplyBox({
   return (
     <div className="replybox">
       <div className="reply-to">Répondre {dest}</div>
-      <textarea
+      <AutoTextarea
         className="input"
         style={{ minHeight: 90 }}
         value={body}
@@ -761,7 +762,7 @@ function Compose({
       </div>
       <div className="field">
         <label>Message</label>
-        <textarea
+        <AutoTextarea
           className="input"
           value={body}
           onChange={(e) => setBody(e.target.value)}

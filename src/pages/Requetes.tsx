@@ -20,6 +20,7 @@ import {
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
+import { AutoTextarea } from '../components/AutoTextarea'
 
 /* ============================================================================
    Requêtes — les joueurs soumettent une action RP, les Mestres valident/refusent.
@@ -229,7 +230,7 @@ function TicketForm({ meId, onDone, onCancel }: { meId: string; onDone: () => vo
       </div>
       <div className="field">
         <label>Détails de la requête</label>
-        <textarea className="input" style={{ minHeight: 100 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Explique l'action que tu veux faire valider…" />
+        <AutoTextarea className="input" style={{ minHeight: 100 }} value={body} onChange={(e) => setBody(e.target.value)} placeholder="Explique l'action que tu veux faire valider…" />
       </div>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <button className="btn-seal" disabled={busy} onClick={submit}>✒️ Soumettre aux Mestres</button>
@@ -395,7 +396,7 @@ function TicketDetail({
 
       {canWrite && (
         <div className="replybox">
-          <textarea className="input" style={{ minHeight: 70 }} value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Écris un message…" />
+          <AutoTextarea className="input" style={{ minHeight: 70 }} value={reply} onChange={(e) => setReply(e.target.value)} placeholder="Écris un message…" />
           <div style={{ marginTop: 8 }}>
             <button className="btn-seal" disabled={busy} onClick={sendReply}>💬 Envoyer</button>
           </div>

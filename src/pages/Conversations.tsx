@@ -23,6 +23,7 @@ import type { Profile } from '../types/database'
 import { Seal } from '../components/Seal'
 import { CharLink } from '../components/CharLink'
 import { HelpCard } from '../components/HelpCard'
+import { AutoTextarea } from '../components/AutoTextarea'
 
 /* ============================================================================
    Conversations — salons de discussion libres, publics ou privés.
@@ -296,7 +297,7 @@ export function ConversationView({
 
       {canWrite ? (
         <div className="replybox" style={{ marginTop: 12 }}>
-          <textarea
+          <AutoTextarea
             className="input"
             style={{ minHeight: 64 }}
             value={text}
