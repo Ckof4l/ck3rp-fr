@@ -312,28 +312,28 @@ function Composer({
         </div>
       )}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 10, flexWrap: 'wrap' }}>
-        <button className="btn-seal" disabled={busy} onClick={submit}>
+        <button className="btn-seal tip" data-tip="Publie ton message dans le salon" disabled={busy} onClick={submit}>
           ✒️ Publier
         </button>
-        <label className="attach-btn">
+        <label className="attach-btn tip" data-tip="Joins une image à ton message (facultatif)">
           📎 Image
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={pickImage} />
         </label>
         {allowPrivate && (
           <button
             type="button"
-            className={isPrivate ? 'tiny good' : 'tiny'}
+            className={`${isPrivate ? 'tiny good' : 'tiny'} tip`}
+            data-tip={isPrivate ? 'Visible seulement des maisons de ton royaume' : 'Visible de tous — clique pour restreindre à ton royaume'}
             onClick={() => setIsPrivate((v) => !v)}
-            title={isPrivate ? 'Visible seulement de ton royaume' : 'Visible de tous'}
           >
             {isPrivate ? '🔒 Privé (ton royaume)' : '🌍 Public'}
           </button>
         )}
         <button
           type="button"
-          className={isHrp ? 'tiny good' : 'tiny'}
+          className={`${isHrp ? 'tiny good' : 'tiny'} tip`}
+          data-tip={isHrp ? 'HRP — message hors-jeu, entre joueurs' : 'RP — message en personnage. Clique pour passer en hors-jeu (HRP)'}
           onClick={() => setIsHrp((v) => !v)}
-          title={isHrp ? 'Message hors-roleplay' : 'Message en roleplay'}
         >
           {isHrp ? 'HRP' : 'RP'}
         </button>

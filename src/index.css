@@ -484,7 +484,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   font-size: 14px;
   cursor: pointer;
 }
-.attach-btn:hover { border-color: var(--gold-dim); }
+.attach-btn:hover { border-color: var(--gold); background: #241913; color: #E7DBBE; box-shadow: inset 0 0 0 1px #c9a24b33, 0 0 18px #c9a24b22; }
 .img-prev { margin: 10px 0 2px; position: relative; display: inline-block; }
 .img-prev img { max-width: 240px; max-height: 180px; border-radius: var(--r-sm); border: 1px solid var(--line); display: block; }
 .img-prev .rm {
@@ -936,19 +936,48 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
     transform var(--t-fast) var(--ease);
 }
 
+/* Bouton-sceau : cire rouge fondue, liseré or, halo de bougie. Se soulève au
+   survol, s'enfonce au clic — un vrai geste de cachet apposé. */
 .btn-seal {
-  border: 0;
+  position: relative;
+  border: 1px solid #E0915E55;
   border-radius: var(--radius);
-  padding: 13px 22px;
+  padding: 13px 24px;
   font-family: var(--display);
   letter-spacing: 0.14em;
   font-size: 14px;
-  color: #1A0F0D;
-  background: linear-gradient(#C24A3F, #8E2F2A);
-  box-shadow: 0 10px 26px #8e2f2a55, inset 0 1px 0 #ffffff33;
+  color: #2A0F0B;
+  background: linear-gradient(180deg, #D9564A 0%, #B23A30 46%, #8E2F2A 100%);
+  text-shadow: 0 1px 0 #ffffff40;
+  box-shadow:
+    inset 0 1px 0 #ffffff55,
+    inset 0 -7px 14px #00000033,
+    0 8px 20px #8e2f2a55,
+    0 2px 4px #0007;
 }
-.btn-seal:hover { filter: brightness(1.07); }
-.btn-seal:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.4); }
+.btn-seal:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06) saturate(1.06);
+  box-shadow:
+    inset 0 1px 0 #ffffff66,
+    inset 0 -7px 14px #00000033,
+    0 14px 32px #8e2f2a80,
+    0 5px 10px #0007;
+}
+.btn-seal:active {
+  transform: translateY(1px);
+  filter: brightness(0.96);
+  box-shadow:
+    inset 0 1px 0 #ffffff22,
+    inset 0 -4px 10px #00000055,
+    0 4px 10px #8e2f2a44,
+    0 1px 2px #0008;
+}
+.btn-seal:disabled {
+  opacity: 0.5; cursor: not-allowed; filter: grayscale(0.4);
+  transform: none;
+  box-shadow: 0 2px 6px #0005;
+}
 .btn-seal.block { width: 100%; }
 
 .btn-discord {
@@ -969,7 +998,8 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   padding: 12px 16px;
   font-size: 14px;
 }
-.btn-ghost:hover { border-color: var(--gold-dim); }
+.btn-ghost:hover { border-color: var(--gold); background: #1B140D; color: #E7DBBE; box-shadow: inset 0 0 0 1px #c9a24b33; }
+.btn-ghost:active { transform: translateY(1px); filter: brightness(0.95); }
 
 .linkbtn {
   background: transparent;
@@ -979,11 +1009,57 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   padding: 8px 12px;
   font-size: 13px;
 }
-.linkbtn:hover { border-color: var(--gold-dim); }
+.linkbtn:hover { border-color: var(--gold); background: #1B140D; color: #E7DBBE; }
+.linkbtn:active { transform: translateY(1px); }
 
 .tiny { padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid var(--line); background: #0F0B07; color: #C7B894; font-size: 12.5px; }
 .tiny.danger { border-color: #8E2F2A66; color: #E7A79F; }
 .tiny.good { border-color: #5e7a4a66; color: #B7CDA0; }
+.tiny:hover { border-color: var(--gold-dim); }
+
+/* Enfoncement commun : chaque bouton « répond » sous le doigt. */
+.btn-ghost:active, .linkbtn:active, .tiny:active, .attach-btn:active,
+.subnav button:active, .dest-pick button:active, .ruban:active,
+.pact-pick-item:active, .btn-discord:active { transform: translateY(1px); }
+
+/* ── Tuto au survol — bulle parchemin qui explique un bouton (data-tip) ──────
+   On pose la classe .tip + un attribut data-tip="…" sur n'importe quel bouton :
+   au survol (ou au focus clavier), une étiquette de parchemin se déplie. */
+.tip { position: relative; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%; bottom: calc(100% + 9px);
+  transform: translateX(-50%) translateY(4px);
+  width: max-content; max-width: 220px;
+  padding: 7px 11px;
+  font-family: var(--body); font-weight: 400;
+  font-size: 12.5px; letter-spacing: 0; text-transform: none; line-height: 1.4;
+  color: var(--ink-soft);
+  background: linear-gradient(var(--parch-warm), var(--parch-deep));
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-lift);
+  opacity: 0; pointer-events: none; z-index: 60;
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.tip::before {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: calc(100% + 5px);
+  transform: translateX(-50%) translateY(4px) rotate(45deg);
+  width: 9px; height: 9px;
+  background: var(--parch-deep);
+  border-right: 1px solid var(--gold-dim);
+  border-bottom: 1px solid var(--gold-dim);
+  opacity: 0; pointer-events: none; z-index: 60;
+  transition: opacity var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.tip:hover::after, .tip:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
+.tip:hover::before, .tip:focus-visible::before { opacity: 1; transform: translateX(-50%) translateY(0) rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .tip::after, .tip::before { transition: opacity var(--t) linear; }
+}
 
 .badge {
   font-family: var(--display);
