@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import { usePageBg } from './lib/usePageBg'
@@ -82,17 +82,15 @@ function isUnlocked(): boolean {
 }
 
 function Maintenance() {
-  return (
-    <div className="gate-screen">
-      <div className="gate-card">
-        <img src="/logo.png" alt="CK3FR RP" className="gate-logo" />
-        <p className="kicker" style={{ marginTop: 8 }}>La Citadelle</p>
-        <p style={{ color: '#C9BC9D', fontStyle: 'italic', margin: '12px 0 0', fontSize: 18, lineHeight: 1.55 }}>
-          Le site est actuellement fermé.
-        </p>
-      </div>
-    </div>
-  )
+  // Rien à voir pour le public : page neutre, sans aucune marque du site.
+  useEffect(() => {
+    const prev = document.title
+    document.title = 'Indisponible'
+    return () => {
+      document.title = prev
+    }
+  }, [])
+  return <div style={{ position: 'fixed', inset: 0, background: '#0a0a0b', zIndex: 9999 }} />
 }
 
 export default function App() {
