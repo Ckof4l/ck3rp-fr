@@ -56,11 +56,30 @@ function FullScreen({ children }: { children: React.ReactNode }) {
   )
 }
 
-/* ── Mode fermé ──────────────────────────────────────────────────────────────
-   Quand MAINTENANCE = true, PERSONNE ne peut utiliser le site : tout le monde
-   (connecté ou non) tombe sur l'écran de fermeture. Repasser à false pour
-   rouvrir le site (puis rebuild + push). */
+/* ── Accès privé ─────────────────────────────────────────────────────────────
+   Quand MAINTENANCE = true, le site est fermé pour TOUT LE MONDE, SAUF qui
+   possède le lien secret :  /?ouvre=<UNLOCK_TOKEN>  (le navigateur le mémorise
+   ensuite, plus besoin de le remettre). Repasser MAINTENANCE à false pour
+   rouvrir le site à tous (puis rebuild + push). */
 const MAINTENANCE = true
+const UNLOCK_TOKEN = '90e0fefd88a954d4c0'
+const UNLOCK_STORAGE = 'ck3fr_open'
+
+/* Capture le jeton depuis l'URL (?ouvre=…) et le mémorise dans ce navigateur. */
+try {
+  const t = new URLSearchParams(window.location.search).get('ouvre')
+  if (t) localStorage.setItem(UNLOCK_STORAGE, t)
+} catch {
+  /* localStorage indisponible : on ignore. */
+}
+
+function isUnlocked(): boolean {
+  try {
+    return localStorage.getItem(UNLOCK_STORAGE) === UNLOCK_TOKEN
+  } catch {
+    return false
+  }
+}
 
 function Maintenance() {
   return (
@@ -81,8 +100,8 @@ export default function App() {
   const location = useLocation()
   usePageBg(PAGE_BG[location.pathname] ?? null)
 
-  // Mode fermé : court-circuite tout le reste (voir MAINTENANCE ci-dessus).
-  if (MAINTENANCE) return <Maintenance />
+  // Accès privé : fermé pour tous, sauf le détenteur du lien secret.
+  if (MAINTENANCE && !isUnlocked()) return <Maintenance />
 
   if (loading) {
     return (
