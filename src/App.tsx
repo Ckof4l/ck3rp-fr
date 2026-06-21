@@ -56,10 +56,33 @@ function FullScreen({ children }: { children: React.ReactNode }) {
   )
 }
 
+/* ── Mode fermé ──────────────────────────────────────────────────────────────
+   Quand MAINTENANCE = true, PERSONNE ne peut utiliser le site : tout le monde
+   (connecté ou non) tombe sur l'écran de fermeture. Repasser à false pour
+   rouvrir le site (puis rebuild + push). */
+const MAINTENANCE = true
+
+function Maintenance() {
+  return (
+    <div className="gate-screen">
+      <div className="gate-card">
+        <img src="/logo.png" alt="CK3FR RP" className="gate-logo" />
+        <p className="kicker" style={{ marginTop: 8 }}>La Citadelle</p>
+        <p style={{ color: '#C9BC9D', fontStyle: 'italic', margin: '12px 0 0', fontSize: 18, lineHeight: 1.55 }}>
+          Le site est actuellement fermé.
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const { session, profile, ban, loading, configured } = useAuth()
   const location = useLocation()
   usePageBg(PAGE_BG[location.pathname] ?? null)
+
+  // Mode fermé : court-circuite tout le reste (voir MAINTENANCE ci-dessus).
+  if (MAINTENANCE) return <Maintenance />
 
   if (loading) {
     return (
