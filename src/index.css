@@ -31,6 +31,13 @@
   --radius: 10px;
   --radius-parch: 6px;
 
+  /* ── Échelle de rayons — cohérence des arrondis sur tout le site ── */
+  --r-sm:  8px;    /* petites puces, mini-boutons */
+  --r-md:  10px;   /* boutons, champs */
+  --r-lg:  12px;   /* cartes, lignes, panneaux courants */
+  --r-xl:  14px;   /* grands panneaux (pactes, zone de danger) */
+  --r-pill: 999px; /* pastilles, badges, rubans */
+
   /* ── Mouvement — courbe et durées communes pour des micro-interactions cohérentes ── */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --t-fast: 0.12s;
@@ -87,7 +94,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(#7A6128, #463716);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 3px solid transparent;
   background-clip: padding-box;
 }
@@ -123,7 +130,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
     url('/bg/fond-global.jpg') center / cover no-repeat;
   backdrop-filter: blur(8px);
 }
-.burger { display: none; background: transparent; border: 1px solid var(--line); color: var(--parch); border-radius: 8px; padding: 6px 10px; font-size: 16px; }
+.burger { display: none; background: transparent; border: 1px solid var(--line); color: var(--parch); border-radius: var(--r-sm); padding: 6px 10px; font-size: 16px; }
 .wordmark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .wordmark span { font-family: var(--display); letter-spacing: 0.2em; font-weight: 700; font-size: 18px; color: var(--parch); }
 .wordmark:hover { text-decoration: none; }
@@ -160,7 +167,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 }
 .side-link {
   display: flex; align-items: center; gap: 10px;
-  padding: 8px 10px; border-radius: 8px;
+  padding: 8px 10px; border-radius: var(--r-sm);
   color: #BDB092; text-decoration: none; font-size: 14.5px;
   border: 1px solid transparent;
 }
@@ -175,7 +182,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .side-badge {
   flex: none; margin-left: auto;
   font-size: 11px; background: var(--weirwood); color: #fff;
-  border-radius: 999px; padding: 0 7px; min-width: 18px; text-align: center; line-height: 18px;
+  border-radius: var(--r-pill); padding: 0 7px; min-width: 18px; text-align: center; line-height: 18px;
 }
 
 .content {
@@ -387,7 +394,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   background-position: center;
   background-blend-mode: multiply;
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   padding: 16px 18px;
 }
 
@@ -400,7 +407,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   width: 100%;
   background: linear-gradient(#2A211733, #1C150E66);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   padding: 14px 16px;
   color: inherit;
   transition: transform 0.1s, border-color 0.1s;
@@ -416,7 +423,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   font-style: italic;
   padding: 46px 20px;
   border: 1px dashed var(--line);
-  border-radius: 14px;
+  border-radius: var(--r-xl);
 }
 
 /* ── Sous-navigation de la Chancellerie ── */
@@ -425,7 +432,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   border: 1px solid var(--line);
   background: #0F0B07;
   color: #BDB092;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 8px 15px;
   font-size: 14px;
   display: flex;
@@ -442,7 +449,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   text-transform: uppercase;
   color: var(--gold-dim);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 1px 8px;
 }
 
@@ -454,7 +461,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   border: 1px solid var(--line);
   background: #0F0B07;
   color: #C7B894;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   padding: 11px 10px;
   font-size: 14px;
 }
@@ -468,14 +475,14 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
   border: 1px solid var(--line);
   background: #0F0B07;
   color: #C7B894;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   padding: 11px 16px;
   font-size: 14px;
   cursor: pointer;
 }
 .attach-btn:hover { border-color: var(--gold-dim); }
 .img-prev { margin: 10px 0 2px; position: relative; display: inline-block; }
-.img-prev img { max-width: 240px; max-height: 180px; border-radius: 8px; border: 1px solid var(--line); display: block; }
+.img-prev img { max-width: 240px; max-height: 180px; border-radius: var(--r-sm); border: 1px solid var(--line); display: block; }
 .img-prev .rm {
   position: absolute; top: -9px; right: -9px;
   width: 26px; height: 26px; border-radius: 50%;
@@ -515,7 +522,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 /* ── Encart d'aide (« tuto ») ── */
 .help-card {
   border: 1px solid var(--gold-dim);
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   background: linear-gradient(#33271A55, #241B1288);
   margin: 0 0 18px;
   overflow: hidden;
@@ -541,7 +548,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .linkbtn.on { border-color: var(--gold-dim); color: var(--gold); background: #1B140D; }
 .thread-count {
   font-size: 11px; color: #C7B894;
-  border: 1px solid var(--line); border-radius: 999px;
+  border: 1px solid var(--line); border-radius: var(--r-pill);
   padding: 0 7px; min-width: 18px; text-align: center;
 }
 
@@ -550,7 +557,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; }
 .msg {
   background: linear-gradient(#2A211733, #1C150E66);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   padding: 12px 16px;
   max-width: 86%;
   align-self: flex-start;
@@ -582,7 +589,7 @@ html[data-region] .section-h { color: var(--gold); text-shadow: 0 1px 8px rgba(0
 html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9); }
 .composer {
   background: linear-gradient(#2A211733, #1C150E66);
-  border: 1px solid var(--line); border-radius: 12px;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 14px 16px; margin-bottom: 22px;
 }
 .feed { display: flex; flex-direction: column; gap: 10px; }
@@ -593,7 +600,7 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
     linear-gradient(rgba(42, 33, 23, 0.5), rgba(28, 21, 14, 0.74)),
     url('/bg/parchemin.jpg');
   background-size: cover; background-position: center; background-blend-mode: multiply;
-  border: 1px solid var(--line); border-radius: 12px;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
   padding: 14px 16px; color: inherit; transition: transform 0.1s, border-color 0.1s;
 }
 /* Survol : TOUTE la carte se teinte de la couleur du royaume de l'auteur (--rk),
@@ -623,14 +630,14 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
   display: inline-block;
   font-family: var(--display); font-size: 10px; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--weirwood-br);
-  border: 1px solid #8E2F2A55; border-radius: 999px; padding: 1px 8px; margin-right: 8px;
+  border: 1px solid #8E2F2A55; border-radius: var(--r-pill); padding: 1px 8px; margin-right: 8px;
 }
 
 .comments { display: flex; flex-direction: column; gap: 10px; }
 .comment {
   display: flex; gap: 12px; align-items: flex-start;
   background: linear-gradient(#2A211722, #1C150E44);
-  border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-md); padding: 11px 14px;
 }
 .c-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .c-who { font-size: 14px; color: #E7DBBE; }
@@ -644,7 +651,7 @@ html[data-region] .channel-desc { color: #EADCBB; text-shadow: 0 1px 8px rgba(0,
 .armorial-card {
   display: flex; gap: 13px; align-items: center;
   background: linear-gradient(#2A211733, #1C150E66);
-  border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px;
+  border: 1px solid var(--line); border-radius: var(--r-lg); padding: 13px 15px;
 }
 /* Fiche entièrement cliquable (un joueur la tient) */
 a.armorial-card.linked {
@@ -684,18 +691,18 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 @media (max-width: 600px) { .chronicle { flex-direction: column; gap: 4px; } .chr-date { width: auto; } }
 
 /* ── Annonce (Citadelle) ── */
-.announce-box { background: #160F0A; border: 1px solid var(--gold-dim); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; }
+.announce-box { background: #160F0A; border: 1px solid var(--gold-dim); border-radius: var(--r-lg); padding: 14px 16px; margin-bottom: 18px; }
 
 /* ── Requêtes (tickets) ── */
 .tk-badge {
   font-family: var(--display); font-size: 10px; letter-spacing: 0.08em;
-  border-radius: 999px; padding: 2px 9px; border: 1px solid var(--line);
+  border-radius: var(--r-pill); padding: 2px 9px; border: 1px solid var(--line);
 }
 .tk-badge.wait { color: var(--gold); border-color: var(--gold-dim); }
 .tk-badge.ok { color: #B7CDA0; border-color: #5e7a4a66; }
 .tk-badge.no { color: #E7A79F; border-color: #8E2F2A66; }
 .verdict {
-  margin-top: 14px; border-radius: 12px; padding: 12px 16px; font-size: 14px;
+  margin-top: 14px; border-radius: var(--r-lg); padding: 12px 16px; font-size: 14px;
   border: 1px solid var(--line); background: #1C150E66;
 }
 .verdict.accepted { border-color: #5e7a4a66; color: #B7CDA0; }
@@ -705,13 +712,13 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 /* ── Pactes & Diplomatie ── */
 .pact-card {
   background: linear-gradient(#2A211733, #1C150E66);
-  border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+  border: 1px solid var(--line); border-radius: var(--r-xl); padding: 16px 18px;
 }
 .pact-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
 .pact-title { font-family: var(--display); font-size: 18px; color: var(--parch); margin: 0; }
 .pact-status {
   margin-left: auto; font-size: 12px; color: var(--gold-dim);
-  border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px;
+  border: 1px solid var(--line); border-radius: var(--r-pill); padding: 2px 10px;
 }
 .pact-status.ok { color: #B7CDA0; border-color: #5e7a4a66; }
 .pact-meta { color: #9C8F71; font-size: 12px; margin: 4px 0 10px; }
@@ -719,42 +726,42 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .pact-houses { display: flex; gap: 7px; flex-wrap: wrap; }
 .pact-house {
   display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px 3px 4px;
+  border: 1px solid var(--line); border-radius: var(--r-pill); padding: 3px 10px 3px 4px;
   font-size: 13px; color: #A99C7E;
 }
 .pact-house.signed { color: #B7CDA0; border-color: #5e7a4a55; }
 
-.pact-pick { max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; padding: 4px 12px 12px; }
+.pact-pick { max-height: 260px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--r-md); padding: 4px 12px 12px; }
 .pact-pick-row { display: flex; gap: 6px; flex-wrap: wrap; }
 .pact-pick-item {
   display: inline-flex; align-items: center; gap: 6px;
   border: 1px solid var(--line); background: #0F0B07; color: #C7B894;
-  border-radius: 999px; padding: 4px 11px 4px 5px; font-size: 13px;
+  border-radius: var(--r-pill); padding: 4px 11px 4px 5px; font-size: 13px;
 }
 .pact-pick-item.on { border-color: var(--gold-dim); background: #1B140D; color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold-dim); }
 
 /* ── Citadelle : stats, mestres, signalements, danger ── */
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 22px; }
-.stat { background: linear-gradient(#2A211733, #1C150E66); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.stat { background: linear-gradient(#2A211733, #1C150E66); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px 16px; }
 .stat-n { font-family: var(--display); font-size: 26px; color: var(--gold); }
 .stat-l { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9C8F71; }
 
 .mestre-row {
   display: flex; gap: 14px; align-items: flex-start;
   background: linear-gradient(#2A211733, #1C150E66);
-  border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px;
+  border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px 16px;
 }
 .mestre-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
 .mestre-actions .tiny:disabled { cursor: not-allowed; }
 
 .report-card {
   background: linear-gradient(#2A1A1733, #1C120E66);
-  border: 1px solid #8E2F2A44; border-radius: 12px; padding: 14px 16px;
+  border: 1px solid #8E2F2A44; border-radius: var(--r-lg); padding: 14px 16px;
 }
 .report-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
 .report-reason { color: #E7A79F; font-style: italic; font-size: 14px; margin-bottom: 8px; }
 .report-target {
-  background: #0F0B07; border: 1px solid var(--line); border-radius: 8px;
+  background: #0F0B07; border: 1px solid var(--line); border-radius: var(--r-sm);
   padding: 10px 12px; font-size: 14px; line-height: 1.5;
 }
 
@@ -763,10 +770,10 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .report-box { width: 100%; margin-top: 6px; }
 .report-done { color: #C9776F; font-size: 12.5px; }
 
-.danger-zone { border: 1px solid #8E2F2A55; border-radius: 14px; padding: 18px 20px; background: #160F0A; }
+.danger-zone { border: 1px solid #8E2F2A55; border-radius: var(--r-xl); padding: 18px 20px; background: #160F0A; }
 
 .death-form {
-  background: #160F0A; border: 1px solid #8E2F2A44; border-radius: 14px;
+  background: #160F0A; border: 1px solid #8E2F2A44; border-radius: var(--r-xl);
   padding: 18px 20px; margin: 18px 0 4px;
 }
 .death-form h3 {
@@ -782,7 +789,7 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .clean-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: linear-gradient(#2A211722, #1C150E44);
-  border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; font-size: 14px;
+  border: 1px solid var(--line); border-radius: var(--r-md); padding: 9px 14px; font-size: 14px;
 }
 
 @media (max-width: 600px) { .stat-row { grid-template-columns: 1fr 1fr; } }
@@ -809,7 +816,7 @@ a.armorial-card.linked:hover .armorial-holder.held { color: var(--gold); }
 .input {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   border: 1px solid var(--line);
   background: #0F0B07;
   color: var(--parch);
@@ -848,7 +855,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   text-transform: uppercase;
   color: #9C8F71;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 1px 7px;
   white-space: nowrap;
 }
@@ -862,7 +869,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   padding: 2px 10px 6px 2px;
   margin-top: 4px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-md);
   background: #0C0905;
 }
 .house-scroll .region-h:first-child { margin-top: 4px; }
@@ -884,7 +891,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 .house {
   border: 1px solid var(--line);
   background: #0F0B07;
-  border-radius: 10px;
+  border-radius: var(--r-md);
   padding: 9px 3px;
   text-align: center;
   color: #C7B894;
@@ -903,6 +910,21 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 /* ============================================================================
    BOUTONS
    ========================================================================== */
+/* Micro-interactions — adoucit les contrôles qui changeaient d'état d'un coup
+   (couleur/bordure/ombre au survol et au focus). Un même tempo partout pour un
+   toucher « artisanal » cohérent. Les cartes/lignes gardent leur propre tempo. */
+.btn-seal, .btn-discord, .btn-ghost, .linkbtn, .tiny, .attach-btn,
+.subnav button, .dest-pick button, .side-link, .help-head,
+.lightbox-close, .pact-pick-item, .input {
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease),
+    filter var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+
 .btn-seal {
   border: 0;
   border-radius: var(--radius);
@@ -920,7 +942,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
 
 .btn-discord {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; border: 0; border-radius: 10px; padding: 14px;
+  width: 100%; border: 0; border-radius: var(--r-md); padding: 14px;
   background: #5865F2; color: #fff;
   font-family: var(--display); letter-spacing: 0.08em; font-size: 15px;
   box-shadow: 0 10px 26px #5865f255, inset 0 1px 0 #ffffff33;
@@ -942,13 +964,13 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   background: transparent;
   border: 1px solid var(--line);
   color: #C7B894;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 8px 12px;
   font-size: 13px;
 }
 .linkbtn:hover { border-color: var(--gold-dim); }
 
-.tiny { padding: 6px 10px; border-radius: 7px; border: 1px solid var(--line); background: #0F0B07; color: #C7B894; font-size: 12.5px; }
+.tiny { padding: 6px 10px; border-radius: var(--r-sm); border: 1px solid var(--line); background: #0F0B07; color: #C7B894; font-size: 12.5px; }
 .tiny.danger { border-color: #8E2F2A66; color: #E7A79F; }
 .tiny.good { border-color: #5e7a4a66; color: #B7CDA0; }
 
@@ -959,18 +981,18 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   color: #1A0F0D;
   background: linear-gradient(#E0BE63, #B8923A);
   padding: 3px 8px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
 }
 .badge.obs { background: linear-gradient(#A8AEB6, #6E7681); }
 
-.pill { font-size: 11px; background: var(--weirwood); color: #fff; border-radius: 999px; padding: 1px 7px; min-width: 18px; text-align: center; }
+.pill { font-size: 11px; background: var(--weirwood); color: #fff; border-radius: var(--r-pill); padding: 1px 7px; min-width: 18px; text-align: center; }
 
 /* ── Rubans de navigation ── */
 .ruban {
   border: 1px solid var(--line);
   background: #0F0B07;
   color: #BDB092;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   padding: 9px 16px;
   font-size: 14px;
   letter-spacing: 0.03em;
@@ -991,7 +1013,7 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   color: #E7A79F;
   background: #3a191655;
   border: 1px solid #8E2F2A55;
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 10px 12px;
   font-size: 14px;
   margin: 0 0 14px;
