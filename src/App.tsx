@@ -61,7 +61,7 @@ function FullScreen({ children }: { children: React.ReactNode }) {
    possède le lien secret :  /?ouvre=<UNLOCK_TOKEN>  (le navigateur le mémorise
    ensuite, plus besoin de le remettre). Repasser MAINTENANCE à false pour
    rouvrir le site à tous (puis rebuild + push). */
-const MAINTENANCE = true
+const MAINTENANCE = false
 const UNLOCK_TOKEN = '90e0fefd88a954d4c0'
 const UNLOCK_STORAGE = 'ck3fr_open'
 
