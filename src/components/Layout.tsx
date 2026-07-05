@@ -7,6 +7,7 @@ import { channelsByCategory } from '../lib/channels'
 import { supabase } from '../lib/supabase'
 import { getAnnouncement } from '../lib/realm'
 import { Seal } from './Seal'
+import { NotifBell } from './NotifBell'
 
 function Banner() {
   const [msg, setMsg] = useState<string | null>(null)
@@ -147,6 +148,8 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
             <>
               <SideLink to="/armorial" icon="📜" ico="/icons/armorial.png?v=2" label="Annuaire" onClick={onNavigate} />
               <SideLink to="/chroniques" icon="📖" ico="/icons/chroniques.png?v=2" label="Chroniques" onClick={onNavigate} />
+              <SideLink to="/recherche" icon="🔍" label="Recherche" onClick={onNavigate} />
+              <SideLink to="/statistiques" icon="📊" label="Recensement" onClick={onNavigate} />
             </>
           )}
         </div>
@@ -173,6 +176,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
         {profile && (
           <div className="me">
+            <NotifBell />
             <Link to="/destin" className="me-chip" title="Mon personnage">
               <Seal house={profile.house} />
               <span className="me-text">

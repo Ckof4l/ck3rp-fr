@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
+import type { Profile } from '../types/database'
+import { MentionText } from './MentionText'
 
 /* ============================================================================
    Lettrine enluminée — la première lettre d'une proclamation ou d'une lettre
    importante, façon manuscrit. Passe le texte ; la première lettre est ornée.
+   Avec `players`, les « @Nom » du corps sont surlignés (mentions).
    ========================================================================== */
 
-export function Lettrine({ children }: { children: string }) {
+export function Lettrine({ children, players }: { children: string; players?: Profile[] }) {
   const text = children ?? ''
   const first = text.slice(0, 1)
   const rest = text.slice(1)
@@ -16,7 +19,7 @@ export function Lettrine({ children }: { children: string }) {
       </span>
       {/* La lettre ornée est décorative : on garde le mot complet pour les lecteurs d'écran. */}
       <span className="sr-only">{first}</span>
-      {rest}
+      {players ? <MentionText text={rest} players={players} /> : rest}
     </p>
   )
 }

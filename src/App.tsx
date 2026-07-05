@@ -25,6 +25,8 @@ const Sort = lazy(() => import('./pages/Sort').then((m) => ({ default: m.Sort })
 const Pactes = lazy(() => import('./pages/Pactes').then((m) => ({ default: m.Pactes })))
 const Alliances = lazy(() => import('./pages/Alliances').then((m) => ({ default: m.Alliances })))
 const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
+const Recherche = lazy(() => import('./pages/Recherche').then((m) => ({ default: m.Recherche })))
+const Recensement = lazy(() => import('./pages/Recensement').then((m) => ({ default: m.Recensement })))
 
 /* ============================================================================
    Aiguillage de l'application.
@@ -46,6 +48,8 @@ const PAGE_BG: Record<string, string> = {
   '/conversations': '/bg/pages/conversations.jpg',
   '/hrp': '/bg/pages/hrp.jpg',
   '/admin': '/bg/pages/citadelle.jpg',
+  '/recherche': '/bg/pages/annuaire.jpg',
+  '/statistiques': '/bg/pages/scrutins.jpg',
 }
 
 function FullScreen({ children }: { children: React.ReactNode }) {
@@ -154,6 +158,8 @@ export default function App() {
         <Route path="/alliances" element={<Alliances />} />
         <Route path="/requetes" element={<Requetes />} />
         <Route path="/chroniques" element={<Chroniques />} />
+        <Route path="/recherche" element={<Recherche />} />
+        <Route path="/statistiques" element={<Recensement />} />
         <Route path="/scrutins" element={<Scrutins />} />
         <Route path="/sort" element={<Sort />} />
         <Route path="/destin" element={<Destin />} />

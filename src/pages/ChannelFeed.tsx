@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
+import type { Profile } from '../types/database'
+import { mentionPlayers, notifyMentions } from '../lib/mentions'
+import { MentionText } from '../components/MentionText'
 import { useAuth } from '../context/AuthContext'
 import { useUnread } from '../context/UnreadContext'
 import { getChannel, canPostChannel, canComment, isMuted } from '../lib/channels'
@@ -42,6 +45,8 @@ export function ChannelFeed() {
   const [posts, setPosts] = useState<PostRow[]>([])
   const [loading, setLoading] = useState(true)
   const [openPost, setOpenPost] = useState<string | null>(null)
+  // Lien profond depuis une notification : /c/<salon>?post=<id> ouvre la lettre.
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const refresh = useCallback(async () => {
     if (!channel) return
@@ -51,10 +56,15 @@ export function ChannelFeed() {
   }, [channel])
 
   useEffect(() => {
-    setOpenPost(null)
+    setOpenPost(searchParams.get('post'))
     refresh()
     if (channel) markSeen(channel.key)
-  }, [refresh, channel, markSeen])
+  }, [refresh, channel, markSeen, searchParams])
+
+  const closePost = useCallback(() => {
+    setOpenPost(null)
+    if (searchParams.get('post')) setSearchParams({}, { replace: true })
+  }, [searchParams, setSearchParams])
 
   // Fond propre au salon : la colonne de contenu prend une scène peinte.
   // Les régions ont leur royaume ; Rumeurs prend sa taverne.
@@ -85,9 +95,9 @@ export function ChannelFeed() {
 
   // Stable pour ne pas re-souscrire les abonnements temps réel de PostDetail.
   const handleDeleted = useCallback(async () => {
-    setOpenPost(null)
+    closePost()
     await refresh()
-  }, [refresh])
+  }, [closePost, refresh])
 
   // Temps réel : toute écriture dans ce salon (nouveau post, édition,
   // épinglage, suppression) recharge le fil. On ne marque « vu » que sur un
@@ -129,7 +139,7 @@ export function ChannelFeed() {
         meId={meId}
         isAdmin={!!profile?.is_admin}
         mayComment={canComment(profile)}
-        onBack={() => setOpenPost(null)}
+        onBack={closePost}
         onDeleted={handleDeleted}
       />
     )
@@ -268,7 +278,9 @@ function Composer({
     setBusy(true)
     setStatus('Publication…')
     try {
-      await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile, isPrivate, isHrp })
+      const postId = await createPost({ meId, channel: channelKey, title, body: body.trim(), imageFile, isPrivate, isHrp })
+      // Mentions @joueur : notifie après coup, sans bloquer la publication.
+      notifyMentions({ meId, channel: channelKey, postId, body: body.trim() })
       setTitle('')
       setBody('')
       setImageFile(null)
@@ -370,6 +382,11 @@ function PostDetail({
   const [editBody, setEditBody] = useState('')
   const [editingC, setEditingC] = useState<string | null>(null)
   const [editCText, setEditCText] = useState('')
+  // Référentiel des joueurs (cache de session) pour surligner les @mentions.
+  const [players, setPlayers] = useState<Profile[]>([])
+  useEffect(() => {
+    mentionPlayers().then(setPlayers)
+  }, [])
 
   const loadAll = useCallback(async () => {
     setLoading(true)
@@ -419,6 +436,7 @@ function PostDetail({
     setBusy(true)
     try {
       await addComment({ meId, postId, body: text })
+      if (post) notifyMentions({ meId, channel: post.channel, postId, body: text })
       setText('')
       setComments(await listComments(postId))
     } catch (e) {
@@ -522,7 +540,9 @@ function PostDetail({
             </div>
           </div>
         ) : (
-          <div className="pm-body">{post.title ? <Lettrine>{post.body}</Lettrine> : post.body}</div>
+          <div className="pm-body">
+            {post.title ? <Lettrine players={players}>{post.body}</Lettrine> : <MentionText text={post.body} players={players} />}
+          </div>
         )}
         {!editing && img && <ZoomImg className="letter-img" src={img} alt="pièce jointe" />}
       </div>
@@ -592,7 +612,7 @@ function PostDetail({
                     </div>
                   </div>
                 ) : (
-                  <div className="c-body">{c.body}</div>
+                  <div className="c-body"><MentionText text={c.body} players={players} /></div>
                 )}
               </div>
             </div>
