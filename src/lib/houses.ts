@@ -30,7 +30,7 @@ export const HOUSES: Record<string, House> = {
   reed:      { key: 'reed',      nom: 'Reed',            region: 'Le Nord',                sig: '🦎', col: '#5E7A4E', canon: 'Lord Leon Reed',             devise: "Sous le roseau, la patience." },
   karstark:  { key: 'karstark',  nom: 'Karstark',        region: 'Le Nord',                sig: '✴️', col: '#AEB9C4', canon: 'Lord Alton Karstark',        devise: "Le soleil blanc de l'hiver." },
   // ── Les Terres de l'Orage ──
-  durrandon: { key: 'durrandon', nom: 'Durrandon',       region: "Les Terres de l'Orage",  sig: '🦌', col: '#C9A24B', canon: 'Roi Arrec Durrandon',        devise: "Nôtre est la furie." },
+  baratheon: { key: 'baratheon', nom: 'Baratheon',       region: "Les Terres de l'Orage",  sig: '🦌', col: '#C9A24B', canon: 'Roi Orys Baratheon',         devise: "Nôtre est la furie." },
   connington:{ key: 'connington',nom: 'Connington',      region: "Les Terres de l'Orage",  sig: '🦅', col: '#B23A33', canon: 'Lord Jon Connington',        devise: "Le griffon veille." },
   // ── Le Conflans ──
   tully:     { key: 'tully',     nom: 'Tully',           region: 'Le Conflans',            sig: '🐟', col: '#3A5A8A', canon: 'Roi Tommen Tully',           devise: "Famille, Devoir, Honneur." },
@@ -155,9 +155,9 @@ export function rkStyle(houseKey: string | null | undefined): CSSProperties {
 }
 
 /** Grandes familles régnantes : Roi automatique à l'inscription.
-   Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0048). */
+   Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0049). */
 export const KING_HOUSES = new Set([
-  'stark', 'arryn', 'lannister', 'durrandon', 'tully', 'jardinier', 'martell', 'chenu', 'targaryen',
+  'stark', 'arryn', 'lannister', 'baratheon', 'tully', 'jardinier', 'martell', 'chenu', 'targaryen',
 ])
 
 /** Liste des maisons groupées par région, dans l'ordre de déclaration. */

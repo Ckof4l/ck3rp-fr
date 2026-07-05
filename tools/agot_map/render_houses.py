@@ -9,7 +9,7 @@ SIZE = 128
 # clé de maison du site -> noms de dynastie candidats dans le mod
 MAP = {
     "stark": ["Stark"], "forestier": ["Forrester"], "manderly": ["Manderly"], "reed": ["Reed"],
-    "karstark": ["Karstark"], "durrandon": ["Durrandon"], "connington": ["Connington"],
+    "karstark": ["Karstark"], "baratheon": ["Baratheon"], "connington": ["Connington"],
     "frey": ["Frey"], "bracken": ["Bracken"], "tully": ["Tully"], "lannister": ["Lannister"],
     "brax": ["Brax"], "reyne": ["Reyne"], "lefford": ["Lefford"], "arryn": ["Arryn"],
     "grafton": ["Grafton"], "melcolm": ["Melcolm"], "hersy": ["Hersy", "Hardyng"],

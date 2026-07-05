@@ -16,6 +16,7 @@ REGIONS = {
     "le-val":          dict(field="agot_blue_light", tex="ce_falcon.dds",         ec=("white", "white", "white"),                     scale=0.80),
     "le-roc":          dict(field="agot_red",        tex="ce_lion_rampant.dds",   ec=("agot_gold", "agot_gold", "agot_gold"),         scale=0.86),
     "le-trident":      dict(field=(34, 68, 140),     tex="rl_tully_2.dds",        ec=("agot_grey_light", "white", "white"),           scale=0.92),
+    "terres-de-l-orage": dict(field="agot_gold",     tex="st_baratheon.dds",      ec=("agot_black", "agot_black", "agot_black"),      scale=0.88),
     "le-bief":         dict(field=(76, 165, 80),     tex="ce_hand.dds",           ec=("agot_gold", "agot_gold", "agot_gold"),         scale=0.74),
     "dorne":           dict(field="agot_orange",     tex="do_nymeros_martell.dds", ec=("agot_red", "agot_gold", "agot_red"),          scale=0.88),
     "les-iles-de-fer": dict(field="agot_black",      tex="ce_greyjoy.dds",        ec=("agot_gold", "agot_gold", "agot_gold"),         scale=0.86),
