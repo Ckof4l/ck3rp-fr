@@ -29,12 +29,13 @@ export const HOUSES: Record<string, House> = {
   manderly:  { key: 'manderly',  nom: 'Manderly',        region: 'Le Nord',                sig: '🧜', col: '#2E7E7E', canon: 'Lord Torrhen Manderly',      devise: "Toujours fidèles." },
   reed:      { key: 'reed',      nom: 'Reed',            region: 'Le Nord',                sig: '🦎', col: '#5E7A4E', canon: 'Lord Leon Reed',             devise: "Sous le roseau, la patience." },
   karstark:  { key: 'karstark',  nom: 'Karstark',        region: 'Le Nord',                sig: '✴️', col: '#AEB9C4', canon: 'Lord Alton Karstark',        devise: "Le soleil blanc de l'hiver." },
-  // ── Le Trident ──
-  durrandon: { key: 'durrandon', nom: 'Durrandon',       region: 'Le Trident',             sig: '🦌', col: '#C9A24B', canon: 'Roi Arrec Durrandon',        devise: "Nôtre est la furie." },
-  connington:{ key: 'connington',nom: 'Connington',      region: 'Le Trident',             sig: '🦅', col: '#B23A33', canon: 'Lord Jon Connington',        devise: "Le griffon veille." },
-  frey:      { key: 'frey',      nom: 'Frey',            region: 'Le Trident',             sig: '🏰', col: '#6E7681', canon: 'Lord Oswald Frey',           devise: "Nous nous tenons ensemble." },
-  bracken:   { key: 'bracken',   nom: 'Bracken',         region: 'Le Trident',             sig: '🐎', col: '#9A5A33', canon: 'Lord Lothar Bracken',        devise: "Fiers et indomptés." },
-  tully:     { key: 'tully',     nom: 'Tully',           region: 'Le Trident',             sig: '🐟', col: '#3A5A8A', canon: 'Lord Tommen Tully',          devise: "Famille, Devoir, Honneur." },
+  // ── Les Terres de l'Orage ──
+  durrandon: { key: 'durrandon', nom: 'Durrandon',       region: "Les Terres de l'Orage",  sig: '🦌', col: '#C9A24B', canon: 'Roi Arrec Durrandon',        devise: "Nôtre est la furie." },
+  connington:{ key: 'connington',nom: 'Connington',      region: "Les Terres de l'Orage",  sig: '🦅', col: '#B23A33', canon: 'Lord Jon Connington',        devise: "Le griffon veille." },
+  // ── Le Conflans ──
+  tully:     { key: 'tully',     nom: 'Tully',           region: 'Le Conflans',            sig: '🐟', col: '#3A5A8A', canon: 'Roi Tommen Tully',           devise: "Famille, Devoir, Honneur." },
+  frey:      { key: 'frey',      nom: 'Frey',            region: 'Le Conflans',            sig: '🏰', col: '#6E7681', canon: 'Lord Oswald Frey',           devise: "Nous nous tenons ensemble." },
+  bracken:   { key: 'bracken',   nom: 'Bracken',         region: 'Le Conflans',            sig: '🐎', col: '#9A5A33', canon: 'Lord Lothar Bracken',        devise: "Fiers et indomptés." },
   // ── Le Roc ──
   lannister: { key: 'lannister', nom: 'Lannister',       region: 'Le Roc',                 sig: '🦁', col: '#C9A24B', canon: 'Roi Tommen Lannister',       devise: "Un Lannister paie toujours ses dettes." },
   brax:      { key: 'brax',      nom: 'Brax',            region: 'Le Roc',                 sig: '🦄', col: '#8A6FB0', canon: 'Lord Andros Brax',           devise: "La corne haute et fière." },
@@ -72,13 +73,13 @@ export const HOUSES: Record<string, House> = {
   cerwyn:     { key: 'cerwyn', nom: 'Cerwyn', region: 'Le Nord', sig: '🛡️', col: '#8C969C', canon: '', devise: "Hachés mais debout." },
   tallhart:   { key: 'tallhart', nom: 'Tallhart', region: 'Le Nord', sig: '🛡️', col: '#673620', canon: '', devise: "Fiers et grands." },
   dustin:     { key: 'dustin', nom: 'Dustin', region: 'Le Nord', sig: '🛡️', col: '#C08A1E', canon: '', devise: "Les barons se souviennent." },
-  blackwood:  { key: 'blackwood', nom: 'Blackwood', region: 'Le Trident', sig: '🛡️', col: '#940503', canon: '', devise: "Le corbeau n'oublie pas." },
-  mallister:  { key: 'mallister', nom: 'Mallister', region: 'Le Trident', sig: '🛡️', col: '#23308A', canon: '', devise: "Au-dessus du reste." },
-  vance:      { key: 'vance', nom: 'Vance', region: 'Le Trident', sig: '🛡️', col: '#3A3A3A', canon: '', devise: "Garde contre la nuit." },
-  piper:      { key: 'piper', nom: 'Piper', region: 'Le Trident', sig: '🛡️', col: '#1E4E96', canon: '', devise: "Brave et docile." },
-  darry:      { key: 'darry', nom: 'Darry', region: 'Le Trident', sig: '🛡️', col: '#673620', canon: '', devise: "Le laboureur reste." },
-  mooton:     { key: 'mooton', nom: 'Mooton', region: 'Le Trident', sig: '🛡️', col: '#A4302A', canon: '', devise: "Rouge comme l'aurore." },
-  whent:      { key: 'whent', nom: 'Whent', region: 'Le Trident', sig: '🛡️', col: '#C08A1E', canon: '', devise: "Noires chauves-souris d'Harrenhal." },
+  blackwood:  { key: 'blackwood', nom: 'Blackwood', region: 'Le Conflans', sig: '🛡️', col: '#940503', canon: '', devise: "Le corbeau n'oublie pas." },
+  mallister:  { key: 'mallister', nom: 'Mallister', region: 'Le Conflans', sig: '🛡️', col: '#23308A', canon: '', devise: "Au-dessus du reste." },
+  vance:      { key: 'vance', nom: 'Vance', region: 'Le Conflans', sig: '🛡️', col: '#3A3A3A', canon: '', devise: "Garde contre la nuit." },
+  piper:      { key: 'piper', nom: 'Piper', region: 'Le Conflans', sig: '🛡️', col: '#1E4E96', canon: '', devise: "Brave et docile." },
+  darry:      { key: 'darry', nom: 'Darry', region: 'Le Conflans', sig: '🛡️', col: '#673620', canon: '', devise: "Le laboureur reste." },
+  mooton:     { key: 'mooton', nom: 'Mooton', region: 'Le Conflans', sig: '🛡️', col: '#A4302A', canon: '', devise: "Rouge comme l'aurore." },
+  whent:      { key: 'whent', nom: 'Whent', region: 'Le Conflans', sig: '🛡️', col: '#C08A1E', canon: '', devise: "Noires chauves-souris d'Harrenhal." },
   clegane:    { key: 'clegane', nom: 'Clegane', region: 'Le Roc', sig: '🛡️', col: '#C08A1E', canon: '', devise: "Les chiens mordent." },
   marbrand:   { key: 'marbrand', nom: 'Marpheux', region: 'Le Roc', sig: '🛡️', col: '#5C4E4E', canon: '', devise: "Brûlants et fiers." },
   crakehall:  { key: 'crakehall', nom: 'Crakehall', region: 'Le Roc', sig: '🛡️', col: '#673620', canon: '', devise: "Aucun sanglier ne recule." },
@@ -133,7 +134,8 @@ export const REGION_COLORS: Record<string, string> = {
   'Le Nord': '#7E8B99',                 // gris-glace Stark
   'La Montagne et le Val': '#4F79B0',   // bleu ciel Arryn
   'Le Roc': '#A32E28',                  // rouge Lannister
-  'Le Trident': '#2F5D9E',              // bleu rivière
+  "Les Terres de l'Orage": '#A8862F',   // or orageux Durrandon
+  'Le Conflans': '#2F5D9E',             // bleu rivière Tully
   'Le Bief': '#3F8A4E',                 // vert Jardinier
   'Dorne': '#D08A2A',                   // orange Martell
   'Les Îles de Fer': '#3F525C',         // ardoise des Fer-nés
@@ -153,9 +155,9 @@ export function rkStyle(houseKey: string | null | undefined): CSSProperties {
 }
 
 /** Grandes familles régnantes : Roi automatique à l'inscription.
-   Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0039). */
+   Doit rester synchronisé avec la fonction SQL complete_onboarding (migration 0048). */
 export const KING_HOUSES = new Set([
-  'stark', 'arryn', 'lannister', 'durrandon', 'jardinier', 'martell', 'chenu', 'targaryen',
+  'stark', 'arryn', 'lannister', 'durrandon', 'tully', 'jardinier', 'martell', 'chenu', 'targaryen',
 ])
 
 /** Liste des maisons groupées par région, dans l'ordre de déclaration. */

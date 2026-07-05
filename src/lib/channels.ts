@@ -32,10 +32,12 @@ export const CHANNELS: Channel[] = [
   { key: 'le-nord',           name: 'Le Nord',            category: 'Le Royaume', icon: '❄️', kind: 'region', region: 'Le Nord',               ruler: 'stark',     description: "Le RP du Nord, de Winterfell au Mur." },
   { key: 'le-val',            name: 'La Montagne et le Val', category: 'Le Royaume', icon: '🦅', kind: 'region', region: 'La Montagne et le Val', ruler: 'arryn',     description: "Le RP du Val d'Arryn et des Montagnes de la Lune." },
   { key: 'le-roc',            name: "Les Terres de l'Ouest", category: 'Le Royaume', icon: '🦁', kind: 'region', region: 'Le Roc',               ruler: 'lannister', description: "Le RP du Roc de Castral et de l'Ouest." },
-  { key: 'le-trident',        name: 'Le Trident',         category: 'Le Royaume', icon: '🐟', kind: 'region', region: 'Le Trident',            ruler: 'durrandon', description: "Le RP du Conflans et des Terres des Rivières." },
+  // NB : la clé `le-trident` est conservée (posts.channel y pointe) ; seul l'affichage change d'époque.
+  { key: 'le-trident',        name: 'Le Conflans',        category: 'Le Royaume', icon: '🐟', kind: 'region', region: 'Le Conflans',           ruler: 'tully',     description: "Le RP du Conflans et des Terres des Rivières." },
+  { key: 'terres-de-l-orage', name: "Les Terres de l'Orage", category: 'Le Royaume', icon: '🦌', kind: 'region', region: "Les Terres de l'Orage", ruler: 'durrandon', description: "Le RP des Terres de l'Orage, d'Accalmie au Bois-de-la-Pluie." },
   { key: 'le-bief',           name: 'Le Bief',            category: 'Le Royaume', icon: '🌾', kind: 'region', region: 'Le Bief',               ruler: 'jardinier', description: "Le RP du Bief et de Hautjardin." },
   { key: 'dorne',             name: 'Dorne',              category: 'Le Royaume', icon: '☀️', kind: 'region', region: 'Dorne',                 ruler: 'martell',   description: "Le RP de Dorne, des sables aux montagnes Rouges." },
-  { key: 'les-iles-de-fer',   name: 'Les Îles de Fer',    category: 'Le Royaume', icon: '🐙', kind: 'region', region: 'Les Îles de Fer',       ruler: 'greyjoy',   description: "Le RP des Îles de Fer et de leurs reavers." },
+  { key: 'les-iles-de-fer',   name: 'Les Îles de Fer',    category: 'Le Royaume', icon: '🐙', kind: 'region', region: 'Les Îles de Fer',       ruler: 'chenu',     description: "Le RP des Îles de Fer et de leurs reavers." },
   { key: 'peyredragon',       name: 'Peyredragon',        category: 'Le Royaume', icon: '🐉', kind: 'region', region: 'Peyredragon',           ruler: 'targaryen', description: "Le RP de Peyredragon et des seigneurs du détroit." },
 
   // ── La Cour ──
