@@ -107,6 +107,8 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
   const cats = channelsByCategory()
   return (
     <nav className="side-nav">
+      <SideLink to="/recherche" icon="🔍" ico="/icons/recherche.png?v=1" label="Recherche" onClick={onNavigate} />
+
       <div className="side-cat">Messages</div>
       <SideLink to="/chancellerie" icon="🐦‍⬛" ico="/icons/corbeaux.png?v=2" label="Corbeaux" onClick={onNavigate} badge={corbeaux} />
       <SideLink to="/conversations" icon="💬" ico="/icons/conversations.png?v=2" label="Conversations" onClick={onNavigate} />
@@ -148,8 +150,7 @@ function Sidebar({ onNavigate }: { onNavigate: () => void }) {
             <>
               <SideLink to="/armorial" icon="📜" ico="/icons/armorial.png?v=2" label="Annuaire" onClick={onNavigate} />
               <SideLink to="/chroniques" icon="📖" ico="/icons/chroniques.png?v=2" label="Chroniques" onClick={onNavigate} />
-              <SideLink to="/recherche" icon="🔍" label="Recherche" onClick={onNavigate} />
-              <SideLink to="/statistiques" icon="📊" label="Recensement" onClick={onNavigate} />
+              <SideLink to="/statistiques" icon="📊" ico="/icons/recensement.png?v=1" label="Recensement" onClick={onNavigate} />
             </>
           )}
         </div>
