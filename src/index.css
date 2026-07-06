@@ -1284,3 +1284,57 @@ textarea.input { min-height: 200px; resize: vertical; line-height: 1.6; }
   .census-region { width: 110px; font-size: 12.5px; }
   .census-count { width: auto; font-size: 12px; }
 }
+
+/* ── Interrupteurs à segments (Privé/Public, RP/HRP…) ─────────────────────
+   Un vrai sélecteur à deux états, à la place de deux petits boutons plats :
+   rail sombre en creux, segment actif en relief — or (public/RP), cire
+   weirwood (privé/verrouillé), acier bleuté (HRP). */
+.seg-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #0C0906;
+  box-shadow: inset 0 2px 7px rgba(0, 0, 0, 0.55);
+}
+.seg {
+  border: 1px solid transparent;
+  background: none;
+  color: var(--muted-2);
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.seg:hover { color: var(--gold); }
+.seg:active { transform: translateY(1px); }
+.seg.on {
+  color: #ECC76C;
+  border-color: #D8B25A88;
+  background:
+    radial-gradient(120% 100% at 50% -20%, rgba(201, 162, 75, 0.30), transparent 60%),
+    linear-gradient(180deg, #3A2D1A, #241A0E);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 220, 150, 0.16);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.seg.lock.on {
+  color: #F2C9C2;
+  border-color: #AE3A3388;
+  background:
+    radial-gradient(120% 100% at 50% -20%, rgba(174, 58, 51, 0.42), transparent 60%),
+    linear-gradient(180deg, #4C1512, #2C0D0B);
+}
+.seg.hrp.on {
+  color: #BBD3F2;
+  border-color: #5A7FA888;
+  background:
+    radial-gradient(120% 100% at 50% -20%, rgba(90, 127, 168, 0.36), transparent 60%),
+    linear-gradient(180deg, #22303F, #141D28);
+}

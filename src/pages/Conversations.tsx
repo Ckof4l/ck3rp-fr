@@ -362,9 +362,9 @@ function CreateForm({
       </div>
       <div className="field">
         <label>Visibilité</label>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button type="button" className={isPrivate ? 'tiny' : 'tiny good'} onClick={() => setIsPrivate(false)}>💬 Publique</button>
-          <button type="button" className={isPrivate ? 'tiny good' : 'tiny'} onClick={() => setIsPrivate(true)}>🔒 Privée</button>
+        <div className="seg-toggle">
+          <button type="button" className={`seg${isPrivate ? '' : ' on'}`} onClick={() => setIsPrivate(false)}>💬 Publique</button>
+          <button type="button" className={`seg lock${isPrivate ? ' on' : ''}`} onClick={() => setIsPrivate(true)}>🔒 Privée</button>
         </div>
         <p className="hint" style={{ marginTop: 4 }}>
           {isPrivate ? 'Seuls les membres invités la verront.' : 'Visible et ouverte à tous les joueurs.'}

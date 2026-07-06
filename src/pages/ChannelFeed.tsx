@@ -332,23 +332,29 @@ function Composer({
           <input type="file" accept="image/*" style={{ display: 'none' }} onChange={pickImage} />
         </label>
         {allowPrivate && (
-          <button
-            type="button"
-            className={`${isPrivate ? 'tiny good' : 'tiny'} tip`}
-            data-tip={isPrivate ? 'Visible seulement des maisons de ton royaume' : 'Visible de tous — clique pour restreindre à ton royaume'}
-            onClick={() => setIsPrivate((v) => !v)}
+          <div
+            className="seg-toggle tip"
+            data-tip={isPrivate ? 'Visible seulement des maisons de ton royaume' : 'Visible de tous les joueurs'}
           >
-            {isPrivate ? '🔒 Privé (ton royaume)' : '🌍 Public'}
-          </button>
+            <button type="button" className={`seg${isPrivate ? '' : ' on'}`} onClick={() => setIsPrivate(false)}>
+              🌍 Public
+            </button>
+            <button type="button" className={`seg lock${isPrivate ? ' on' : ''}`} onClick={() => setIsPrivate(true)}>
+              🔒 Privé
+            </button>
+          </div>
         )}
-        <button
-          type="button"
-          className={`${isHrp ? 'tiny good' : 'tiny'} tip`}
-          data-tip={isHrp ? 'HRP — message hors-jeu, entre joueurs' : 'RP — message en personnage. Clique pour passer en hors-jeu (HRP)'}
-          onClick={() => setIsHrp((v) => !v)}
+        <div
+          className="seg-toggle tip"
+          data-tip={isHrp ? 'HRP — message hors-jeu, entre joueurs' : 'RP — message en personnage'}
         >
-          {isHrp ? 'HRP' : 'RP'}
-        </button>
+          <button type="button" className={`seg${isHrp ? '' : ' on'}`} onClick={() => setIsHrp(false)}>
+            🎭 RP
+          </button>
+          <button type="button" className={`seg hrp${isHrp ? ' on' : ''}`} onClick={() => setIsHrp(true)}>
+            💬 HRP
+          </button>
+        </div>
         {status && <span className="sent-ok">{status}</span>}
       </div>
     </div>
