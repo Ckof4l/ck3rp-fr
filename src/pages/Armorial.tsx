@@ -32,6 +32,13 @@ export function Armorial() {
           <div className="armorial-grid">
             {houses
               .filter((h) => h.key !== FREE_HOUSE_KEY)
+              // Les maisons tenues d'abord, les libres ensuite — chacune par
+              // ordre alphabétique.
+              .sort((a, b) => {
+                const ha = holders[a.key] ? 0 : 1
+                const hb = holders[b.key] ? 0 : 1
+                return ha !== hb ? ha - hb : a.nom.localeCompare(b.nom, 'fr')
+              })
               .map((h) => {
                 const holder = holders[h.key]
                 const body = (
